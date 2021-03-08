@@ -1,0 +1,12 @@
+
+/* home.css */
+
+
+
+header {
+    min-height: 100vh;
+}
+
+header h1 {
+    font-size: 3rem;
+}

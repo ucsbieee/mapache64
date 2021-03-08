@@ -1,0 +1,16 @@
+
+/* home.css */
+
+
+
+header {
+    min-height: 100vh;
+}
+
+header h1 {
+    font-size: 4.5rem;
+    text-shadow:    0 0 .8em white,
+                    0 0 .8em white,
+                    0 0 .8em white,
+                    0 0 .8em white;
+}
