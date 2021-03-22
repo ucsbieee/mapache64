@@ -3,9 +3,9 @@
 
 # 6502 Arcade Machine
 
-Repository: https://github.com/ucsbieee/arcade
+Repository: <https://github.com/ucsbieee/arcade>
 
-Website: https://arcade.ucsbieee.org/
+Website: <https://arcade.ucsbieee.org/>
 
 ## Description
 
@@ -13,7 +13,7 @@ UCSB IEEE is working on a large project where we build an arcade machine based o
 
 This project will be carried out accross 2 quarters. In spring'21, we will design the hardware and write the software. In fall'21, we will build the hardware and debug as needed.
 
-### Why
+### Motivation
 
 The UCSB ECE cirriculum gives lots of opportunities to practice using microcontrollers (ECE 5, ECE 153ab, ECE 189abc). However, there are no classes that give practice in building systems from a microprocessor. Therefore, this club project is meant to fill that gap in experience.
 
@@ -27,7 +27,7 @@ There will be optional weekly meetings/lectures for anyone who wants to learn mo
 
 ## Contact
 
-Discord Server: https://discord.gg/udvRzqV
+Discord Server: <http://discord.ucsbieee.org/>
 
 ### Project Managers
 
@@ -49,6 +49,12 @@ Right now, we are working on software. There are three different levels of softw
 |     [High Level](#high-level)     |            cs8,16<br>JavaScript           | We will design the entire Arcade Machine with JavaScript. This involves the firmware and the games. Then the assembly-level workers will translate everything to assembly. |
 | [Assembly Level](#assembly-level) | cs64,154<br>ece154a<br>6502&nbsp;Assembly | The high-level code needs to be converted to assembly. Plus, the addressable space of the 6502 needs to be designed.                                                       |
 | [Hardware Level](#hardware-level) |      cs154<br>ece152a,154a<br>Verilog     | This is where hardware such as the PPU, controllers, and address bus need to be designed.                                                                                  |
+
+
+### General Guides/References
+
+* [NES PPU Explanation](https://www.youtube.com/watch?v=-THeUXqR3zY&list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&index=5)
+
 ---
 
 ## High Level
