@@ -49,7 +49,8 @@ const BytesPerTile          = 16;
 var PMB = new Uint8Array( NumTiles * BytesPerTile );
 
 // Nametable
-var NTBL                    = new Uint8Array( 1024 );
+const NTBL_Size = 1024;
+var NTBL                    = new Uint8Array( NTBL_Size );
 var NTBL_Color1 = 0b111;
 var NTBL_Color2 = 0b001;
 const NTBL_getColor = (index) => NTBL[index] >>> 7;
@@ -230,42 +231,46 @@ function numToColor( num ) {
 
 /* ====== Controller ====== */
 
-var START   = false;
-var SELECT  = false;
-var A       = false;
-var B       = false;
-var UP      = false;
-var DOWN    = false;
-var LEFT    = false;
-var RIGHT   = false;
+var CONTROLLER_D = 0;
+var CONTROLLER_Q = 0;
+const CONTROLLER_A      = () => (CONTROLLER_Q & 0b00000001) >>> 0;
+const CONTROLLER_B      = () => (CONTROLLER_Q & 0b00000010) >>> 1;
+const CONTROLLER_UP     = () => (CONTROLLER_Q & 0b00000100) >>> 2;
+const CONTROLLER_DOWN   = () => (CONTROLLER_Q & 0b00001000) >>> 3;
+const CONTROLLER_LEFT   = () => (CONTROLLER_Q & 0b00010000) >>> 4;
+const CONTROLLER_RIGHT  = () => (CONTROLLER_Q & 0b00100000) >>> 5;
+const CONTROLLER_START  = () => (CONTROLLER_Q & 0b01000000) >>> 6;
+const CONTROLLER_SELECT = () => (CONTROLLER_Q & 0b10000000) >>> 7;
 
 document.addEventListener('keyup', handle_keyup);
 document.addEventListener('keydown', handle_keydown);
 
 function handle_keyup(e) {
-    if ( !updatingPPU ) switch ( e.code ) {
-        case "Enter"      : START   = false; break;
-        case "ShiftRight" : SELECT  = false; break;
-        case "KeyZ"       : A       = false; break;
-        case "KeyX"       : B       = false; break;
-        case "ArrowUp"    : UP      = false; break;
-        case "ArrowDown"  : DOWN    = false; break;
-        case "ArrowLeft"  : LEFT    = false; break;
-        case "ArrowRight" : RIGHT   = false; break;
+    switch ( e.code ) {
+        case "KeyZ"       : CONTROLLER_D &= ~0b00000001; break;
+        case "KeyX"       : CONTROLLER_D &= ~0b00000010; break;
+        case "ArrowUp"    : CONTROLLER_D &= ~0b00000100; break;
+        case "ArrowDown"  : CONTROLLER_D &= ~0b00001000; break;
+        case "ArrowLeft"  : CONTROLLER_D &= ~0b00010000; break;
+        case "ArrowRight" : CONTROLLER_D &= ~0b00100000; break;
+        case "Enter"      : CONTROLLER_D &= ~0b01000000; break;
+        case "ShiftRight" : CONTROLLER_D &= ~0b10000000; break;
         default: break;
     }
+    // console.log(`keyup   : ${CONTROLLER.toString(16)}`);
 }
 
 function handle_keydown(e) {
-    if ( !updatingPPU ) switch ( e.code ) {
-        case "Enter"      : START   = true; break;
-        case "ShiftRight" : SELECT  = true; break;
-        case "KeyZ"       : A       = true; break;
-        case "KeyX"       : B       = true; break;
-        case "ArrowUp"    : UP      = true; break;
-        case "ArrowDown"  : DOWN    = true; break;
-        case "ArrowLeft"  : LEFT    = true; break;
-        case "ArrowRight" : RIGHT   = true; break;
+    switch ( e.code ) {
+        case "KeyZ"       : CONTROLLER_D |= 0b00000001; break;
+        case "KeyX"       : CONTROLLER_D |= 0b00000010; break;
+        case "ArrowUp"    : CONTROLLER_D |= 0b00000100; break;
+        case "ArrowDown"  : CONTROLLER_D |= 0b00001000; break;
+        case "ArrowLeft"  : CONTROLLER_D |= 0b00010000; break;
+        case "ArrowRight" : CONTROLLER_D |= 0b00100000; break;
+        case "Enter"      : CONTROLLER_D |= 0b01000000; break;
+        case "ShiftRight" : CONTROLLER_D |= 0b10000000; break;
         default: break;
     }
+    // console.log(`keydown : ${CONTROLLER.toString(16)}`);
 }
