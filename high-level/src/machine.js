@@ -57,6 +57,10 @@ const NTBL_getColor = (index) => NTBL[index] >>> 7;
 const NTBL_getHFlip = (index) => (NTBL[index] >>> 6) & 0b1;
 const NTBL_getVFlip = (index) => (NTBL[index] >>> 5) & 0b1;
 const NTBL_getAddr  = (index) => NTBL[index] & 0b11111;
+function NTBL_setColor(index,Color) { NTBL[index] &= ~0b10000000; NTBL[index] |= (Color & 0b1) << 7; }
+function NTBL_setHFlip(index,HFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (HFlip & 0b1) << 6; }
+function NTBL_setVFlip(index,VFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (VFlip & 0b1) << 5; }
+function NTBL_setAddr(index,Addr) { NTBL[index] &= ~0b00011111; NTBL[index] |= (Addr & 0x1f); }
 
 // Current Tile Scanline
 var CTS = 0;
@@ -76,7 +80,7 @@ const OBM_getVFlip = (index) => (OBM[index] >>> 14) & 0b1;
 const OBM_getAddr = (index) => (OBM[index] >>> 8) & 0x1f;
 const OBM_getColor = (index) => (OBM[index]) & 0x7;
 const OBM_getScanline = (index, scanline) => {
-    let line_address = OBM_getAddr(index);
+    let line_address = OBM_getAddr(index) << 4;
     line_address += 2*( OBM_getVFlip(index) ? (7-scanline) : scanline );
     let out = (PMF[ line_address ] << 8) | (PMF[ line_address + 1 ]);
     return OBM_getHFlip(index) ? flip(out) : out;
@@ -100,6 +104,18 @@ function OBSM_setX(index,X) { OBSM[index] &= ~0xff000000; OBSM[index] |= (X & 0x
 function OBSM_setData(index,Data) { OBSM[index] &= ~0x00ffff00; OBSM[index] |= (Data & 0xffff) << 8; }
 function OBSM_setColor(index,Color) { OBSM[index] &= ~0x00000007; OBSM[index] |= (Color & 0x7); }
 
+function VRAM_RESET() {
+    for ( let i = 0; i < PMF.length; i++ )
+        PMF[i] = 0;
+    for ( let i = 0; i < PMB.length; i++ )
+        PMB[i] = 0;
+    for ( let i = 0; i < NTBL.length; i++ )
+        NTBL[i] = 0;
+    for ( let i = 0; i < OBM.length; i++ ) {
+        OBM[i] = 0;
+        OBM_setY( i, 0xff );
+    }
+}
 
 function drawScreen() {
     OBSM_Size = 0;
@@ -139,7 +155,7 @@ function loadToCTS( x, y ) {
     let index = (x >>> 3) | ((y >>> 3) << 5 );
     x &= 0b111;
     y &= 0b111;
-    let address = NTBL_getAddr(index);
+    let address = NTBL_getAddr(index) << 4;
     address += 2*( NTBL_getVFlip(index) ? (7-y) : y );
     let data = (PMB[ address ] << 8) | (PMB[ address + 1 ]);
     CTS_setData( NTBL_getHFlip(index) ? flip(data) : data );
