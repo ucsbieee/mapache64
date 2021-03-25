@@ -18,6 +18,16 @@ const CanvasScalar  = 3;
 const CanvasWidth   = GameWidth * CanvasScalar;
 const CanvasHeight  = GameHeight * CanvasScalar;
 
+
+/* ====== Flags ====== */
+
+var drawingPPU = false;
+var updatingPPU = false;
+
+
+
+/* ====== GPU ====== */
+
 // Add Canvas to Game
 var Canvas;
 Canvas = document.createElement( "canvas" );
@@ -99,7 +109,7 @@ function drawScreen() {
             // load current tile scanline
             if ( (j & 0b111) == 0 )
                 loadToCTS(j,i);
-            
+
             // get background pixel color
             loadCTSColor(j);
 
@@ -212,4 +222,50 @@ function numToColor( num ) {
     while ( hex.length < 6 )
         hex = "0" + hex;
     return "#" + hex;
+}
+
+
+
+
+
+/* ====== Controller ====== */
+
+var START   = false;
+var SELECT  = false;
+var A       = false;
+var B       = false;
+var UP      = false;
+var DOWN    = false;
+var LEFT    = false;
+var RIGHT   = false;
+
+document.addEventListener('keyup', handle_keyup);
+document.addEventListener('keydown', handle_keydown);
+
+function handle_keyup(e) {
+    if ( !updatingPPU ) switch ( e.code ) {
+        case "Enter"      : START   = false; break;
+        case "ShiftRight" : SELECT  = false; break;
+        case "KeyZ"       : A       = false; break;
+        case "KeyX"       : B       = false; break;
+        case "ArrowUp"    : UP      = false; break;
+        case "ArrowDown"  : DOWN    = false; break;
+        case "ArrowLeft"  : LEFT    = false; break;
+        case "ArrowRight" : RIGHT   = false; break;
+        default: break;
+    }
+}
+
+function handle_keydown(e) {
+    if ( !updatingPPU ) switch ( e.code ) {
+        case "Enter"      : START   = true; break;
+        case "ShiftRight" : SELECT  = true; break;
+        case "KeyZ"       : A       = true; break;
+        case "KeyX"       : B       = true; break;
+        case "ArrowUp"    : UP      = true; break;
+        case "ArrowDown"  : DOWN    = true; break;
+        case "ArrowLeft"  : LEFT    = true; break;
+        case "ArrowRight" : RIGHT   = true; break;
+        default: break;
+    }
 }

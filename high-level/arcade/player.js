@@ -20,12 +20,17 @@ function advanceFrame() {
     timer_then = timer_now - ( timer_delta % timer_interval );
 
     /* Run CPU */
+    drawingPPU = true;
     updatePPU();
+    drawingPPU = false;
 
     /* Draw */
+    updatingPPU = true;
     drawScreen();
+    updatingPPU = false;
 
-    console.log(`Second: ${frame/FPS}`);
+
+    // console.log(`Second: ${frame/FPS}`);
 
     frame++;
 
