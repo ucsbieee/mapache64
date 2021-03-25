@@ -53,6 +53,7 @@ const NTBL_Size = 1024;
 var NTBL                    = new Uint8Array( NTBL_Size );
 var NTBL_Color1 = 0b111;
 var NTBL_Color2 = 0b001;
+const NTBL_RCToIndex = (r,c) => ((r&0b11111)<<5) | ((c&0b11111));
 const NTBL_getColor = (index) => NTBL[index] >>> 7;
 const NTBL_getHFlip = (index) => (NTBL[index] >>> 6) & 0b1;
 const NTBL_getVFlip = (index) => (NTBL[index] >>> 5) & 0b1;
@@ -166,7 +167,6 @@ function loadCTSColor( x ) {
     x &= 0b111;
     let pixel = (CTS_getData() >>> (14-2*x)) & 0b11;
     let color = 0;
-    // if (pixel) console.log(`pixel: ${pixel}`);
     switch (pixel) {
         case 0b11: color = 0xffffff; break;
         case 0b10: color = 0x7f7f7f; break;
@@ -273,7 +273,6 @@ function handle_keyup(e) {
         case "ShiftRight" : CONTROLLER_D &= ~0b10000000; break;
         default: break;
     }
-    // console.log(`keyup   : ${CONTROLLER.toString(16)}`);
 }
 
 function handle_keydown(e) {
@@ -288,5 +287,4 @@ function handle_keydown(e) {
         case "ShiftRight" : CONTROLLER_D |= 0b10000000; break;
         default: break;
     }
-    // console.log(`keydown : ${CONTROLLER.toString(16)}`);
 }
