@@ -32,7 +32,7 @@ class Person {
                 this.xv += 15
             }
         }
-        
+
     }
     advance() {
         p.xv = clamp( -10, p.xv, 10 );
@@ -73,7 +73,7 @@ class Person {
             OBM_setAddr(0,0);
         else
             OBM_setAddr(0,1);
-        
+
         OBM_setX( this.object, Math.floor(this.xp) );
         // bob if on the ground
         OBM_setY( this.object, Math.floor(this.yp-this.height) + (this.yp==ground)*(frame&1) );
@@ -118,7 +118,7 @@ function reset() {
     console.log("reseting!");
     p = new Person( 128, ground );
     p.draw();
-    
+
     VRAM_RESET();
 
     // Person sprite

@@ -21,7 +21,7 @@ function advanceFrame() {
 
     // recieve controller inputs
     CONTROLLER_Q = CONTROLLER_D;
-    
+
     /* Run CPU */
     drawingPPU = true;
     updatePPU();
@@ -31,7 +31,6 @@ function advanceFrame() {
     updatingPPU = true;
     drawScreen();
     updatingPPU = false;
-
 
     // console.log(`Second: ${frame/FPS}`);
 
