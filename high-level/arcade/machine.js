@@ -133,7 +133,6 @@ function loadToCTS( x, y ) {
     let data = (PMB[ address ] << 8) | (PMB[ address + 1 ]);
     CTS_setData( NTBL_getHFlip(index) ? flip(data) : data );
     CTS_setColor( NTBL_getColor(index) ? NTBL_Color2 : NTBL_Color1 );
-    if (frame) debugger;
 }
 
 function loadCTSColor( x ) {

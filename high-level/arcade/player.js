@@ -29,5 +29,5 @@ function advanceFrame() {
 
     frame++;
 
-    debugger;
+    // debugger;
 }
