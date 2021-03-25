@@ -50,7 +50,6 @@ Right now, we are working on software. There are three different levels of softw
 | [Assembly Level](#assembly-level) | cs64,154<br>ece154a<br>6502&nbsp;Assembly | The high-level code needs to be converted to assembly. Plus, the addressable space of the 6502 needs to be designed.                                                       |
 | [Hardware Level](#hardware-level) |      cs154<br>ece152a,154a<br>Verilog     | This is where hardware such as the PPU, controllers, and address bus need to be designed.                                                                                  |
 
-
 ### General Guides/References
 
 * [NES PPU Explanation](https://www.youtube.com/watch?v=-THeUXqR3zY&list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&index=5)
