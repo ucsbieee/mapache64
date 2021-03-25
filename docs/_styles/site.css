@@ -77,7 +77,6 @@ p a {
 
 /* ======= Site Styling ======= */
 
-
 header {
     background: #C6C461;
     background: linear-gradient(15deg, #c3e7aa 0%, #fdbb2d 90%);
@@ -95,10 +94,7 @@ header h1 {
     margin: 0;
     padding: 0;
 
-    text-shadow:    0 0 .8em white,
-                    0 0 .8em white,
-                    0 0 .8em white,
-                    0 0 .8em white;
+    text-shadow: 0 0 .8em white;
 }
 
 #_MAIN_ {
@@ -106,6 +102,3 @@ header h1 {
     margin: auto;
     min-height: 50vh;
 }
-
-
-
