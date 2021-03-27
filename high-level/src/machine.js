@@ -36,6 +36,7 @@ Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
 Game.appendChild( Canvas );
 const ctx = Canvas.getContext("2d", { alpha: false });
+var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
 
 
 // Pattern Memory Foreground
@@ -118,6 +119,9 @@ function VRAM_RESET() {
     }
 }
 
+// 24 bits - rgb
+var currentColor = 0;
+
 function drawScreen() {
     OBSM_Size = 0;
     for ( let i = 0; i < GameHeight; i++ ) {
@@ -135,13 +139,24 @@ function drawScreen() {
             loadOBMColor(j);
 
             // draw pixel
-            ctx.fillRect( j*CanvasScalar, i*CanvasScalar, CanvasScalar, CanvasScalar );
+            const pixelLocation = 4*CanvasScalar*(CanvasWidth*i + j);
+            for ( let vs = 0; vs < CanvasScalar; vs++ ) {
+                for ( let hs = 0; hs < CanvasScalar; hs++ ) {
+                    const subpixelLocation = pixelLocation + 4*CanvasWidth*vs + 4*(hs);
+                    PixelBuffer[ subpixelLocation + 0 ] = (currentColor & 0xff0000) >>> 16;
+                    PixelBuffer[ subpixelLocation + 1 ] = (currentColor & 0x00ff00) >>>  8;
+                    PixelBuffer[ subpixelLocation + 2 ] = (currentColor & 0x0000ff) >>>  0;
+                    PixelBuffer[ subpixelLocation + 3 ] = 0xff;
+                }
+            }
         }
 
         // load next OBSM
         loadToOBSM( i+1 );
 
     }
+    const screenImage = new ImageData( PixelBuffer, CanvasWidth, CanvasHeight );
+    ctx.putImageData( screenImage, 0, 0 );
 }
 
 function printOBM() {
@@ -166,20 +181,19 @@ function loadToCTS( x, y ) {
 function loadCTSColor( x ) {
     x &= 0b111;
     let pixel = (CTS_getData() >>> (14-2*x)) & 0b11;
-    let color = 0;
     switch (pixel) {
-        case 0b11: color = 0xffffff; break;
-        case 0b10: color = 0x7f7f7f; break;
-        case 0b01: color = 0x3f3f3f; break;
+        case 0b11: currentColor = 0xffffff; break;
+        case 0b10: currentColor = 0x7f7f7f; break;
+        case 0b01: currentColor = 0x3f3f3f; break;
         default: break;
     }
     if ( !( (CTS_getColor()>>>2) & 1 ) )
-        color &= ~0xff0000;
+        currentColor &= ~0xff0000;
     if ( !( (CTS_getColor()>>>1) & 1 ) )
-        color &= ~0x00ff00;
+        currentColor &= ~0x00ff00;
     if ( !( (CTS_getColor()>>>0) & 1 ) )
-        color &= ~0x0000ff;
-    ctx.fillStyle = numToColor( color );
+        currentColor &= ~0x0000ff;
+    
 }
 
 function loadOBMColor( x ) {
@@ -188,20 +202,18 @@ function loadOBMColor( x ) {
         if ( 0 <= distance && distance < 8 ) {
             let pixel = (OBSM_getData(object_i) >>> (14-2*distance)) & 0b11;
             if ( pixel != 0b00 ) {
-                let color = 0;
                 switch (pixel) {
-                    case 0b11: color = 0xffffff; break;
-                    case 0b10: color = 0x7f7f7f; break;
-                    case 0b01: color = 0x3f3f3f; break;
+                    case 0b11: currentColor = 0xffffff; break;
+                    case 0b10: currentColor = 0x7f7f7f; break;
+                    case 0b01: currentColor = 0x3f3f3f; break;
                     default: break;
                 }
                 if ( !( (OBSM_getColor(object_i)>>>2) & 1 ) )
-                    color &= ~0xff0000;
+                    currentColor &= ~0xff0000;
                 if ( !( (OBSM_getColor(object_i)>>>1) & 1 ) )
-                    color &= ~0x00ff00;
+                    currentColor &= ~0x00ff00;
                 if ( !( (OBSM_getColor(object_i)>>>0) & 1 ) )
-                    color &= ~0x0000ff;
-                ctx.fillStyle = numToColor( color );
+                    currentColor &= ~0x0000ff;
                 break;
             }
 
