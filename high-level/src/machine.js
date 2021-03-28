@@ -128,7 +128,7 @@ function drawScreen() {
 
         // find color of each pixel
         for ( let j = 0; j < GameWidth; j++ ) {
-            // load current tile scanline
+            // at every new tile, load its scanline
             if ( (j & 0b111) == 0 )
                 loadToCTS(j,i);
 
@@ -193,7 +193,7 @@ function loadCTSColor( x ) {
         currentColor &= ~0x00ff00;
     if ( !( (CTS_getColor()>>>0) & 1 ) )
         currentColor &= ~0x0000ff;
-    
+
 }
 
 function loadOBMColor( x ) {
