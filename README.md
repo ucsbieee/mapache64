@@ -32,10 +32,10 @@ Discord Server: <http://discord.ucsbieee.org/>
 ### Project Managers
 
 <!-- README\tables\project-managers.tgn -->
-|       Name      |     Role     |                             Discord                             |          Email          |
-|:---------------:|:------------:|:---------------------------------------------------------------:|:-----------------------:|
-| Ethan Sifferman | Project Lead | [@E4tHam#8319](https://discordapp.com/users/120303964448096258) | esifferman@ucsbieee.org |
-|  Sammy Umezawa  |              |  [@fraps#8624](https://discordapp.com/users/260474815184502785) |  sammyumezawa@ucsb.edu  |
+|       Name      |     Role      |                             Discord                             |          Email          |
+|:---------------:|:-------------:|:---------------------------------------------------------------:|:-----------------------:|
+| Ethan Sifferman | Project Lead  | [@E4tHam#8319](https://discordapp.com/users/120303964448096258) | esifferman@ucsbieee.org |
+|  Sammy Umezawa  | Game Director |  [@fraps#8624](https://discordapp.com/users/260474815184502785) |  sammyumezawa@ucsb.edu  |
 
 ---
 
