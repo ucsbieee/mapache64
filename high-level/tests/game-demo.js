@@ -1,5 +1,5 @@
 
-/* testgame.js */
+/* game-demo.js */
 
 var start_value = false;
 var start_pedge = false;
@@ -69,6 +69,7 @@ class Person {
         this.yv -= gravity;
     }
     draw() {
+        // 
         if ( this.yv < 0 )
             OBM_setAddr(0,0);
         else

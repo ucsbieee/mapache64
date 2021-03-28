@@ -1,5 +1,5 @@
 
-/* testgame.js */
+/* controller.js */
 
 function updatePPU() {
     console.log(`A      : ${CONTROLLER_A()}`);

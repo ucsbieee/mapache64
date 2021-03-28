@@ -1,5 +1,5 @@
 
-/* testgame.js */
+/* gpu-showcase.js */
 
 function updatePPU() {
     for ( let i = 0; i < PMF.length; i++ )
