@@ -3,11 +3,9 @@
 
 var animationFrameRequest   = NaN;
 var  timer_now, timer_then = Date.now(), timer_delta;
-var frame = 0;
-const FPS = 60;
 const timer_interval = 1000/FPS;
 
-// testOBM();
+
 advanceFrame();
 function advanceFrame() {
 

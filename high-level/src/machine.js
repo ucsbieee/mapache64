@@ -19,6 +19,13 @@ const CanvasWidth   = GameWidth * CanvasScalar;
 const CanvasHeight  = GameHeight * CanvasScalar;
 
 
+/* ====== Game Data ====== */
+
+var frame = 0;
+const FPS = 60;
+
+
+
 /* ====== Flags ====== */
 
 var drawingPPU = false;
