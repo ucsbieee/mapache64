@@ -8,7 +8,7 @@ entrypoint:
         lda #$ff
         sta $6002       ; set 6522 PA to output
 
-        lda #%01010101  ; alternating bits
+        lda #$55        ; alternating bits
         sta $6000       ; send to 6522
 
 loop:
