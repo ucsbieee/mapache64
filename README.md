@@ -9,13 +9,13 @@ Website: <https://arcade.ucsbieee.org/>
 
 ## Description
 
-UCSB IEEE is working on a large project where we build an arcade machine based on a 6502 microproccessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and FPGA(s).
+UCSB IEEE is working on a large project where we build an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and FPGA(s).
 
-This project will be carried out accross 2 quarters. In spring'21, we will design the hardware and write the software. In fall'21, we will build the hardware and debug as needed.
+This project will be carried out across 2 quarters. In spring'21, we will design the hardware and write the software. In fall'21, we will build the hardware and debug as needed.
 
 ### Motivation
 
-The UCSB ECE cirriculum gives lots of opportunities to practice using microcontrollers (ECE 5, ECE 153ab, ECE 189abc). However, there are no classes that give practice in building systems from a microprocessor. Therefore, this club project is meant to fill that gap in experience.
+The UCSB ECE curriculum gives lots of opportunities to practice using microcontrollers (ECE 5, ECE 153ab, ECE 189abc). However, there are no classes that give practice in building systems from a microprocessor. Therefore, this club project is meant to fill that gap in experience.
 
 Also, having an arcade machine in the lab would look awesome. ;)
 
@@ -42,17 +42,13 @@ Discord Server: <http://discord.ucsbieee.org/>
 ## Overview
 
 <!-- README\tables\areas.tgn -->
-Right now, we are working on software. There are three different levels of software that need to be written: high level, assembly level, and hardware level. Click the area that sounds most intersting!
+Right now, we are working on software. There are three different levels of software that need to be written: high level, assembly level, and hardware level. Click the area that sounds most interesting!
 
 |                Area               |              Relevant Skills              | Description                                                                                                                                                                |
 |:---------------------------------:|:-----------------------------------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |     [High Level](#high-level)     |            cs8,16<br>JavaScript           | We will design the entire Arcade Machine with JavaScript. This involves the firmware and the games. Then the assembly-level workers will translate everything to assembly. |
 | [Assembly Level](#assembly-level) | cs64,154<br>ece154a<br>6502&nbsp;Assembly | The high-level code needs to be converted to assembly. Plus, the addressable space of the 6502 needs to be designed.                                                       |
 | [Hardware Level](#hardware-level) |      cs154<br>ece152a,154a<br>Verilog     | This is where hardware such as the PPU, controllers, and address bus need to be designed.                                                                                  |
-
-### General Guides/References
-
-* [NES PPU Explanation](https://www.youtube.com/watch?v=-THeUXqR3zY&list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&index=5)
 
 ---
 
@@ -70,16 +66,26 @@ Nothing yet. Check back soon!
 
 ### Assembly Guides/References
 
-* [Ben Eater 6502 Computer Project](https://www.youtube.com/watch?v=LnzuMJLZRdU&list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH)
+* [65c02 Instruction Reference](http://www.obelisk.me.uk/65C02/reference.html)
+* [Stephen Edwards 6502 Instruction Overview Video](https://youtu.be/WEliEAc3ZyA)
+* [Ben Eater 6502 Computer Video Series](https://www.youtube.com/watch?v=LnzuMJLZRdU&list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH)
 
-### Assembly Libraries Used
+### Assembly Tools/Libraries Used
 
-* [VASM](http://sun.hasenbraten.de/vasm)
-* [STM32NES](https://github.com/jefflongo/stm32nes)
+* [Daryl's Kowalski 6502 Simulator](https://sbc.rictor.org/kowalski.html)
+* [VASM](http://sun.hasenbraten.de/vasm) ([Barthelmann's Page](http://www.compilers.de/vasm.html))
 
 ---
 
 ## Hardware Level
+
+### Datasheets
+
+* [W65C02S Microprocessor](https://westerndesigncenter.com/wdc/documentation/w65c02s.pdf)
+* [W65C22S VIA](https://westerndesigncenter.com/wdc/documentation/w65c22s.pdf)
+* [AT28C256 32kB EEPROM](http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf)
+* [AS6C62256 32kB SRAM](https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf)
+* [74LVC4245A Transceiver](https://assets.nexperia.com/documents/data-sheet/74LVC4245A.pdf)
 
 ### Hardware Guides/References
 
@@ -88,6 +94,15 @@ Nothing yet. Check back soon!
 * [Ben Eater VGA](https://youtu.be/uqY3FMuMuRo)
 * [bitluni VGA](https://youtu.be/qJ68fRff5_k)
 
-### Hardware Libraries Used
+### Hardware Libraries/Tools Used
 
 * [Verilog of MOS 6502 CPU](https://github.com/Arlet/verilog-6502)
+* [nextpnr -- FPGA Place and Route Tool](https://github.com/YosysHQ/nextpnr)
+
+---
+
+## Miscellaneous
+
+### Other Guides/References
+
+* [NES PPU Explanation](https://www.youtube.com/watch?v=-THeUXqR3zY&list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&index=5)
