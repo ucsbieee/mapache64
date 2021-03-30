@@ -86,6 +86,7 @@ Nothing yet. Check back soon!
 * [AT28C256 32kB EEPROM](http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf)
 * [AS6C62256 32kB SRAM](https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf)
 * [74LVC4245A Transceiver](https://assets.nexperia.com/documents/data-sheet/74LVC4245A.pdf)
+* [iCE40 LP/HX FPGA](https://www.mouser.com/datasheet/2/225/FPGA_DS_02029_3_6_iCE40_LP_HX_Family_Data_Sheet-1022803.pdf)
 
 ### Hardware Guides/References
 
