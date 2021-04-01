@@ -7,7 +7,12 @@ header {
     min-height: 100vh;
 }
 
-header h1 {
-    font-size: 4.5rem;
+header > h1 {
     text-shadow: 0 0 .8em white;
+    font-size: 4.5rem;
+}
+
+#IEEE-Logo {
+    max-width: 10rem;
+    filter: drop-shadow(0 0 .8rem white);
 }
