@@ -7,41 +7,25 @@
 // Q8.8 :
 // 1 is 0b0000000100000000
 
-class UQ4_4 {
+class Q11_4 {
     /**
      * @param {number} number
      */
     constructor( number ) {
-        while ( number < 0 ) number += 16;
-        while ( number >= 16 ) number -= 16;
-        this.value = Math.floor(number * 16);
+        this.update( number );
     }
-
-    /**
-     * Q4_4 to unsigned INT8
-     * @return {number} uint8
-     */
-    toUINT() {
-        return this.value >>> 4;
-    }
-
-    toNumber() { return this.value / 16; }
-    toString() { return `${ this.toNumber() }`; }
-}
-
-class SQ4_4 {
     /**
      * @param {number} number
      */
-    constructor( number ) {
-        while ( number < -8 ) number += 16;
-        while ( number >= 8 ) number -= 16;
+    update( number ) {
+        while ( number < -2048 ) number += 2048;
+        while ( number >= 2048 ) number -= 2048;
         this.value = Math.floor(number * 16);
     }
 
     /**
-     * Q4_4 to signed INT8
-     * @return {number} sint8
+     * Q11_4 to signed INT16
+     * @return {number} sint16
      */
     toSINT() {
         return this.value >> 4;
@@ -51,270 +35,69 @@ class SQ4_4 {
     toString() { return `${ this.toNumber() }`; }
 }
 
-class UQ8_8 {
-    /**
-     * @param {number} number
-     */
-    constructor( number ) {
-        while ( number < 0 ) number += 256;
-        while ( number >= 256 ) number -= 256;
-        this.value = Math.floor(number * 256);
-    }
-
-    /**
-     * Q8_8 to unsigned INT8
-     * @return {INT8} uint8
-     */
-    toUINT() {
-        return this.value >>> 8;
-    }
-
-    toNumber() { return this.value / 256; }
-    toString() { return `${ this.toNumber() }`; }
-}
-
-class SQ8_8 {
-    /**
-     * @param {number} number
-     */
-    constructor( number ) {
-        while ( number < -128 ) number += 256;
-        while ( number >= 127 ) number -= 256;
-        this.value = Math.floor(number * 256);
-    }
-
-    /**
-     * Q8_8 to signed INT8
-     * @return {INT8} sint8
-     */
-    toSINT() {
-        return this.value >> 8;
-    }
-
-    toNumber() { return this.value / 256; }
-    toString() { return `${ this.toNumber() }`; }
-}
-
-
 
  
 /* ======== Methods ======== */
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
- * @return {UQ4_4} sum
+ * @param {Q11_4} a
+ * @param {Q11_4} b
+ * @return {Q11_4} sum
  */
-function UQ4_4_add( a, b ) {
-    return new Q4_4( a.toNumber() + b.toNumber() );
+function Q11_4_add( a, b ) {
+    return new Q11_4( a.toNumber() + b.toNumber() );
 }
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
- * @return {UQ4_4} difference
+ * @param {Q11_4} a
+ * @param {Q11_4} b
+ * @return {Q11_4} difference
  */
-function UQ4_4_sub( a, b ) {
-    return new Q4_4( a.toNumber() - b.toNumber() );
+function Q11_4_sub( a, b ) {
+    return new Q11_4( a.toNumber() - b.toNumber() );
 }
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
- * @return {UQ8_8} product
+ * @param {Q11_4} a
+ * @param {Q11_4} b
+ * @return {Q11_4} product
  */
-function UQ4_4_mul( a, b ) {
-    return new Q8_8( a.toNumber() * b.toNumber() );
+function Q11_4_mul( a, b ) {
+    console.log(`signed ${a} ${b}`);
+    let sign = ( a.toNumber() * b.toNumber() < 0);
+    a.value = Math.abs(a.value);
+    b.value = Math.abs(b.value);
+    console.log(`abs    ${a} ${b}`);
+    let out = new Q11_4( a.toNumber() * b.toNumber() )
+    out.value *= 1 - (2*sign);
+    console.log(`out:   ${out}`);
+    return out;
 }
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
- * @return {UQ4_4} quotient
+ * @param {Q11_4} a
+ * @param {Q11_4} b
+ * @return {Q11_4} quotient
  */
-function UQ4_4_div( a, b ) {
-    return new Q4_4( a.toNumber() / b.toNumber() );
+function Q11_4_div( a, b ) {
+    return new Q11_4( a.toNumber() / b.toNumber() );
 }
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
+ * @param {Q11_4} a
+ * @param {Q11_4} b
  * @return {boolean} comparison
  */
-function UQ4_4_lt( a, b ) {
+function Q11_4_lt( a, b ) {
     return a.toNumber < b.toNumber;
 }
 
 
 /**
- * @param {UQ4_4} a
- * @param {UQ4_4} b
+ * @param {Q11_4} a
+ * @param {Q11_4} b
  * @return {boolean} comparison
  */
-function UQ4_4_eq( a, b ) {
-    return a.toNumber == b.toNumber;
-}
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {SQ4_4} sum
- */
-function SQ4_4_add( a, b ) {
-    return new Q4_4( a.toNumber() + b.toNumber() );
-}
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {SQ4_4} difference
- */
-function SQ4_4_sub( a, b ) {
-    return new Q4_4( a.toNumber() - b.toNumber() );
-}
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {UQ8_8} product
- */
-function SQ4_4_mul( a, b ) {
-    return new Q4_4( a.toNumber() * b.toNumber() );
-}
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {SQ4_4} quotient
- */
-function SQ4_4_div( a, b ) {
-    return new Q4_4( a.toNumber() / b.toNumber() );
-}
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {boolean} comparison
- */
-function SQ4_4_lt( a, b ) {
-    return a.toNumber < b.toNumber;
-}
-
-
-/**
- * @param {SQ4_4} a
- * @param {SQ4_4} b
- * @return {boolean} comparison
- */
-function SQ4_4_eq( a, b ) {
-    return a.toNumber == b.toNumber;
-}
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {UQ8_8} sum
- */
- function UQ8_8_add( a, b ) {
-    return new Q8_8( a.toNumber() + b.toNumber() );
-}
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {UQ8_8} difference
- */
-function UQ8_8_sub( a, b ) {
-    return new Q8_8( a.toNumber() - b.toNumber() );
-}
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {UQ8_8} product
- */
-function UQ8_8_mul( a, b ) {
-    return new Q8_8( a.toNumber() * b.toNumber() );
-}
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {UQ8_8} quotient
- */
-function UQ8_8_div( a, b ) {
-    return new Q8_8( a.toNumber() / b.toNumber() );
-}
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {boolean} comparison
- */
-function UQ8_8_lt( a, b ) {
-    return a.toNumber < b.toNumber;
-}
-
-
-/**
- * @param {UQ8_8} a
- * @param {UQ8_8} b
- * @return {boolean} comparison
- */
-function UQ8_8_eq( a, b ) {
-    return a.toNumber == b.toNumber;
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {SQ8_8} sum
- */
-function SQ8_8_add( a, b ) {
-    return new Q8_8( a.toNumber() + b.toNumber() );
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {SQ8_8} difference
- */
-function SQ8_8_sub( a, b ) {
-    return new Q8_8( a.toNumber() - b.toNumber() );
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {UQ8_8} product
- */
-function SQ8_8_mul( a, b ) {
-    return new Q8_8( a.toNumber() * b.toNumber() );
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {SQ8_8} quotient
- */
-function SQ8_8_div( a, b ) {
-    return new Q8_8( a.toNumber() - b.toNumber() );
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {boolean} comparison
- */
-function SQ8_8_lt( a, b ) {
-    return a.toNumber < b.toNumber;
-}
-
-/**
- * @param {SQ8_8} a
- * @param {SQ8_8} b
- * @return {boolean} comparison
- */
-function SQ8_8_eq( a, b ) {
+function Q11_4_eq( a, b ) {
     return a.toNumber == b.toNumber;
 }
