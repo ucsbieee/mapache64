@@ -8,6 +8,7 @@ html,
 body {
     margin: 0;
     font-size: 23px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 /* Element Defaults */
@@ -31,6 +32,17 @@ textarea {
 }
 textarea {
     resize: none;
+}
+ 
+/* CodeMirror */
+.CodeMirror {
+    height: auto !important;
+    font-size: 0.75rem;
+}
+.CodeMirror-scroll {
+    /* ASSUME THIS WILL BREAK AT SOME POINT */
+    /* this is a temprary fix for codemirror auto resize */
+    height: unset !important;
 }
 
 /* Buttons */
@@ -78,8 +90,8 @@ p a {
 /* ======= Site Styling ======= */
 
 header {
-    background: #C6C461;
-    background: linear-gradient(15deg, #c3e7aa 0%, #fdbb2d 90%);
+    background: #79bfd8;
+    background: linear-gradient(15deg, #c3e7aa 0%, #2d87fd 90%);
 
     display: flex;
     flex-direction: column;
@@ -97,8 +109,9 @@ header h1 {
     text-shadow: 0 0 .8em white;
 }
 
-#_MAIN_ {
+#__MAIN__ {
     max-width: 1200px;
     margin: auto;
+    padding: 2rem;
     min-height: 50vh;
 }
