@@ -11,17 +11,22 @@ var A_value = false;
 // A button positive edge
 var A_pedge = false;
 
-const ground = 224;
-const gravity = 1;
+const ground = new Q11_4(224);
+const gravity = new Q11_4(.3125);
+const jump_strength = 5;
+const walljump_strength = 10;
+const gnd_horizonal_deccel = 1.5;
+const air_horizonal_deccel = .15;
+const horizonal_speed = 1.75;
 
 const clamp = ( min, T, max ) => Math.max( min, Math.min( T, max ) );
 
 class Person {
     constructor() { // cordinates relative to bottom left
-        this.xp = 128;
-        this.yp = ground;
-        this.xv = 0;
-        this.yv = 0;
+        this.xp = new Q11_4(128);
+        this.yp = new Q11_4(ground.toNumber());
+        this.xv = new Q11_4(0);
+        this.yv = new Q11_4(0);
         this.height = 8;
         this.width = 8;
         this.object = 0;
@@ -29,71 +34,79 @@ class Person {
     }
     jump() {
         // if on ground or against a wall
-        if ( ( Math.floor(ground-this.yp) < 5 ) || this.xp == 0 || this.xp == GameWidth-p.width ) {
+        if ( ( Math.floor(ground-this.yp.toNumber()) < 5 ) || this.xp.toNumber() == 0 || this.xp.toNumber() == GameWidth-p.width ) {
 
-            this.yv = 10;
+            this.yv.update(jump_strength);
 
             // left walljump
-            if ( this.xp == 0 ) this.xv -= 10;
+            if ( this.xp.toNumber() == 0 ) this.xv = Q11_4_sub( this.xv, new Q11_4(walljump_strength) );
             // right walljump
-            if ( this.xp == GameWidth-p.width ) this.xv += 10;
+            if ( this.xp.toNumber() == GameWidth-p.width ) this.xv = Q11_4_add( this.xv, new Q11_4(walljump_strength) );
         }
 
     }
     advance() {
         // limit speed
-        p.xv = clamp( -8, p.xv, 8 );
-        p.yv = clamp( -20, p.yv, 20 );
-
+        this.xv.update( clamp(  -5, this.xv.toNumber(),  5 ) );
+        this.yv.update( clamp( -15, this.yv.toNumber(), 15 ) );
+        
         // update position
-        this.yp -= this.yv;
-        this.xp -= this.xv;
-
+        this.xp = Q11_4_sub( this.xp, this.xv );
+        this.yp = Q11_4_sub( this.yp, this.yv );
+        
         // ground collision
-        if ( this.yp > ground ) {
-            this.yp = ground;
-            this.yv = Math.floor( this.yv * -.5 );
+        if ( this.yp.toNumber() >= ground.toNumber() ) {
+            this.yp.update( ground.toNumber() );
+            this.yv = Q11_4_mul( this.yv, new Q11_4(-.5) );
         }
-
+        
         // left wall collision
-        if ( this.xp < 0 ) {
-            this.xp = 0;
+        if ( this.xp.toNumber() < 0 ) {
+            this.xp.update(0);
         }
 
         // right wall collision
-        if ( this.xp > GameWidth-p.width ) {
-            this.xp = GameWidth-p.width;
+        if ( this.xp.toNumber() > GameWidth-this.width ) {
+            this.xp.update( GameWidth-this.width );
         }
 
         // ceiling collision
-        if ( this.yp < p.height ) {
-            this.yp = p.height;
-            this.yv = Math.floor( this.yv * -.5 );
+        if ( this.yp.toNumber() < this.height ) {
+            this.yp.update( this.height );
+            this.yv = Q11_4_mul( this.yv, new Q11_4(-.5) );
         }
 
         // horizonal deccel
-        // if one the ground, slow by 4, else slow by 2
-        if ( this.xv > 0 ) {
-            this.xv = Math.max( 0, ( this.xv - 2*(this.yp==ground) - 1*(this.yp!=ground) ) );
+        let horizonal_deccel =
+            ( this.yp.toNumber() >= ground.toNumber() )*gnd_horizonal_deccel
+            + ( this.yp.toNumber() < ground.toNumber() )*air_horizonal_deccel;
+
+        if ( this.xv.toNumber() > 0 ) {
+            this.xv.update(Math.max(
+                0, Q11_4_sub( this.xv, new Q11_4(horizonal_deccel) ).toNumber()
+            ));
         }
-        else if ( this.xv < 0 ) {
-            this.xv = Math.min( 0, ( this.xv + 2*(this.yp==ground) + 1*(this.yp!=ground) ) );
+        else if ( this.xv.toNumber() < 0 ) {
+            this.xv.update(Math.min(
+                0, Q11_4_add( this.xv, new Q11_4(horizonal_deccel) ).toNumber()
+            ));
         }
 
         // gravity
-        this.yv -= gravity;
+        this.yv = Q11_4_sub( this.yv, gravity );
+        
     }
     draw() {
         // if falling, use look up sprite
-        if ( this.yv < 0 )
+        if ( this.yv.toNumber() <= 0 )
             OBM_setAddr( this.object, 0 );
         else
             OBM_setAddr( this.object, 1 );
 
         // set x
-        OBM_setX( this.object, Math.floor(this.xp) );
-        // set y (bob if on the ground)
-        OBM_setY( this.object, Math.floor(this.yp-this.height) + (this.yp==ground)*((frame&0b1000)!=0) );
+        OBM_setX( this.object, this.xp.toSINT() );
+        // set y
+        OBM_setY( this.object, this.yp.toSINT()-this.height + ( this.yp.toNumber() >= ground.toNumber() )*((frame&0b1000)!=0) );
     }
 }
 
@@ -118,9 +131,9 @@ function updatePPU() {
 
     // move in a direction if a direction is held
     if ( CONTROLLER_LEFT() )
-        p.xv += 3;
+        p.xv = Q11_4_add( p.xv, new Q11_4(horizonal_speed) );
     if ( CONTROLLER_RIGHT() )
-        p.xv -= 3;
+        p.xv = Q11_4_sub( p.xv, new Q11_4(horizonal_speed) );
 
     // move person
     p.advance();
