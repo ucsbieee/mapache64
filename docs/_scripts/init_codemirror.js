@@ -1,33 +1,43 @@
 
-var code_instances = document.getElementsByClassName("code");
+const textareas         = document.getElementsByTagName("textarea");
 
-// loop through all code blocks
-for ( var i = 0 ; i < code_instances.length ; i++ ) {
+
+for ( let i = 0; i < textareas.length; i++ ) {
+
+    let textarea = textareas[i];
     
-    let current_code = code_instances[i];
-    
+    // skip if there is no src
+    if ( !textarea.hasAttribute("src") ) {
+        beautify_textarea( textarea );
+        continue;
+    }
+
     // get code src
-    fetch( current_code.getAttribute("src") )
+    fetch( textarea.getAttribute("src") )
         .then(response => response.text())
         .then(data => {
-            // set contents of code block to src
-            current_code.value = data;
-            current_code.setAttribute("readonly","true");
-
-            // config codemirror
-            let c = CodeMirror.fromTextArea(
-                current_code, {
-                    mode: current_code.getAttribute("mode"),
-                    lineNumbers: true,
-                    viewportMargin: Infinity,
-                    readOnly: "nocursor"
-                }
-            );
-
-        })
-        .catch(err => {
-            current_code.value = "[Error]: Failed to fetch code."
-            console.error(err);
+            textarea.value = data;
+            textarea.setAttribute("readonly","true");
+            beautify_textarea( textarea );
         });
+}
 
+
+function beautify_textarea( textarea ) {
+    if ( textarea.classList.contains("code") ) {
+        // config codemirror
+        let c = CodeMirror.fromTextArea(
+            textarea, {
+                mode: textarea.getAttribute("mode"),
+                lineNumbers: true,
+                viewportMargin: Infinity,
+                readOnly: "nocursor"
+            }
+        );
+    } else {
+        // config default textarea
+        textarea.style.height = (textarea.scrollHeight+3) + "px";
+        textarea.style.width = "100%";
+        textarea.style.opacity = "100%";
+    }
 }
