@@ -7,6 +7,10 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/_styles/site.css">
     <link rel="stylesheet" href="/_styles/page.css">
     <link rel="stylesheet" href="/_styles/guide.css">
@@ -24,7 +28,73 @@
         <h1>Assembly</h1>
     </header>
     <div id="__MAIN__">
-        <textarea class="code" mode="gas" src="/_code/assembly/macro.asm"></textarea>
+        <h1>Table of Contents</h1>
+        <ul>
+            <li class="clickable"><a href="#Guides">
+                Guides
+            </a></li>
+            <li class="clickable"><a href="#Address-Space">
+                Address Space
+            </a></li>
+            <li class="clickable"><a href="#Accessing-Memory">
+                Accessing Memory
+            </a></li>
+        </ul>
+
+
+        <h1 id="Guides">Guides</h1>
+        <p>
+            There are a lot of fantastic resources about 65C02 assembly. Refer to these:
+        </p>
+        <ul>
+            <li class="clickable external-link"><a href="http://www.obelisk.me.uk/65C02/reference.html" target="_blank" rel="noopener noreferrer">
+                65C02 Reference
+            </a></li>
+            <li class="clickable external-link"><a href="http://www.obelisk.me.uk/6502/addressing.html" target="_blank" rel="noopener noreferrer">
+                Addressing Modes
+            </a></li>
+        </ul>
+
+
+        <h1 id="Address-Space">Address Space</h1>
+        <p>
+            You should be experienced with C++ pointers, which are memory addresses that point somewhere in RAM. However, EVERYTHING that the 6502 interacts with must have a memory address. This includes ROM, RAM, VRAM, the game controllers, etc. At the moment, this is the proposed address space of the 6502:
+        </p>
+        <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/blob/main/address%20space.txt" target="_blank" rel="noopener noreferrer">
+            address space.txt
+        </a></div>
+        <!-- <textarea src="https://raw.githubusercontent.com/ucsbieee/arcade/main/address%20space.txt"></textarea> -->
+        <div>Summary:</div>
+        <ul>
+            <li>
+                The zero page takes up <code>$0000-$00ff</code>. It enables &ldquo;Zero Page Indirect&rdquo; addressing, 
+            </li>
+            <li>
+                The VRAM takes up <code>$3700-$3fff</code>. Filling this will update the screen.
+            </li>
+            <li>
+                The firmware ROM takes up <code>$4000-$6fff</code>. All firmware subroutines must have an orgin within that range.
+            </li>
+            <li>
+                ROM takes up <code>$8000-$ffff</code>. Therefore, all programs must start with <code>.org $8000</code>.
+            </li>
+        </ul>
+        <p>
+            It is important that we map this out ahead of time to be sure we stay consistent. Any time you refer to any memory location, please refer to this table. Any time you create a new entry in the zero page, please add it to the table.
+        </p>
+
+
+
+        <h1 id="Accessing-Memory">Accessing Memory</h1>
+        <p>
+            Since registers are only 8 bits, we cannot load entire 16-bit addresses into registers. However, we can load load 16-bit addesses into zero-page registers. Then, we can use &ldquo;Zero Page Indirect&rdquo; addressing to access any address. Observe this linked list traversal program:
+        </p>
+
+        <div class="clickable external-link center"><a href="/_code/assembly/linked_list.asm" download>
+            linked_list.asm
+        </a></div>
+        <textarea class="code" mode="gas" src="/_code/assembly/linked_list.asm"></textarea>
+
     </div>
 </body>
 </html>
