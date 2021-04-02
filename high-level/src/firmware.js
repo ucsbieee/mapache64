@@ -89,7 +89,7 @@ function Q11_4_div( a, b ) {
  * @return {boolean} comparison
  */
 function Q11_4_lt( a, b ) {
-    return a.toNumber < b.toNumber;
+    return a.toNumber() < b.toNumber();
 }
 
 
@@ -99,5 +99,5 @@ function Q11_4_lt( a, b ) {
  * @return {boolean} comparison
  */
 function Q11_4_eq( a, b ) {
-    return a.toNumber == b.toNumber;
+    return a.toNumber() == b.toNumber();
 }
