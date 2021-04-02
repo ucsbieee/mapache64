@@ -23,6 +23,9 @@ a {
 a:active {
     color: inherit;
 }
+p, li {
+    line-height: 155%;
+}
 p {
     text-indent: 1em;
 }
@@ -32,6 +35,8 @@ textarea {
 }
 textarea {
     resize: none;
+    /* To be overwritten by JavaScript */
+    opacity: 0;
 }
  
 /* CodeMirror */
@@ -85,6 +90,26 @@ textarea {
 p a {
     color: #4c61a8c9;
 }
+
+
+.center {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+.center:not( img ) {
+    width: fit-content;
+}
+
+.center-within {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
 
 .big {
     font-size: 1.5rem;
