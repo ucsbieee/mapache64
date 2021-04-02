@@ -1,10 +1,14 @@
 
 /* home.css */
 
-
+#__MAIN__ {
+    min-height: 50vh;
+}
 
 header {
     min-height: 100vh;
+    flex-direction: column;
+    justify-content: center;
 }
 
 header > h1 {

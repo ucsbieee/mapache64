@@ -86,6 +86,9 @@ p a {
     color: #4c61a8c9;
 }
 
+.big {
+    font-size: 1.5rem;
+}
 
 /* ======= Site Styling ======= */
 
@@ -94,9 +97,8 @@ header {
     background: linear-gradient(15deg, #c3e7aa 0%, #2d87fd 90%);
 
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
 
     box-shadow: 0 -2rem 1rem 2rem #00000059;
 }
@@ -113,5 +115,4 @@ header h1 {
     max-width: 1200px;
     margin: auto;
     padding: 2rem;
-    min-height: 50vh;
 }

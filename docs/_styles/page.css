@@ -1,10 +1,28 @@
 
 /* page.css */
 
+/**********/
+/* Header */
+/**********/
+
+#__MAIN__ {
+    min-height: 80vh;
+}
+
 header {
     min-height: 20vh;
 }
 
+header > * {
+    display: block;
+}
+
 header h1 {
     font-size: 3rem;
+    margin: auto;
+}
+
+#Back {
+    width: 3em;
+    height: 3em;
 }
