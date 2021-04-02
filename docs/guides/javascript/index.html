@@ -7,6 +7,10 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/_styles/site.css">
     <link rel="stylesheet" href="/_styles/page.css">
     <link rel="stylesheet" href="/_styles/guide.css">
@@ -24,6 +28,62 @@
         <h1>JavaScript</h1>
     </header>
     <div id="__MAIN__">
+        <h1>Table of Contents</h1>
+        <ul>
+            <li class="clickable"><a href="#Guides">
+                Guides
+            </a></li>
+            <li class="clickable"><a href="#Fixed-Point">
+                Fixed Point
+            </a></li>
+            <li class="clickable"><a href="#Pattern-Memory">
+                Pattern Memory
+            </a></li>
+        </ul>
+
+        <h1 id="Guides">Guides</h1>
+        <p>
+            Nothing here yet.
+        </p>
+
+
+        <h1 id="Fixed-Point">Floating Point vs. Fixed Point</h1>
+        <p>
+            The 65C02 does not have any built-in floating-point functionality. Therefore, we will instead use fixed-point numbers for continuous values.
+        </p>
+        <div class="clickable external-link center"><a href="https://en.wikipedia.org/wiki/Q_(number_format)" target="_blank" rel="noopener noreferrer">
+            Fixed Point Numbers
+        </a></div>
+        <p>
+            We have a Q11_4 implimentation in <a href="https://github.com/ucsbieee/arcade/blob/main/high-level/src/firmware.js" target="_blank" rel="noopener noreferrer"><code>firmware.js</code></a>. You can see its usage in <a href="https://github.com/ucsbieee/arcade/blob/main/high-level/tests/game-demo.js" target="_blank" rel="noopener noreferrer"><code>game-demo.js</code></a>.
+        </p>
+        <p>
+            <b>Never use floating point numbers! If you need non-integers, use Q11_4.</b>
+        </p>
+
+
+
+        <h1 id="Pattern-Memory">Filling the Pattern Memory</h1>
+        <p>
+            Pattern memory stores the pixel data for the sprites (PMF) and tiles (PMB). Pattern Memory is divided into blocks of 16 bytes, where one block is one sprite/tile. Observe Ethan&rsquo;s Binary Hacking Class notes:
+        </p>
+        <div class="clickable external-link center"><a href="https://ieee.sifferman.dev/W21-BinHacking/Lecture/21-01-30/#Sprites" target="_blank" rel="noopener noreferrer">
+            Sprites
+        </a></div>
+        <ul>
+            <li><code>11</code> is white</li>
+            <li><code>10</code> is light gray</li>
+            <li><code>01</code> is light dark</li>
+            <li><code>00</code> is transparent/black</li>
+        </ul>
+        <p>
+            To learn more about how to fill the VRAM, visit the GPU guide:
+        </p>
+        <div class="clickable center"><a href="../GPU/">
+            GPU Guide
+        </a></div>
+        
+        <!-- <textarea class="code" mode="js" src="/_code/"></textarea> -->
 
     </div>
 </body>
