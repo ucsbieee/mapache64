@@ -14,6 +14,12 @@
     <link rel="stylesheet" href="/_styles/site.css">
     <link rel="stylesheet" href="/_styles/page.css">
     <link rel="stylesheet" href="/_styles/guide.css">
+
+    <!-- codemirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js" integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/verilog/verilog.min.js" integrity="sha512-2xCdH/sTLQe5Zz5Ex2U0sGB+EJYY8ms/JDnrV3UGPqonytDVAMOH4SMWocAihLficzG56y2KfFm/osubL9Qo5g==" crossorigin="anonymous"></script>
+    <script src="/_scripts/init_codemirror.js" defer></script>
 </head>
 <body>
     <header>
@@ -21,6 +27,162 @@
         <h1>GPU</h1>
     </header>
     <div id="__MAIN__">
+
+
+        <h1>Table of Contents</h1>
+        <ul>
+            <li class="clickable"><a href="#Overview">
+                Overview
+            </a></li>
+            <li class="clickable"><a href="#Pattern-Memory">
+                Pattern Memory
+            </a></li>
+            <li class="clickable"><a href="#Nametable">
+                Nametable
+            </a></li>
+            <li class="clickable"><a href="#Object-Memory">
+                Object Memory
+            </a></li>
+            <li class="clickable"><a href="#Object-Scanline-Memory">
+                Object Scanline Memory
+            </a></li>
+            <li class="clickable"><a href="#VGA-Timing">
+                VGA Timing
+            </a></li>
+        </ul>
+
+
+
+
+        <h1 id="Overview">Overview</h1>
+        <p>
+            All the GPU does is display to the screen based off what is in the VRAM. Therefore, to display to the screen, you must fill the VRAM accordingly.
+        </p>
+        <p>
+            There are three parts of the VRAM: Pattern Memory, Nametable, and Object Memory.
+        </p>
+        <ul>
+            <li>
+                The pattern memory (PMF and PMB) stores pixel data for 32 foreground sprites and 32 background tiles.
+            </li>
+            <li>
+                The Nametable (NTBL) stores the arrangement of 32&times;30 background tiles on the screen.
+            </li>
+            <li>
+                The Object Memory (OBM) stores the arrangement of 64 foreground sprites.
+            </li>
+        </ul>
+        <br>
+        <p>
+            If you&rsquo;ve never worked with sprites and tiles, I recommend learning how NES sprites are stored and assembled into metasprites before proceeding:
+        </p>
+        <div class="clickable external-link center"><a href="https://ieee.sifferman.dev/W21-BinHacking/Lecture/21-01-30/#Sprites" target="_blank" rel="noopener noreferrer">
+            Ethan&rsquo;s Image Binary Data Lecture
+        </a></div>
+        <p><em>
+            Note: the GPU in this project took heavy inspiration from the NES&rsquo;s PPU:
+        </em></p>
+        <div class="clickable external-link center"><a href="https://www.youtube.com/watch?v=-THeUXqR3zY&list=PLrOv9FMX8xJHqMvSGB_9G9nZZ_4IgteYf&index=5" target="_blank" rel="noopener noreferrer">
+            One Lone Coder&rsquo;s NES PPU Explanation
+        </a></div>
+
+
+
+        <h1 id="Pattern-Memory">Pattern Memory</h1>
+        <p>
+            Pattern Memory stores collections of 8px&times;8px sprites and tiles. Each pixel is stored with 2 bits. Therefore, each sprite/tile is 16 Bytes. Pattern Memory has room for 32 sprites and 32 tiles.
+        </p>
+        <ul>
+            <li>
+                Pattern Memory Foreground (PMF) only holds 32 sprites, and is addressable with 5 bits.
+            </li>
+            <li>
+                Pattern Memory Background (PMB) only holds 32 tiles, and is addressable with 5 bits.
+            </li>
+        </ul>
+        <p><em>
+            Note: pixel data is separate from color data; the Nametable and Object Memory store colors separately.
+        </em></p>
+        <p>
+            Observe the layout of the Pattern Memory:
+        </p>
+        <img class="center" src="/_media/GPU/VRAM/PatternMemory.svg" alt="Pattern Memory Diagram">
+        <p>
+            Observe how the NES converts from bits to pixels:
+        </p>
+        <a class="center" href="https://youtu.be/opoQdHqGEHg" target="_blank" rel="noopener noreferrer"><img src="/_media/GPU/pixels.jpg" alt="Pixel Data"></a>
+        <p>
+            Our GPU does not have the color capabilities of the NES. Instead,
+        </p>
+        <ul>
+            <li><code>11</code> is white,</li>
+            <li><code>10</code> is light gray,</li>
+            <li><code>01</code> is dark gray,</li>
+            <li><code>00</code> is transparent/black.</li>
+        </ul>
+        <p>Then, a color filter is applied depending on the Nametable or Object Memory.</p>
+
+
+
+
+        <h1 id="Nametable">Nametable</h1>
+        <p>
+            The Nametable is effectively a 32&times;30 array of tiles that represent the entire 256px&times;240px screen. If tiles are puzzle pieces, the Nametable is the puzzle solution.
+        </p>
+        <p>
+            Each tile can be flipped horizontally and flipped vertically. This allows for reuse of sprites, leading to smaller file sizes.
+        </p>
+        <p>
+            The Nametable also stores 2 global colors. This means that each background sprite can be only one of two colors. Each tile must select which color it will follow. This is very apparent when looking at the <a href="/examples/gpu-showcase/" target="_blank" rel="noopener noreferrer">GPU Showcase</a>. This example randomizes the VRAM on every frame, but fixes the two global Nametable colors to white and blue.
+        </p>
+        <img class="center" src="/_media/GPU/VRAM/Nametable.svg" alt="Nametable Diagram">
+
+
+
+
+        <h1 id="Object-Memory">Object Memory</h1>
+        <p>
+            The Object Memory is used to identify the location of the sprites on the screen.
+        </p>
+        <p>
+            Each object has an X and Y position, a sprite address, an H-Flip and V-Flip modifier, and a color. If two objects overlap, whichever object appears last in OBM will be on top.
+        </p>
+        <img class="center" src="/_media/GPU/VRAM/ObjectMemory.svg" alt="Object Memory Diagram">
+
+
+        <h1 id="Object-Scanline-Memory">Object Scanline Memory</h1>
+        <p>
+            The Object Scanline Memory (OBSM), which exists in the FPGA, is used to draw each scanline. Once the GPU has finished drawing a row, the GPU iterates through the Object Memory to find at most 8 objects that should be drawn on the next scanline. If they are to be drawn, they will be added to the Object Scanline Memory.
+        </p>
+        <textarea class="code" mode="verilog" src="/_code/verilog/OBSM.sv"></textarea>
+        <p><em>
+            Note: the GPU can only draw 8 objects per scanline. Therefore, if 11 objects appear on a single row of pixels, 3 of the sprites will have that row missing.
+        </em></p>
+
+
+
+        <h1 id="VGA-Timing">VGA Timing</h1>
+        <p>
+            The GPU will follow the VGA protocol. Observe this timing diagram:
+        </p>
+        <a href="https://www.digikey.com/eewiki/pages/viewpage.action?pageId=15925278" target="_blank" rel="noopener noreferrer" class="center"><img src="/_media/GPU/VGA-Timing.jpg" alt="VGA Timing Diagram"></a>
+        <p>
+            The GPU updates each pixel row by row. After drawing a row, it waits for a horizonal blanking period. After finishing the entire frame, it waits for a vertical blanking period.
+        </p>
+        <p>
+            While the GPU is a drawing a frame, the CPU is halted. The CPU only does work in the GPU&rsquo;s vertical blanking period.
+        </p>
+        <p>
+            In the horizonal blanking period, the GPU iterates through the Object Memory to find any objects that should be drawn on the next scanline. If they are to be drawn, they will be added to the Object Scanline Memory.
+        </p>
+        <br>
+        <p>
+            If you want more information about VGA timings, watch this:
+        </p>
+        <div class="clickable external-link center"><a href="https://youtu.be/l7rce6IQDWs" target="_blank" rel="noopener noreferrer">
+            Ben Eater Graphics Card Video
+        </a></div>
+
 
     </div>
 </body>
