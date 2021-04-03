@@ -35,9 +35,9 @@ endif
 bad-syntax:
 	@echo "[Error: Bad Syntax] - Correct usage is \"make <filename>.${OUT_EXTEN}\"."
 
-%.${OUT_EXTEN}: %.${IN_EXTEN}
+%.${OUT_EXTEN}: *.${IN_EXTEN}
 	rm -fv $@
-	${VASM} ${VASM_FLAGS} -o $*.${OUT_EXTEN} $^
+	${VASM} ${VASM_FLAGS} -o $*.${OUT_EXTEN} $*.${IN_EXTEN}
 
 clean:
 	rm -fv *.${OUT_EXTEN}
