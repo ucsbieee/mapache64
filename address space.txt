@@ -1,44 +1,59 @@
-RAM 0000-3fff
-  Zero Page 0000-00ff
-    int8_g1   00
-    int8_g2   01
-    int8_i1   02
-    int8_i2   03
-    int8_o    04
-    int16_g1  05
-    int16_g2  07
-    int16_i1  09
-    int16_i2  0b
-    int16_o   0d
-    Q4.4_g1   0f
-    Q4.4_g2   10
-    Q4.4_i1   11
-    Q4.4_i2   12
-    Q4.4_o    13
-    Q8.8_g1   14
-    Q8.8_g2   16
-    Q8.8_i1   18
-    Q8.8_i2   1a
-    Q8.8_o    1c
-    address   1e
-  Stack 0100-01ff
-  Misc  0200-36ff
-  VRAM  3700-3fff
-    PMF   3700-38ff
-      PMF1  3700
-      PMF1  3800
-    PMB   3900-3aff
-      PMB1  3900
-      PMB1  3a00
-    NTBL  3b00-3eff
-      NTBL1 3b00
-      NTBL2 3c00
-      NTBL3 3d00
-      NTBL4 3e00
-    OBM   3f00-3fff
+RAM         0000-3fff
 
-( Not sure which of these subroutines should just be macros )
-Firmware ROM 4000-6fff
+  Zero Page   0000-00ff
+    INT8_G1       00
+    INT8_G2       01
+    INT8_G3       02
+    INT8_G4       03
+    INT8_G5       04
+    INT8_I1       05
+    INT8_I2       06
+    INT8_O        07
+
+    INT16_G1      08
+    INT16_G2      0a
+    INT16_G3      0c
+    INT16_G4      0e
+    INT16_G5      10
+    INT16_I1      12
+    INT16_I2      14
+    INT16_O       16
+
+    Q11_4_G1      18
+    Q11_4_G2      1a
+    Q11_4_G3      1c
+    Q11_4_G4      1e
+    Q11_4_G5      20
+    Q11_4_I1      22
+    Q11_4_I2      24
+    Q11_4_O       26
+
+    ADDRESS16_1   28
+    ADDRESS16_2   2a
+    ADDRESS16_3   2c
+    ADDRESS16_4   2e
+
+  Stack       0100-01ff
+
+  Misc        0200-36ff
+
+  VRAM        3700-3fff
+    PMF         3700-38ff
+      PMF1        3700
+      PMF1        3800
+    PMB         3900-3aff
+      PMB1        3900
+      PMB1        3a00
+    NTBL        3b00-3eff
+      NTBL1       3b00
+      NTBL2       3c00
+      NTBL3       3d00
+      NTBL4       3e00
+    OBM         3f00-3fff
+
+
+
+Firmware    4000-6fff
   clear VRAM
   copy entire nametable from address into VRAM
   copy entire PMF from address into VRAM
@@ -51,17 +66,17 @@ Firmware ROM 4000-6fff
   int16 subtract
   int16 multiply
   int16 divide
-  Q4.4 add
-  Q4.4 subtract
-  Q4.4 multiply
-  Q4.4 divide
-  Q8.8 add
-  Q8.8 subtract
-  Q8.8 multiply
-  Q8.8 divide
+  Q11_4 add
+  Q11_4 subtract
+  Q11_4 multiply
+  Q11_4 divide
 
-IO 7000-7fff
+
+
+IO          7000-7fff
   controller
   gpu irq
 
-Game ROM 8000-ffff
+
+
+Game ROM    8000-ffff
