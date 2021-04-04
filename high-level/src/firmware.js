@@ -2,7 +2,7 @@
 /* machine.js */
 
 
-// Q4.4 : 
+// Q4.4 :
 // 1 is 0b00010000
 // Q8.8 :
 // 1 is 0b0000000100000000
@@ -36,7 +36,7 @@ class Q11_4 {
 }
 
 
- 
+
 /* ======== Methods ======== */
 
 /**
@@ -63,14 +63,11 @@ function Q11_4_sub( a, b ) {
  * @return {Q11_4} product
  */
 function Q11_4_mul( a, b ) {
-    console.log(`signed ${a} ${b}`);
     let sign = ( a.toNumber() * b.toNumber() < 0);
     a.value = Math.abs(a.value);
     b.value = Math.abs(b.value);
-    console.log(`abs    ${a} ${b}`);
     let out = new Q11_4( a.toNumber() * b.toNumber() )
     out.value *= 1 - (2*sign);
-    console.log(`out:   ${out}`);
     return out;
 }
 
