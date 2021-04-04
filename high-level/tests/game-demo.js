@@ -13,6 +13,7 @@ var A_pedge = false;
 
 const ground = new Q11_4(224);
 const gravity = new Q11_4(.3125);
+const weakgravity = new Q11_4(.07);
 const jump_strength = 5;
 const walljump_strength = 10;
 const gnd_horizonal_deccel = 1.5;
@@ -46,27 +47,31 @@ class Person {
 
     }
     advance() {
+        let onwall = false;
+
         // limit speed
         this.xv.update( clamp(  -5, this.xv.toNumber(),  5 ) );
         this.yv.update( clamp( -15, this.yv.toNumber(), 15 ) );
-        
+
         // update position
         this.xp = Q11_4_sub( this.xp, this.xv );
         this.yp = Q11_4_sub( this.yp, this.yv );
-        
+
         // ground collision
         if ( this.yp.toNumber() >= ground.toNumber() ) {
             this.yp.update( ground.toNumber() );
             this.yv = Q11_4_mul( this.yv, new Q11_4(-.5) );
         }
-        
+
         // left wall collision
         if ( this.xp.toNumber() < 0 ) {
+            onwall = true;
             this.xp.update(0);
         }
 
         // right wall collision
         if ( this.xp.toNumber() > GameWidth-this.width ) {
+            onwall = true;
             this.xp.update( GameWidth-this.width );
         }
 
@@ -80,21 +85,24 @@ class Person {
         let horizonal_deccel =
             ( this.yp.toNumber() >= ground.toNumber() )*gnd_horizonal_deccel
             + ( this.yp.toNumber() < ground.toNumber() )*air_horizonal_deccel;
-
+        // if moving left
         if ( this.xv.toNumber() > 0 ) {
             this.xv.update(Math.max(
                 0, Q11_4_sub( this.xv, new Q11_4(horizonal_deccel) ).toNumber()
             ));
-        }
+        } // if moving right
         else if ( this.xv.toNumber() < 0 ) {
             this.xv.update(Math.min(
                 0, Q11_4_add( this.xv, new Q11_4(horizonal_deccel) ).toNumber()
             ));
         }
 
-        // gravity
-        this.yv = Q11_4_sub( this.yv, gravity );
-        
+        // gravity (fall slower if against a wall)
+        if ( onwall && this.yv < 0 ) {
+            this.yv = Q11_4_sub( this.yv, weakgravity );
+        } else {
+            this.yv = Q11_4_sub( this.yv, gravity );
+        }
     }
     draw() {
         // if falling, use look up sprite
