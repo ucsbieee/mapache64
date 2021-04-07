@@ -1,0 +1,6 @@
+
+# .gitignore #
+
+
+assembly-level/dependencies/*
+assembly-level/dependencies/**/*
