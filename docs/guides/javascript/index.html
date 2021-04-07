@@ -18,7 +18,8 @@
     <!-- codemirror -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js" integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/gas/gas.min.js" integrity="sha512-9kcKyiyWVRjJkMfhrkUfbrnFw/0CAgln6ISmRVoGMDaPWN+VjBKcvLpqhJNhO9fQEgULoZ8jcC5GVtMV4ZSAsQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/xml/xml.min.js" integrity="sha512-XPih7uxiYsO+igRn/NA2A56REKF3igCp5t0W1yYhddwHsk70rN1bbbMzYkxrvjQ6uk+W3m+qExHIJlFzE6m5eg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/javascript/javascript.min.js" integrity="sha512-+tn2IYnLwD2J9p6Nrn/Dl7ag9lluHA0GAblT/vnMiJV8DU/iDsldgf+9XbEqZUee2ThyDtfmSDb+IDZ9u7jrSA==" crossorigin="anonymous"></script>
     <script src="/_scripts/init_codemirror.js" defer></script>
 
 </head>
@@ -30,21 +31,67 @@
     <div id="__MAIN__">
         <h1>Table of Contents</h1>
         <ul>
-            <li class="clickable"><a href="#Guides">
-                Guides
+            <li class="clickable"><a href="#Live-Server">
+                Running JavaScript
+            </a></li>
+            <li class="clickable"><a href="#Game-Code-Structure">
+                Game Code Structure
             </a></li>
             <li class="clickable"><a href="#Fixed-Point">
                 Fixed Point
             </a></li>
-            <li class="clickable"><a href="#Pattern-Memory">
-                Pattern Memory
-            </a></li>
         </ul>
 
-        <h1 id="Guides">Guides</h1>
+
+
+        <h1 id="Live-Server">Running JavaScript</h1>
+        <ins class="center">I highly recommend using VS Code.</ins>
         <p>
-            Nothing here yet.
+            JavaScript is run by opening an html file in a browser. The best way to open html files is through Live Server. Install it here:
         </p>
+        <div class="clickable external-link center"><a href="https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer" target="_blank" rel="noopener noreferrer">
+            Live Server VS Code
+        </a></div>
+        <p><em>
+            Note: If you are running anything in the <code>docs</code> directory, you must open a new VS Code window from the <code>docs</code> folder for the CSS to load.
+        </em></p>
+        <p>
+            To include a JavaScript file in an html file, you need to add a <code>script:src</code> tag to the <code>head</code> section, and provide the source path/link. Observe this code block:
+        </p>
+        <textarea class="code" mode="xml" src="/_code/xml/script-src.xml"></textarea>
+
+        <p>
+            Note: Append <code>defer</code> to all script elements.
+        </p>
+
+        <h2>CDNs</h2>
+        <p>
+            CDN stands for content delivery network. We use a CDN to retrieve JavaScript files from https links instead of paths. A JS Deliver CDN link has this structure: <code>https://cdn.jsdelivr.net/gh/ucsbieee/<b>&lt;repository&gt;</b>@main/<b>&lt;path&gt;</b></code>.
+        </p>
+            <li>
+                Anything inside the <code>docs</code> folder that uses things outside the <code>docs</code> folder must use a CDN link.
+            </li>
+            <li>
+                A file in a repository that uses a file from another repository must use a CDN link.
+            </li>
+            <li>
+                Any changes to files that are pointed to by a CDN link will take ~2 hours to show up.
+            </li>
+        </ul>
+
+
+
+        <h1 id="Game-Code-Structure">High-Level Game Code Structure</h1>
+        <p>
+            To start a new game, create a new UCSB IEEE repository labeled &ldquo;arcade-&lt;game name&gt;&rdquo;, and copy over all the template files from <a href="https://github.com/ucsbieee/arcade/tree/main/arcade-game_template" target="_blank" rel="noopener noreferrer">arcade-game_template/</a>.
+        </p>
+        <p>
+            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/src/game.js" target="_blank" rel="noopener noreferrer">high-level/src/game.js</a> must have the function <code>updatePPU()</code>. This function will be called every frame.
+        </p>
+        <p>
+            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/index.html" target="_blank" rel="noopener noreferrer">high-level/index.html</a> must include the scripts <code>firmware.js</code>, <code>machine.js</code>, <code>game.js</code>, and <code>player.js</code> in that order; and it must include <code>div#Game</code> in <code>body</code>.
+        </p>
+
 
 
         <h1 id="Fixed-Point">Floating Point vs. Fixed Point</h1>
@@ -62,27 +109,6 @@
         </p>
 
 
-
-        <h1 id="Pattern-Memory">Filling the Pattern Memory</h1>
-        <p>
-            Pattern memory stores the pixel data for the sprites (PMF) and tiles (PMB). Pattern Memory is divided into blocks of 16 bytes, where one block is one sprite/tile. Observe Ethan&rsquo;s Binary Hacking Class notes:
-        </p>
-        <div class="clickable external-link center"><a href="https://ieee.sifferman.dev/W21-BinHacking/Lecture/21-01-30/#Sprites" target="_blank" rel="noopener noreferrer">
-            Sprites
-        </a></div>
-        <ul>
-            <li><code>11</code> is white</li>
-            <li><code>10</code> is light gray</li>
-            <li><code>01</code> is light dark</li>
-            <li><code>00</code> is transparent/black</li>
-        </ul>
-        <p>
-            To learn more about how to fill the VRAM, visit the GPU guide:
-        </p>
-        <div class="clickable center"><a href="../GPU/">
-            GPU Guide
-        </a></div>
-        
         <!-- <textarea class="code" mode="js" src="/_code/"></textarea> -->
 
     </div>
