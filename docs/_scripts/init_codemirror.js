@@ -5,7 +5,7 @@ const textareas         = document.getElementsByTagName("textarea");
 for ( let i = 0; i < textareas.length; i++ ) {
 
     let textarea = textareas[i];
-    
+
     // skip if there is no src
     if ( !textarea.hasAttribute("src") ) {
         beautify_textarea( textarea );
@@ -29,7 +29,7 @@ function beautify_textarea( textarea ) {
         let c = CodeMirror.fromTextArea(
             textarea, {
                 mode: textarea.getAttribute("mode"),
-                lineNumbers: true,
+                lineNumbers: !(textarea.hasAttribute("nonumbers")),
                 viewportMargin: Infinity,
                 readOnly: "nocursor"
             }
