@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/firmware.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/machine.js" defer></script>
+    <script src="test.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/player.js" defer></script>
+
+    <title>Test</title>
+</head>
+<body>
+
+    <div id="Game"></div>
+
+</body>
+</html>
