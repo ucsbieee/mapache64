@@ -4,7 +4,7 @@ add8:
         clc
         lda INT8_I1
         adc INT8_I2
-        sta INT16_O     ; store sum
+        sta INT8_O      ; store sum
 
         pla
         rts
