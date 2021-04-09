@@ -17,7 +17,7 @@ div16:
         rts
 
 
-divQ11_4:
+divQ9_6:
         pha
 
         ; TO DO

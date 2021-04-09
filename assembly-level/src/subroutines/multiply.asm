@@ -17,7 +17,7 @@ mul16:
         rts
 
 
-mulQ11_4:
+mulQ9_6:
         pha
 
         ; TO DO

@@ -2,12 +2,8 @@
 /* machine.js */
 
 
-// Q4.4 :
-// 1 is 0b00010000
-// Q8.8 :
-// 1 is 0b0000000100000000
 
-class Q11_4 {
+class Q9_6 {
     /**
      * @param {number} number
      */
@@ -18,20 +14,20 @@ class Q11_4 {
      * @param {number} number
      */
     update( number ) {
-        while ( number < -2048 ) number += 2048;
-        while ( number >= 2048 ) number -= 2048;
-        this.value = Math.floor(number * 16);
+        while ( number < -512 ) number += 512;
+        while ( number >= 512 ) number -= 512;
+        this.value = Math.floor(number * 64);
     }
 
     /**
-     * Q11_4 to signed INT16
+     * Q9_6 to signed INT16
      * @return {number} sint16
      */
     toSINT() {
-        return this.value >> 4;
+        return this.value >> 6;
     }
 
-    toNumber() { return this.value / 16; }
+    toNumber() { return this.value / 64; }
     toString() { return `${ this.toNumber() }`; }
 }
 
@@ -40,61 +36,66 @@ class Q11_4 {
 /* ======== Methods ======== */
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
- * @return {Q11_4} sum
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {Q9_6} sum
  */
-function Q11_4_add( a, b ) {
-    return new Q11_4( a.toNumber() + b.toNumber() );
+function Q9_6_add( a, b ) {
+    return new Q9_6( a.toNumber() + b.toNumber() );
 }
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
- * @return {Q11_4} difference
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {Q9_6} difference
  */
-function Q11_4_sub( a, b ) {
-    return new Q11_4( a.toNumber() - b.toNumber() );
+function Q9_6_sub( a, b ) {
+    return new Q9_6( a.toNumber() - b.toNumber() );
 }
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
- * @return {Q11_4} product
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {Q9_6} product
  */
-function Q11_4_mul( a, b ) {
+function Q9_6_mul( a, b ) {
     let sign = ( a.toNumber() * b.toNumber() < 0);
     a.value = Math.abs(a.value);
     b.value = Math.abs(b.value);
-    let out = new Q11_4( a.toNumber() * b.toNumber() )
+    let out = new Q9_6( a.toNumber() * b.toNumber() )
     out.value *= 1 - (2*sign);
     return out;
 }
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
- * @return {Q11_4} quotient
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {Q9_6} quotient
  */
-function Q11_4_div( a, b ) {
-    return new Q11_4( a.toNumber() / b.toNumber() );
+function Q9_6_div( a, b ) {
+    let sign = ( a.toNumber() * b.toNumber() < 0);
+    a.value = Math.abs(a.value);
+    b.value = Math.abs(b.value);
+    let out = new Q9_6( a.toNumber() / b.toNumber() )
+    out.value *= 1 - (2*sign);
+    return out;
 }
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
+ * @param {Q9_6} a
+ * @param {Q9_6} b
  * @return {boolean} comparison
  */
-function Q11_4_lt( a, b ) {
+function Q9_6_lt( a, b ) {
     return a.toNumber() < b.toNumber();
 }
 
 
 /**
- * @param {Q11_4} a
- * @param {Q11_4} b
+ * @param {Q9_6} a
+ * @param {Q9_6} b
  * @return {boolean} comparison
  */
-function Q11_4_eq( a, b ) {
+function Q9_6_eq( a, b ) {
     return a.toNumber() == b.toNumber();
 }
