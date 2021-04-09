@@ -33,6 +33,9 @@
             <li class="clickable"><a href="#Guides">
                 Guides
             </a></li>
+            <li class="clickable"><a href="#Running-Assembly">
+                Running 6502 Assembly
+            </a></li>
             <li class="clickable"><a href="#Address-Space">
                 Address Space
             </a></li>
@@ -62,6 +65,21 @@
         </ul>
 
 
+        <h1 id="Running-Assembly">Running 6502 Assembly</h1>
+        <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/tools" target="_blank" rel="noopener noreferrer">
+            6502 Assembly Tools
+        </a></div>
+        <p>
+            There are two tools we will use to write/run 6502 assembly: <u>Daryl&rsquo;s Kowalski 6502 Simulator</u> and <u>VASM</u>. We will use the Kowalski simulator to write and debug all assembly. VASM will be used when we want to assemble our code to machine language.
+        </p>
+        <p>
+            Note that the Kowalski simulator is Windows only.
+        </p>
+        <p>
+            VASM expects slightly different macro notation from the Kowalski simulator. Other than that, they should act the same.
+        </p>
+
+
         <h1 id="Address-Space">Address Space</h1>
         <p>
             You should be experienced with C++ pointers, which are memory addresses that point somewhere in RAM. However, EVERYTHING that the 6502 interacts with must have a memory address. This includes ROM, RAM, VRAM, the game controllers, etc. At the moment, this is the proposed address space of the 6502:
@@ -73,7 +91,7 @@
         <div>Summary:</div>
         <ul>
             <li>
-                The zero page takes up <code>$0000-$00ff</code>. It enables &ldquo;Zero Page Indirect&rdquo; addressing,
+                The zero page takes up <code>$0000-$00ff</code>. It enables &ldquo;Zero Page Indirect&rdquo; addressing.
             </li>
             <li>
                 The VRAM takes up <code>$3700-$3fff</code>. Filling this will update the screen.
