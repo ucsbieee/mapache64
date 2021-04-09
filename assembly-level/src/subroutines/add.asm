@@ -11,7 +11,7 @@ add8:
 
 
 add16:
-addQ11_4:
+addQ9_6:
         pha
 
         clc             ; clear carry

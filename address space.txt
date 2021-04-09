@@ -19,14 +19,14 @@ RAM         0000-3fff
     INT16_I2      14
     INT16_O       16
 
-    Q11_4_G1      18
-    Q11_4_G2      1a
-    Q11_4_G3      1c
-    Q11_4_G4      1e
-    Q11_4_G5      20
-    Q11_4_I1      22
-    Q11_4_I2      24
-    Q11_4_O       26
+    Q9_6_G1       18
+    Q9_6_G2       1a
+    Q9_6_G3       1c
+    Q9_6_G4       1e
+    Q9_6_G5       20
+    Q9_6_I1       22
+    Q9_6_I2       24
+    Q9_6_O        26
 
     ADDRESS16_1   28
     ADDRESS16_2   2a
@@ -66,10 +66,10 @@ Firmware    4000-6fff
   int16 subtract
   int16 multiply
   int16 divide
-  Q11_4 add
-  Q11_4 subtract
-  Q11_4 multiply
-  Q11_4 divide
+  Q9_6 add
+  Q9_6 subtract
+  Q9_6 multiply
+  Q9_6 divide
 
 
 
