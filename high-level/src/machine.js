@@ -11,12 +11,17 @@ if ( Game == null ) {
 
 // Set Game styling
 Game.style.textAlign= "center";
+Game.setAttribute("position", "fixed");
+
+
 
 const GameWidth     = 256;
 const GameHeight    = 240;
 const CanvasScalar  = 3;
 const CanvasWidth   = GameWidth * CanvasScalar;
 const CanvasHeight  = GameHeight * CanvasScalar;
+
+
 
 
 /* ====== Game Data ====== */
@@ -36,15 +41,24 @@ var updatingPPU = false;
 /* ====== GPU ====== */
 
 // Add Canvas to Game
+
 var Canvas;
 Canvas = document.createElement( "canvas" );
+
 Canvas.setAttribute( "width", CanvasWidth );
 Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
+Canvas.style.position = "fixed";
+Canvas.style.top = "50%"; Canvas.style.left = "50%";
+Canvas.style.transform = "translate(-50%,-50%)";
+//Canvas.style.boxShadow = "0 0 0 100vmax black";
+
 Game.appendChild( Canvas );
+
+
+
 const ctx = Canvas.getContext("2d", { alpha: false });
 var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
-
 
 // Pattern Memory Foreground
 const NumSprites            = 32;
@@ -279,6 +293,7 @@ const CONTROLLER_SELECT = () => (CONTROLLER_Q & 0b10000000) >>> 7;
 
 document.addEventListener('keyup', handle_keyup);
 document.addEventListener('keydown', handle_keydown);
+document.classList.add("stop_scrolling");
 
 function handle_keyup(e) {
     switch ( e.code ) {
@@ -290,6 +305,7 @@ function handle_keyup(e) {
         case "ArrowRight" : CONTROLLER_D &= ~0b00100000; break;
         case "Enter"      : CONTROLLER_D &= ~0b01000000; break;
         case "ShiftRight" : CONTROLLER_D &= ~0b10000000; break;
+        case "Space"      : Canvas.style.boxShadow = "0 0 0 100vmax black";
         default: break;
     }
 }
