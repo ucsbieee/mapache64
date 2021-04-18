@@ -11,7 +11,7 @@ if ( Game == null ) {
 
 // Set Game styling
 Game.style.textAlign= "center";
-Game.setAttribute("position", "fixed");
+
 
 
 
@@ -48,10 +48,27 @@ Canvas = document.createElement( "canvas" );
 Canvas.setAttribute( "width", CanvasWidth );
 Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
-Canvas.style.position = "fixed";
-Canvas.style.top = "50%"; Canvas.style.left = "50%";
-Canvas.style.transform = "translate(-50%,-50%)";
-//Canvas.style.boxShadow = "0 0 0 100vmax black";
+//if inGameView false, add box shadow and disable scroll. otherwise reset.
+var inGameView = false;
+function toggleGameView(){
+    if (inGameView == false){
+        Canvas.style.boxShadow = "0 0 0 100vmax black"; 
+        Game.style.top = "50%"; Game.style.left = "50%";
+        Game.style.transform = "translate(-50%,-50%)";
+        Game.style.position = "fixed";
+        inGameView = true;
+    }
+    else{
+        Canvas.style.boxShadow = "";
+        Game.style.position =  "";
+        Game.style.top = ""; Game.style.left = "";
+        Game.style.transform = "";
+        inGameView = false;
+
+    }
+}
+
+
 
 Game.appendChild( Canvas );
 
@@ -305,7 +322,7 @@ function handle_keyup(e) {
         case "ArrowRight" : CONTROLLER_D &= ~0b00100000; break;
         case "Enter"      : CONTROLLER_D &= ~0b01000000; break;
         case "ShiftRight" : CONTROLLER_D &= ~0b10000000; break;
-        case "Space"      : Canvas.style.boxShadow = "0 0 0 100vmax black";
+        case "Space"      : toggleGameView();            break;
         default: break;
     }
 }
