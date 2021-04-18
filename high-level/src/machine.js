@@ -12,11 +12,16 @@ if ( Game == null ) {
 // Set Game styling
 Game.style.textAlign= "center";
 
+
+
+
 const GameWidth     = 256;
 const GameHeight    = 240;
 const CanvasScalar  = 3;
 const CanvasWidth   = GameWidth * CanvasScalar;
 const CanvasHeight  = GameHeight * CanvasScalar;
+
+
 
 
 /* ====== Game Data ====== */
@@ -36,15 +41,41 @@ var updatingPPU = false;
 /* ====== GPU ====== */
 
 // Add Canvas to Game
+
 var Canvas;
 Canvas = document.createElement( "canvas" );
+
 Canvas.setAttribute( "width", CanvasWidth );
 Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
+//if inGameView false, add box shadow and disable scroll. otherwise reset.
+var inGameView = false;
+function toggleGameView(){
+    if (inGameView == false){
+        Canvas.style.boxShadow = "0 0 0 100vmax black"; 
+        Game.style.top = "50%"; Game.style.left = "50%";
+        Game.style.transform = "translate(-50%,-50%)";
+        Game.style.position = "fixed";
+        inGameView = true;
+    }
+    else{
+        Canvas.style.boxShadow = "";
+        Game.style.position =  "";
+        Game.style.top = ""; Game.style.left = "";
+        Game.style.transform = "";
+        inGameView = false;
+
+    }
+}
+
+
+
 Game.appendChild( Canvas );
+
+
+
 const ctx = Canvas.getContext("2d", { alpha: false });
 var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
-
 
 // Pattern Memory Foreground
 const NumSprites            = 32;
@@ -279,6 +310,7 @@ const CONTROLLER_SELECT = () => (CONTROLLER_Q & 0b10000000) >>> 7;
 
 document.addEventListener('keyup', handle_keyup);
 document.addEventListener('keydown', handle_keydown);
+document.classList.add("stop_scrolling");
 
 function handle_keyup(e) {
     switch ( e.code ) {
@@ -290,6 +322,7 @@ function handle_keyup(e) {
         case "ArrowRight" : CONTROLLER_D &= ~0b00100000; break;
         case "Enter"      : CONTROLLER_D &= ~0b01000000; break;
         case "ShiftRight" : CONTROLLER_D &= ~0b10000000; break;
+        case "Space"      : toggleGameView();            break;
         default: break;
     }
 }
