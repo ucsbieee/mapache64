@@ -1,0 +1,10 @@
+{
+    "[asm-collection]": {
+        "editor.tabSize": 8
+    },
+    "files.associations": {
+        "*.asm": "asm-collection"
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true
+}
