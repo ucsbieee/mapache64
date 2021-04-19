@@ -52,7 +52,7 @@ Canvas.setAttribute( "id", "Game__Canvas" );
 var inGameView = false;
 function toggleGameView(){
     if (inGameView == false){
-        Canvas.style.boxShadow = "0 0 0 100vmax black"; 
+        Canvas.style.boxShadow = "0 0 0 100vmax black";
         Game.style.top = "50%"; Game.style.left = "50%";
         Game.style.transform = "translate(-50%,-50%)";
         Game.style.position = "fixed";
@@ -92,7 +92,7 @@ const NTBL_Size = 1024;
 var NTBL                    = new Uint8Array( NTBL_Size );
 var NTBL_Color1 = 0b111;
 var NTBL_Color2 = 0b001;
-const NTBL_RCToIndex = (r,c) => ((r&0b11111)<<5) | ((c&0b11111));
+const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));
 const NTBL_getColor = (index) => NTBL[index] >>> 7;
 const NTBL_getHFlip = (index) => (NTBL[index] >>> 6) & 0b1;
 const NTBL_getVFlip = (index) => (NTBL[index] >>> 5) & 0b1;
@@ -206,7 +206,7 @@ function printOBM() {
 function loadToCTS( x, y ) {
     x &= 0xff;
     y &= 0xff;
-    let index = (x >>> 3) | ((y >>> 3) << 5 );
+    let index = ((y&0b11111000)<<2) | ((x&0b11111000)>>>3);
     x &= 0b111;
     y &= 0b111;
     let address = NTBL_getAddr(index) << 4;
@@ -223,6 +223,7 @@ function loadCTSColor( x ) {
         case 0b11: currentColor = 0xffffff; break;
         case 0b10: currentColor = 0x7f7f7f; break;
         case 0b01: currentColor = 0x3f3f3f; break;
+        case 0b00: currentColor = 0x000000; break;
         default: break;
     }
     if ( !( (CTS_getColor()>>>2) & 1 ) )
