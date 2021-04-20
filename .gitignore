@@ -4,3 +4,7 @@
 # pattern-gen
 tools/pattern-gen/*.out
 tools/pattern-gen/**/*.out
+
+# assembly options
+assembly-level/src/options.asm
+assembly-level/src/rom.asm
