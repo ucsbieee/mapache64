@@ -8,3 +8,7 @@ tools/pattern-gen/**/*.out
 # assembly options
 assembly-level/src/options.asm
 assembly-level/src/rom.asm
+
+# vasm output
+assembly-level/*.bin
+assembly-level/**/*.bin
