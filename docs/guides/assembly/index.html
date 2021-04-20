@@ -70,14 +70,39 @@
             6502 Assembly Tools
         </a></div>
         <p>
-            There are two tools we will use to write/run 6502 assembly: <u>Daryl&rsquo;s Kowalski 6502 Simulator</u> and <u>VASM</u>. We will use the Kowalski simulator to write and debug all assembly. VASM will be used when we want to assemble our code to machine language.
+            There are two tools we will use to write/run 6502 assembly: <u>Daryl&rsquo;s Kowalski 6502 Simulator</u> and <u>VASM</u>. We will use the Kowalski simulator to write and debug all assembly. VASM will be used when we want to assemble our code to machine language. <em> Note that the Kowalski simulator is Windows only.</em>
         </p>
         <p>
-            Note that the Kowalski simulator is Windows only.
+            To select your code, enter its path in <a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/rom.asm" target="_blank" rel="noopener noreferrer">rom.asm</a>.
         </p>
-        <p>
-            VASM expects slightly different macro notation from the Kowalski simulator. Other than that, they should act the same.
-        </p>
+        <h2>Kowalski Simulator</h2>
+        <ol>
+            <li>
+                Set the value of <code>__KOWALSKI__</code> in <a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a> to 1.
+            </li>
+            <li>
+                Open <code><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/arcade.asm" target="_blank" rel="noopener noreferrer">arcade.asm</a></code> in the Kowalski Simulator.
+            </li>
+            <li>
+                Press <code>F7</code> to assemble then <code>F6</code> to debug.
+            </li>
+            <li>
+                Press either <code>F5</code> to run, or <code>F11</code> to step through.
+            </li>
+        </ol>
+
+        <h2>VASM</h2>
+        <ol>
+            <li>
+                Set the value of <code>__VASM__</code> in <code><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a></code> to 1.
+            </li>
+            <li>
+                Change directory to <code><a href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/src" target="_blank" rel="noopener noreferrer">assembly-level/src/</a></code> and run <code>make</code>.
+            </li>
+            <li>
+                View the assembled machine code in <code>arcade.bin</code> with a hex editor.
+            </li>
+        </ol>
 
 
         <h1 id="Address-Space">Address Space</h1>
