@@ -13,6 +13,8 @@ _NTBL4          = $3e00
 _NTBL_COLORS    = $3ec0
 _OMB            = $3f00
 
+_FIRMWARE_START = $4000
+
 _VIA_START      = $7000
 
 _ROM_START      = $8000
