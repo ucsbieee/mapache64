@@ -1,0 +1,6 @@
+
+# .gitignore
+
+# pattern-gen
+tools/pattern-gen/*.out
+tools/pattern-gen/**/*.out
