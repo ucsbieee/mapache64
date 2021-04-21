@@ -1,12 +1,23 @@
 
 ; NP means registers are Not Preserved
 
-; stop
+; ===== Missing from Kowalski's ===== ;
         .if __KOWALSKI__
+
+; stop
 stp     .macro
         .byte $db
         .endm
+
+; wait for interrupt
+wai     .macro
+        .byte $cb
+        .endm
+
         .endif
+
+
+; ===== General ===== ;
 
 ; copy byte at src to dst
 cp8NP   .macro src, dst
@@ -49,7 +60,7 @@ swp8    .macro t1, t2
         .endm
 
 ; swap words at t1 and t2
-swpNP   .macro t1, t2
+swp16NP .macro t1, t2
         swp8NP t1+1, t2+1
         swp8NP t1, t2
         .endm
