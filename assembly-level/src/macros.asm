@@ -1,6 +1,13 @@
 
 ; NP means registers are Not Preserved
 
+; stop
+        .if __KOWALSKI__
+stp     .macro
+        .byte $db
+        .endm
+        .endif
+
 ; copy byte at src to dst
 cp8NP   .macro src, dst
         lda src
