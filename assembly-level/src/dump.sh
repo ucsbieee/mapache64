@@ -9,5 +9,7 @@ goto 8000
 save ${DUMP_PATH}zero.bin 0000 00ff
 save ${DUMP_PATH}vram.bin 3700 3fff
 save ${DUMP_PATH}ram.bin  0000 3fff
+save ${DUMP_PATH}rom.bin  8000 ffff
+save ${DUMP_PATH}firmware.bin 4000 6fff
 quit
 EOF
