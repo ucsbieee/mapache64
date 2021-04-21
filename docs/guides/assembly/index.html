@@ -70,8 +70,19 @@
             6502 Assembly Tools
         </a></div>
         <p>
-            There are two tools we will use to write/run 6502 assembly: <u>Daryl&rsquo;s Kowalski 6502 Simulator</u> and <u>VASM</u>. We will use the Kowalski simulator to write and debug all assembly. VASM will be used when we want to assemble our code to machine language. <em> Note that the Kowalski simulator is Windows only.</em>
+            There are three tools we will use to write/run/test 6502 assembly: <u>Daryl&rsquo;s Kowalski 6502 Simulator</u>, <u>VASM</u>, and <u>py65</u>.
         </p>
+        <ul>
+            <li>
+                The Kowalski simulator is a 65C02 IDE with debugging and autocompletion <em>(Windows only)</em>
+            </li>
+            <li>
+                VASM is an assembler for creating machine code
+            </li>
+            <li>
+                py65 is a command line simulator that can dump memory
+            </li>
+        </ul>
         <p>
             To select your code, enter its path in <a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/rom.asm" target="_blank" rel="noopener noreferrer">rom.asm</a>.
         </p>
@@ -97,7 +108,7 @@
                 Set the value of <code>__VASM__</code> in <code><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a></code> to 1.
             </li>
             <li>
-                Change directory to <code><a href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/src" target="_blank" rel="noopener noreferrer">assembly-level/src/</a></code> and run <code>make</code>.
+                Change directory to <code><a href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/src" target="_blank" rel="noopener noreferrer">assembly-level/src/</a></code> and run <code>make arcade</code>.
             </li>
             <li>
                 View the assembled machine code in <code>arcade.bin</code> with a hex editor.
@@ -122,7 +133,7 @@
                 The VRAM takes up <code>$3700-$3fff</code>. Filling this will update the screen.
             </li>
             <li>
-                The firmware ROM takes up <code>$4000-$6fff</code>. All firmware subroutines must have an orgin within that range.
+                The firmware ROM takes up <code>$4000-$6fff</code>. All firmware subroutines must have an origin within that range.
             </li>
             <li>
                 ROM takes up <code>$8000-$ffff</code>. Therefore, all programs must start with <code>.org $8000</code>.

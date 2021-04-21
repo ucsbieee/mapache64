@@ -32,12 +32,21 @@ else
 	endif
 endif
 
-
+# Dump Dir
+DUMP_PATH	= dump/
 
 # === Targets === #
 
-arcade: clean
-	${VASM} ${VASM_FLAGS} -o ${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
+all: clean arcade dump
+
+arcade:
+	mkdir -p ${DUMP_PATH}
+	${VASM} ${VASM_FLAGS} -o ${DUMP_PATH}${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
+
+dump: arcade
+	mkdir -p ${DUMP_PATH}
+	py65mon < py65.in
 
 clean:
 	rm -f ${MAIN}.${OUT_EXTEN}
+	rm -rf ${DUMP_PATH}

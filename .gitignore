@@ -12,3 +12,6 @@ assembly-level/src/rom.asm
 # vasm output
 assembly-level/*.bin
 assembly-level/**/*.bin
+
+# py65 output
+assembly-level/dump/
