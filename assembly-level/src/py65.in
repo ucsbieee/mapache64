@@ -1,7 +1,0 @@
-mpu 65C02
-load dump/arcade.bin
-goto 8000
-save dump/zero.bin 0000 00ff
-save dump/vram.bin 3700 3fff
-save dump/ram.bin  0000 3fff
-quit

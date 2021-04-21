@@ -35,6 +35,7 @@ endif
 # Dump Dir
 DUMP_PATH	= dump/
 
+
 # === Targets === #
 
 all: clean arcade dump
@@ -44,8 +45,7 @@ arcade:
 	${VASM} ${VASM_FLAGS} -o ${DUMP_PATH}${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
 
 dump: arcade
-	mkdir -p ${DUMP_PATH}
-	py65mon < py65.in
+	./dump.sh
 
 clean:
 	rm -f ${MAIN}.${OUT_EXTEN}
