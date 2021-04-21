@@ -20,7 +20,7 @@
 
         ; Kowalski settings
         .if __KOWALSKI__
-        .opt Proc65c02, SwapBin ; % now becomes binary radix and @ becomes modulo
+        .opt Proc65c02, CaseSensitive, SwapBin
         .endif
 
 ; ====== labels ====== ;
@@ -43,6 +43,7 @@
 ; ====== ROM ====== ;
         .org _ROM_START
         .include "rom.asm"
+        stp
 
         ; set 65c02 entry point
         .org $fffc
