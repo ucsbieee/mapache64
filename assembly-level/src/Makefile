@@ -48,5 +48,4 @@ dump: arcade
 	./dump.sh
 
 clean:
-	rm -f ${MAIN}.${OUT_EXTEN}
 	rm -rf ${DUMP_PATH}
