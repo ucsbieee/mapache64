@@ -32,7 +32,7 @@
 
         ; Kowalski entry point
         .if __KOWALSKI__
-        jmp _ROM_START
+        jmp _handle_reset
         .endif
 
         .include "subroutines/add.asm"
@@ -45,7 +45,8 @@
         .include "rom.asm"
         stp
 
-        ; set 65c02 entry point
-        .org $fffc
-        .word _ROM_START
-        .word 0
+        ; set 65c02 vector locations
+        .org $fffa
+        .word _handle_nmi
+        .word _handle_reset
+        .word _handle_irq

@@ -1,4 +1,5 @@
 
+_handle_reset:
         lda #$1
         sta INT8_I1
         sta INT8_I2
@@ -19,3 +20,6 @@
         sta Q9_6_I1+1
         sta Q9_6_I2+1
         jsr addQ9_6
+
+_handle_nmi:
+_handle_irq:
