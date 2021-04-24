@@ -42,6 +42,11 @@
 
         .include "firmware/interrupts.asm"
 
+        .org _IO_START
+        .if __KOWALSKI__
+        .include "io.asm"
+        .endif
+
 ; ====== ROM ====== ;
         .org _ROM_START
         .include "rom.asm"
