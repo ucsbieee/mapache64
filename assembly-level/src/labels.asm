@@ -15,8 +15,6 @@ _OMB            = $3f00
 
 _FIRMWARE_START = $4000
 
-_VIA_START      = $7000
-
 _ROM_START      = $8000
 
 ; ===== Zero Page ===== ;
@@ -52,3 +50,8 @@ ADDRESS16_1     = $28
 ADDRESS16_2     = $2a
 ADDRESS16_3     = $2c
 ADDRESS16_4     = $2e
+
+; ===== IO ===== ;
+
+_IN_VBLANK      = $7000
+_CLR_VBLANK_IRQ = $7001
