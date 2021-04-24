@@ -42,7 +42,9 @@
 
         .include "firmware/interrupts.asm"
 
+; ====== IO ====== ;
         .org _IO_START
+
         .if __KOWALSKI__
         .include "io.asm"
         .endif
