@@ -7,10 +7,10 @@
         .include "options.asm"
 
         .if __VASM__ && __KOWALSKI__
-        .error "Cannot select both Vasm and Kowalski"
+        .error "Cannot select both VASM and Kowalski"
         .endif
         .if !__VASM__ && !__KOWALSKI__
-        .error "Must select either Vasm or Kowalski"
+        .error "Must select either VASM or Kowalski"
         .endif
 
         ; VASM settings
