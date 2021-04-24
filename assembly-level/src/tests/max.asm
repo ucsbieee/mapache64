@@ -5,6 +5,7 @@
         nop
         .endr
 
+reset:
 do_logic:
 fill_vram:
         rts

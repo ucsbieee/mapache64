@@ -21,5 +21,6 @@ do_logic:
         stp
         rts
 
+reset:
 fill_vram:
         rts
