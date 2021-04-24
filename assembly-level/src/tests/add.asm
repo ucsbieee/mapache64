@@ -1,5 +1,5 @@
 
-_handle_reset:
+do_logic:
         lda #$1
         sta INT8_I1
         sta INT8_I2
@@ -21,5 +21,8 @@ _handle_reset:
         sta Q9_6_I2+1
         jsr addQ9_6
 
-_handle_nmi:
-_handle_irq:
+        stp
+        rts
+
+fill_vram:
+        rts

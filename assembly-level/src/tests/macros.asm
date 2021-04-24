@@ -1,6 +1,5 @@
 
-_handle_reset:
-
+do_logic:
         ; cp8
         lda #$ee
         sta INT8_G1
@@ -19,5 +18,8 @@ _handle_reset:
         ; swp16
         swp16 INT16_G1, INT16_G2
 
-_handle_nmi:
-_handle_irq:
+        stp
+        rts
+
+fill_vram:
+        rts

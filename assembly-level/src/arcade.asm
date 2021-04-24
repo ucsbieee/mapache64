@@ -35,10 +35,12 @@
         jmp _handle_reset
         .endif
 
-        .include "subroutines/add.asm"
-        .include "subroutines/subtract.asm"
-        .include "subroutines/multiply.asm"
-        .include "subroutines/divide.asm"
+        .include "firmware/subroutines/add.asm"
+        .include "firmware/subroutines/subtract.asm"
+        .include "firmware/subroutines/multiply.asm"
+        .include "firmware/subroutines/divide.asm"
+
+        .include "firmware/interrupts.asm"
 
 ; ====== ROM ====== ;
         .org _ROM_START

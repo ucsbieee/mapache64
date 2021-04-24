@@ -74,8 +74,8 @@ Firmware    4000-6fff
 
 
 IO          7000-7fff
+  gpu in v-blank  7000
   controller
-  gpu irq
 
 
 
