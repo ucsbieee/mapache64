@@ -7,8 +7,8 @@
 ; ====================== ;
 ; ===== Kowalski's ===== ;
 ; ====================== ;
-
         .if __KOWALSKI__
+; ====================== ;
 
 ; ===== Missing from Kowalski's ===== ;
 
@@ -80,15 +80,25 @@ swp16   .macro t1, t2
         pla
         .endm
 
+; increment memory with specified size
+inc_mem .macro address, length
+.i      .set 0
+        .repeat length
+        inc address+.i
+        bne .end_inc
+.i      .set .i+1
+        .endr
+.end_inc:
+        .endm
 
+
+; ====================== ;
         .endif
-
-
 ; ====================== ;
 ; ======== VASM ======== ;
 ; ====================== ;
-
         .if __VASM__
+; ====================== ;
 
 ; ===== General ===== ;
 
@@ -148,5 +158,18 @@ swp16   .macro t1, t2
         pla
         .endm
 
+; increment memory with specified size
+inc_mem .macro address, length
+.endinc .set .endinc\@
+.i      .set \address
+        .repeat \length
+        inc .i
+        bne .endinc
+.i      .set .i+1
+        .endr
+.endinc\@:
+        .endm
 
+
+; ====================== ;
         .endif
