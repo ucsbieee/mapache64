@@ -9,14 +9,20 @@ _handle_nmi:
 ; reset
 
 _handle_reset:
+        lda #$ff
+        sta FRAME
+        sta FRAME+1
+        sta FRAME+2
         jsr reset
 _next_frame:    ; handle frame timing
         sei                     ; disble irq
-        jsr do_logic
+        inc_mem FRAME, 3        ; set frame to next value
+        jsr do_logic            ; do non-vram logic
+
         cli                     ; enable irq
-        wai
-        jsr fill_vram
-        jmp _next_frame
+        wai                     ; wait for draw irq
+        jsr fill_vram           ; fill vram while in vblank
+        jmp _next_frame         ; repeat
 
 
 
