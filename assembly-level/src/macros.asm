@@ -82,12 +82,20 @@ swp16   .macro t1, t2
 
 ; increment memory with specified size
 inc_mem .macro address, length
+        .if length < 1          ; ensure input is valid
+        .error "Bad memory size in inc_mem"
+        .endif
+
 .i      .set 0
-        .repeat length
+
+        .repeat length-1        ; -------------------------------------- ;
         inc address+.i
-        bne .end_inc
+        bne .end_inc            ; increment next if overflow occurred
 .i      .set .i+1
-        .endr
+        .endr                   ; -------------------------------------- ;
+
+        inc address+.i
+
 .end_inc:
         .endm
 
@@ -160,13 +168,22 @@ swp16   .macro t1, t2
 
 ; increment memory with specified size
 inc_mem .macro address, length
+        .if \length < 1         ; ensure input is valid
+        .error "Bad memory size in inc_mem"
+        .endif
+
 .endinc .set .endinc\@
-.i      .set \address
-        .repeat \length
-        inc .i
-        bne .endinc
+.address .set \address
+.i      .set 0
+
+        .repeat \length-1       ; -------------------------------------- ;
+        inc .address+.i
+        bne .endinc             ; increment next if overflow occurred
 .i      .set .i+1
-        .endr
+        .endr                   ; -------------------------------------- ;
+
+        inc .address+.i
+
 .endinc\@:
         .endm
 
