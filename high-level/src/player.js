@@ -5,12 +5,17 @@ var animationFrameRequest   = NaN;
 var  timer_now, timer_then = Date.now(), timer_delta;
 const timer_interval = 1000/FPS;
 
+function _reset() {
+    frame = -1;
+    _next_frame();
+}
 
-advanceFrame();
-function advanceFrame() {
+function _next_frame() {
+
+    frame++;
 
     // FPS Control
-    animationFrameRequest = requestAnimationFrame( advanceFrame );
+    animationFrameRequest = requestAnimationFrame( _next_frame );
     timer_now = Date.now();
     timer_delta = timer_now - timer_then;
     if ( timer_delta < timer_interval )
@@ -21,18 +26,16 @@ function advanceFrame() {
     CONTROLLER_Q = CONTROLLER_D;
 
     /* Run CPU */
-    drawingPPU = true;
-    updatePPU();
-    drawingPPU = false;
-
-    /* Draw */
-    updatingPPU = true;
+    disableInterrupts = true;
     drawScreen();
-    updatingPPU = false;
+    do_logic();
+    disableInterrupts = false;
+
+    fill_vram();
 
     // console.log(`Second: ${frame/FPS}`);
 
-    frame++;
-
-    // debugger;
 }
+
+
+_reset();
