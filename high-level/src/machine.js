@@ -33,8 +33,7 @@ const FPS = 60;
 
 /* ====== Flags ====== */
 
-var drawingPPU = false;
-var updatingPPU = false;
+var disableInterrupts = false;
 
 
 
@@ -311,7 +310,7 @@ const CONTROLLER_SELECT = () => (CONTROLLER_Q & 0b10000000) >>> 7;
 
 document.addEventListener('keyup', handle_keyup);
 document.addEventListener('keydown', handle_keydown);
-document.classList.add("stop_scrolling");
+// document.classList.add("stop_scrolling");
 
 function handle_keyup(e) {
     switch ( e.code ) {
