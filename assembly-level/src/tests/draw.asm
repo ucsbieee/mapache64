@@ -1,21 +1,40 @@
 
 ; variables
-person_xp       = $70
-person_yp       = $71
+zero_initilized = $70
+vram_initilized = $71
+
+person_xp       = $72
+person_yp       = $73
+
+_16:       .byte 16
+
+
+; code
 
 reset:
+        stz zero_initilized
+        stz vram_initilized
         rts
 
 do_logic:
-        .repeat 10
-        nop
-        .endr
+        lda zero_initilized
+        beq zero_initilize
         rts
 
 fill_vram:
-        .repeat 10
-        nop
-        .endr
+        lda vram_initilized
+        beq vram_initilize
+        rts
+
+zero_initilize:
+        lda #128
+        sta person_xp   ; person_xp = 128
+        sta person_yp   ; person_yp = 128
+        lda #1
+        sta zero_initilized     ; set zero_initilized to true
+        rts
+
+vram_initilize:
         rts
 
 

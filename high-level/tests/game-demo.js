@@ -20,6 +20,9 @@ const gnd_horizonal_deccel = 1.5;
 const air_horizonal_deccel = .15;
 const horizonal_speed = 1.75;
 
+var initalized = false;
+
+
 const clamp = ( min, T, max ) => Math.max( min, Math.min( T, max ) );
 
 class Person {
@@ -122,7 +125,13 @@ var p = new Person();
 
 
 
-function updatePPU() {
+
+/* ====================================================================== */
+/* ============================= Interrupts ============================= */
+/* ====================================================================== */
+
+
+function do_logic() {
     getInput();
 
     // if start was pressed, reset
@@ -147,7 +156,16 @@ function updatePPU() {
     p.advance();
 
     // load person to VRAM
+}
+
+function fill_vram() {
     p.draw();
+    if ( initalized ) return;
+    fill_PMF();
+    fill_PMB();
+    fill_NTBL();
+    fill_OBM();
+    initalized = true;
 }
 
 function getInput() {
@@ -160,13 +178,37 @@ function getInput() {
 function reset() {
     console.log("reseting!");
 
-    // update VRAM
-    VRAM_RESET();
-
     // Reinitialize person
     p = new Person();
-    p.draw();
 
+}
+
+
+
+
+/* ====================================================================== */
+/* ============================= VRAM Update ============================ */
+/* ====================================================================== */
+
+
+function fill_NTBL() {
+    // sky-blue
+    NTBL_Color1 = 0b011;
+    // green
+    NTBL_Color2 = 0b010;
+    // sky is blue, ground is green
+    for ( let i = 0; i < NTBL_Size; i++ ) {
+        if ( i < 896 ) {
+            NTBL_setAddr(i,3);
+            NTBL_setColor(i,0);
+        } else {
+            NTBL_setAddr(i,2);
+            NTBL_setColor(i,1);
+        }
+    }
+}
+
+function fill_PMF() {
     /* === Person sprite === */
     // normal
     PMF[ 0] = 0b00001010; PMF[ 1] = 0b10100000;
@@ -187,7 +229,9 @@ function reset() {
     PMF[26] = 0b10110111; PMF[27] = 0b11011110;
     PMF[28] = 0b00101111; PMF[29] = 0b11111000;
     PMF[30] = 0b00001010; PMF[31] = 0b10100000;
+}
 
+function fill_PMB() {
     /* === tiles === */
     // black
     PMB[ 0] = 0b00000000; PMB[ 1] = 0b00000000;
@@ -228,19 +272,10 @@ function reset() {
     PMB[58] = 0b11111111; PMB[59] = 0b11111111;
     PMB[60] = 0b11111111; PMB[61] = 0b11111111;
     PMB[62] = 0b11111111; PMB[63] = 0b11111111;
+}
 
-    // sky-blue
-    NTBL_Color1 = 0b011;
-    // green
-    NTBL_Color2 = 0b010;
-    // sky is blue, ground is green
-    for ( let i = 0; i < NTBL_Size; i++ ) {
-        if ( i < 896 ) {
-            NTBL_setAddr(i,3);
-            NTBL_setColor(i,0);
-        } else {
-            NTBL_setAddr(i,2);
-            NTBL_setColor(i,1);
-        }
+function fill_OBM() {
+    for ( let i = 1; i < 64; i++ ) {
+        OBM_setY(i,255);
     }
 }
