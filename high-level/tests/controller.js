@@ -6,6 +6,12 @@ function reset() {
 }
 
 function  do_logic() {
+    console.log(frame);
+    // console.log(`CONTROLLER1_D: ${CONTROLLER1_D}`);
+    // console.log(`CONTROLLER1_Q: ${CONTROLLER1_Q}`);
+    // console.log(`CONTROLLER2_D: ${CONTROLLER2_D}`);
+    // console.log(`CONTROLLER2_Q: ${CONTROLLER2_Q}`);
+
     console.log(`A      : ${CONTROLLER1_A()}`);
     console.log(`B      : ${CONTROLLER1_B()}`);
     console.log(`UP     : ${CONTROLLER1_UP()}`);
