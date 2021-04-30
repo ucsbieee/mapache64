@@ -17,36 +17,24 @@ const CanvasScalar  = 3;
 const CanvasWidth   = GameWidth * CanvasScalar;
 const CanvasHeight  = GameHeight * CanvasScalar;
 
-
-
-
-/* ====== Game Data ====== */
-
-var frame = 0;
-const FPS = 60;
-
-
-
-/* ====== Flags ====== */
-
-var disableInterrupts = false;
-
-
-
-/* ====== GPU ====== */
-
 // Add Canvas to Game
-
 var Canvas;
 Canvas = document.createElement( "canvas" );
 
 Canvas.setAttribute( "width", CanvasWidth );
 Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
+Game.appendChild( Canvas );
+const ctx = Canvas.getContext("2d", { alpha: false });
+
+
+
+/* ====== Full Screen ====== */
+
 //if inGameView false, add box shadow and disable scroll. otherwise reset.
 var inGameView = false;
-function toggleGameView(){
-    if (inGameView == false){
+function toggleGameView() {
+    if (inGameView === false){
         Canvas.style.boxShadow = "0 0 0 100vmax black";
         Game.style.top = "50%"; Game.style.left = "50%";
         Game.style.transform = "translate(-50%,-50%)";
@@ -64,12 +52,21 @@ function toggleGameView(){
 }
 
 
+/* ====== Game Data ====== */
 
-Game.appendChild( Canvas );
+var frame = 0;
+const FPS = 1;
 
 
 
-const ctx = Canvas.getContext("2d", { alpha: false });
+/* ====== Flags ====== */
+
+var disableInterrupts = false;
+
+
+
+/* ====== GPU ====== */
+
 var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
 
 // Pattern Memory Foreground
