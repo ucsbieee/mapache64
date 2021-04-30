@@ -18,7 +18,8 @@ function advanceFrame() {
     timer_then = timer_now - ( timer_delta % timer_interval );
 
     // recieve controller inputs
-    CONTROLLER_Q = CONTROLLER_D;
+    CONTROLLER1_Q = CONTROLLER1_D;
+    CONTROLLER2_Q = CONTROLLER2_D;
 
     /* Run CPU */
     drawingPPU = true;
