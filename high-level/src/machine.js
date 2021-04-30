@@ -328,7 +328,7 @@ document.addEventListener('keydown', handle_keydown);
 
 // extra switch case + if statement for multiple controllers
 function handle_keyup(e) {
-    if (!twoControllers){
+    if (!twoControllers) {
         switch ( e.code ) {
             case "KeyZ"       : CONTROLLER1_D &= ~0b00000001; break;
             case "KeyX"       : CONTROLLER1_D &= ~0b00000010; break;
@@ -344,8 +344,8 @@ function handle_keyup(e) {
     }
     else {
         switch ( e.code ) {
-            case "KeyZ"       : CONTROLLER1_D &= ~0b00000001; break;
-            case "KeyX"       : CONTROLLER1_D &= ~0b00000010; break;
+            case "KeyN"       : CONTROLLER1_D &= ~0b00000001; break;
+            case "KeyM"       : CONTROLLER1_D &= ~0b00000010; break;
             case "ArrowUp"    : CONTROLLER1_D &= ~0b00000100; break;
             case "ArrowDown"  : CONTROLLER1_D &= ~0b00001000; break;
             case "ArrowLeft"  : CONTROLLER1_D &= ~0b00010000; break;
@@ -359,8 +359,8 @@ function handle_keyup(e) {
             case "KeyS"       : CONTROLLER2_D &= ~0b00001000; break;
             case "KeyA"       : CONTROLLER2_D &= ~0b00010000; break;
             case "KeyD"       : CONTROLLER2_D &= ~0b00100000; break;
-            case "KeyN"       : CONTROLLER2_D &= ~0b01000000; break;
-            case "KeyM"       : CONTROLLER2_D &= ~0b10000000; break;
+            case "KeyZ"       : CONTROLLER2_D &= ~0b01000000; break;
+            case "KeyX"       : CONTROLLER2_D &= ~0b10000000; break;
             case "Space"      : toggleGameView();             break;
             default: break;
         }
@@ -369,40 +369,39 @@ function handle_keyup(e) {
 }
 
 function handle_keydown(e) {
-    if (!twoControllers){
-            switch ( e.code ) {
-                case "KeyZ"       : CONTROLLER1_D |= 0b00000001; break;
-                case "KeyX"       : CONTROLLER1_D |= 0b00000010; break;
-                case "ArrowUp"    : CONTROLLER1_D |= 0b00000100; break;
-                case "ArrowDown"  : CONTROLLER1_D |= 0b00001000; break;
-                case "ArrowLeft"  : CONTROLLER1_D |= 0b00010000; break;
-                case "ArrowRight" : CONTROLLER1_D |= 0b00100000; break;
-                case "Enter"      : CONTROLLER1_D |= 0b01000000; break;
-                case "ShiftRight" : CONTROLLER1_D |= 0b10000000; break;
-                default: break;
-            }
-    }
-    else{
+    if (!twoControllers) {
         switch ( e.code ) {
-            case "KeyZ"       : CONTROLLER1_D &= ~0b00000001; break;
-            case "KeyX"       : CONTROLLER1_D &= ~0b00000010; break;
-            case "ArrowUp"    : CONTROLLER1_D &= ~0b00000100; break;
-            case "ArrowDown"  : CONTROLLER1_D &= ~0b00001000; break;
-            case "ArrowLeft"  : CONTROLLER1_D &= ~0b00010000; break;
-            case "ArrowRight" : CONTROLLER1_D &= ~0b00100000; break;
-            case "Enter"      : CONTROLLER1_D &= ~0b01000000; break;
-            case "ShiftRight" : CONTROLLER1_D &= ~0b10000000; break;
-
-            case "KeyQ"       : CONTROLLER2_D &= ~0b00000001; break;
-            case "KeyE"       : CONTROLLER2_D &= ~0b00000010; break;
-            case "KeyW"       : CONTROLLER2_D &= ~0b00000100; break;
-            case "KeyS"       : CONTROLLER2_D &= ~0b00001000; break;
-            case "KeyA"       : CONTROLLER2_D &= ~0b00010000; break;
-            case "KeyD"       : CONTROLLER2_D &= ~0b00100000; break;
-            case "KeyN"       : CONTROLLER2_D &= ~0b01000000; break;
-            case "KeyM"       : CONTROLLER2_D &= ~0b10000000; break;
+            case "KeyZ"       : CONTROLLER1_D |= 0b00000001; break;
+            case "KeyX"       : CONTROLLER1_D |= 0b00000010; break;
+            case "ArrowUp"    : CONTROLLER1_D |= 0b00000100; break;
+            case "ArrowDown"  : CONTROLLER1_D |= 0b00001000; break;
+            case "ArrowLeft"  : CONTROLLER1_D |= 0b00010000; break;
+            case "ArrowRight" : CONTROLLER1_D |= 0b00100000; break;
+            case "Enter"      : CONTROLLER1_D |= 0b01000000; break;
+            case "ShiftRight" : CONTROLLER1_D |= 0b10000000; break;
             default: break;
         }
+    }
+    else {
+        switch ( e.code ) {
+            case "KeyN"       : CONTROLLER1_D |= 0b00000001; break;
+            case "KeyM"       : CONTROLLER1_D |= 0b00000010; break;
+            case "ArrowUp"    : CONTROLLER1_D |= 0b00000100; break;
+            case "ArrowDown"  : CONTROLLER1_D |= 0b00001000; break;
+            case "ArrowLeft"  : CONTROLLER1_D |= 0b00010000; break;
+            case "ArrowRight" : CONTROLLER1_D |= 0b00100000; break;
+            case "Enter"      : CONTROLLER1_D |= 0b01000000; break;
+            case "ShiftRight" : CONTROLLER1_D |= 0b10000000; break;
 
+            case "KeyQ"       : CONTROLLER2_D |= 0b00000001; break;
+            case "KeyE"       : CONTROLLER2_D |= 0b00000010; break;
+            case "KeyW"       : CONTROLLER2_D |= 0b00000100; break;
+            case "KeyS"       : CONTROLLER2_D |= 0b00001000; break;
+            case "KeyA"       : CONTROLLER2_D |= 0b00010000; break;
+            case "KeyD"       : CONTROLLER2_D |= 0b00100000; break;
+            case "KeyZ"       : CONTROLLER2_D |= 0b01000000; break;
+            case "KeyX"       : CONTROLLER2_D |= 0b10000000; break;
+            default: break;
+        }
     }
 }
