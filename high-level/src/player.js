@@ -7,12 +7,11 @@ const timer_interval = 1000/FPS;
 
 function _reset() {
     frame = -1;
+    reset();
     _next_frame();
 }
 
 function _next_frame() {
-
-    frame++;
 
     // FPS Control
     animationFrameRequest = requestAnimationFrame( _next_frame );
@@ -21,6 +20,8 @@ function _next_frame() {
     if ( timer_delta < timer_interval )
         return;
     timer_then = timer_now - ( timer_delta % timer_interval );
+
+    frame++;
 
     // recieve controller inputs
     CONTROLLER1_Q = CONTROLLER1_D;
