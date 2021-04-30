@@ -33,6 +33,8 @@ RAM         0000-3fff
     ADDRESS16_3   2c
     ADDRESS16_4   2e
 
+    FRAME         30
+
   Stack       0100-01ff
 
   Misc        0200-36ff

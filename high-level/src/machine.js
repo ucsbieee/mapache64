@@ -29,8 +29,7 @@ const FPS = 60;
 
 /* ====== Flags ====== */
 
-var drawingPPU = false;
-var updatingPPU = false;
+var disableInterrupts = false;
 
 
 
@@ -328,8 +327,9 @@ const CONTROLLER2_SELECT = () => (CONTROLLER2_Q & 0b10000000) >>> 7;
 
 document.addEventListener('keyup', handle_keyup);
 document.addEventListener('keydown', handle_keydown);
-document.classList.add("stop_scrolling");
-//add another switch case + if statement for multiple controllers
+// document.classList.add("stop_scrolling");
+
+// extra switch case + if statement for multiple controllers
 function handle_keyup(e) {
     if (!twoControllers){
         switch ( e.code ) {
@@ -341,7 +341,7 @@ function handle_keyup(e) {
             case "ArrowRight" : CONTROLLER1_D &= ~0b00100000; break;
             case "Enter"      : CONTROLLER1_D &= ~0b01000000; break;
             case "ShiftRight" : CONTROLLER1_D &= ~0b10000000; break;
-            case "Space"      : toggleGameView();            break;
+            case "Space"      : toggleGameView();             break;
             default: break;
         }
     }
@@ -364,7 +364,7 @@ function handle_keyup(e) {
             case "KeyD"       : CONTROLLER2_D &= ~0b00100000; break;
             case "KeyN"       : CONTROLLER2_D &= ~0b01000000; break;
             case "KeyM"       : CONTROLLER2_D &= ~0b10000000; break;
-            case "Space"      : toggleGameView();            break;
+            case "Space"      : toggleGameView();             break;
             default: break;
         }
 

@@ -89,6 +89,8 @@ Nothing yet. Check back soon!
 * [AS6C62256 32kB SRAM](https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf)
 * [74LVC4245A Transceiver](https://assets.nexperia.com/documents/data-sheet/74LVC4245A.pdf)
 * [iCE40 LP/HX FPGA](https://www.mouser.com/datasheet/2/225/FPGA_DS_02029_3_6_iCE40_LP_HX_Family_Data_Sheet-1022803.pdf)
+* [Dell 1908FP Monitor](https://downloads.dell.com/manuals/all-products/esuprt_electronics/esuprt_display/dell-1908fp_user%27s%20guide_en-us.pdf)
+* [VESA, 640 x 480 @ 60 Hz Video Timing](http://www.tinyvga.com/vga-timing/640x480@60Hz)
 
 ### Hardware Guides/References Used
 

@@ -7,8 +7,8 @@
 ; ====================== ;
 ; ===== Kowalski's ===== ;
 ; ====================== ;
-
         .if __KOWALSKI__
+; ====================== ;
 
 ; ===== Missing from Kowalski's ===== ;
 
@@ -80,15 +80,33 @@ swp16   .macro t1, t2
         pla
         .endm
 
-
+; increment memory with specified size
+inc_mem .macro address, length
+        .if length < 1          ; ensure input is valid
+        .error "Bad memory size in inc_mem"
         .endif
 
+.i      .set 0
 
+        .repeat length-1        ; -------------------------------------- ;
+        inc address+.i
+        bne .end_inc            ; increment next if overflow occurred
+.i      .set .i+1
+        .endr                   ; -------------------------------------- ;
+
+        inc address+.i
+
+.end_inc:
+        .endm
+
+
+; ====================== ;
+        .endif
 ; ====================== ;
 ; ======== VASM ======== ;
 ; ====================== ;
-
         .if __VASM__
+; ====================== ;
 
 ; ===== General ===== ;
 
@@ -148,5 +166,27 @@ swp16   .macro t1, t2
         pla
         .endm
 
+; increment memory with specified size
+inc_mem .macro address, length
+        .if \length < 1         ; ensure input is valid
+        .error "Bad memory size in inc_mem"
+        .endif
 
+.endinc .set .endinc\@
+.address .set \address
+.i      .set 0
+
+        .repeat \length-1       ; -------------------------------------- ;
+        inc .address+.i
+        bne .endinc             ; increment next if overflow occurred
+.i      .set .i+1
+        .endr                   ; -------------------------------------- ;
+
+        inc .address+.i
+
+.endinc\@:
+        .endm
+
+
+; ====================== ;
         .endif

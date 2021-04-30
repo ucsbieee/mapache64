@@ -1,4 +1,6 @@
 
+inctest         = $70
+
 do_logic:
         ; cp8
         lda #$ee
@@ -17,6 +19,17 @@ do_logic:
 
         ; swp16
         swp16 INT16_G1, INT16_G2
+
+        ; increment
+        lda #$fe
+        sta inctest
+        lda #$ff
+        sta inctest+1
+        sta inctest+2
+        sta inctest+3
+        inc_mem inctest, 4
+        inc_mem inctest, 4
+        inc_mem inctest, 4
 
         stp
         rts
