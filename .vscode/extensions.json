@@ -1,0 +1,15 @@
+{
+	"recommendations": [
+		// html css
+		"ecmel.vscode-html-css",
+		"formulahendry.auto-rename-tag",
+
+		// javascript
+		"ritwickdey.liveserver",
+		"visualstudioexptteam.vscodeintellicode",
+
+		// assembly
+		"maziac.asm-code-lens",
+		"ms-vscode.hexeditor"
+	]
+}
