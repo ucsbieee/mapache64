@@ -37,6 +37,14 @@ def handle_JavaScript():
         else:
             outfile.write( " " )
 
+def handle_Assembly():
+    # [ To Do ]
+    # Convert "pattern" to correct format for assembly
+    # print(pattern)
+    # Write to outfile with outfile.write("")
+    print("[ERROR]: Not yet suppoted.")
+    exit(1)
+
 # Read Options
 try:
     arguments, values = getopt.getopt(sys.argv[1:], options, long_options)
@@ -93,7 +101,9 @@ print(pattern)
 outfile = open( filename+".out", "w" )
 
 # Handle Platforms
-if ( platform == "JavaScript" ):
+if   ( platform == "JavaScript" ):
     handle_JavaScript()
+elif ( platform == "Assembly" ):
+    handle_Assembly()
 else:
     print( "[ERROR]: Unexpected platform." )
