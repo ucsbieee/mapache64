@@ -55,7 +55,7 @@ function toggleGameView() {
 /* ====== Game Data ====== */
 
 var frame = 0;
-const FPS = 1;
+const FPS = 60;
 
 
 
