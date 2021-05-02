@@ -142,14 +142,14 @@ function do_logic() {
 
     // if A was pressed, jump
     if ( A_pedge ) {
-        console.log("jumping!");
+        // console.log("jumping!");
         p.jump();
     }
 
     // move in a direction if a direction is held
-    if ( CONTROLLER_LEFT() )
+    if ( CONTROLLER1_LEFT() )
         p.xv = Q9_6_add( p.xv, new Q9_6(horizonal_speed) );
-    if ( CONTROLLER_RIGHT() )
+    if ( CONTROLLER1_RIGHT() )
         p.xv = Q9_6_sub( p.xv, new Q9_6(horizonal_speed) );
 
     // move person
@@ -169,10 +169,10 @@ function fill_vram() {
 }
 
 function getInput() {
-    start_pedge = ( !start_value && CONTROLLER_START() );
-    start_value = CONTROLLER_START();
-    A_pedge = ( !A_value && CONTROLLER_A() );
-    A_value = CONTROLLER_A();
+    start_pedge = ( !start_value && CONTROLLER1_START() );
+    start_value = CONTROLLER1_START();
+    A_pedge = ( !A_value && CONTROLLER1_A() );
+    A_value = CONTROLLER1_A();
 }
 
 function reset() {
@@ -180,6 +180,9 @@ function reset() {
 
     // Reinitialize person
     p = new Person();
+
+    initalized = false;
+    setNumControllers(1);
 
 }
 
