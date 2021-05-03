@@ -36,6 +36,9 @@
             <li class="clickable"><a href="#Running-Assembly">
                 Running 6502 Assembly
             </a></li>
+            <li class="clickable"><a href="#Structure">
+                ASM Code Structure
+            </a></li>
             <li class="clickable"><a href="#Address-Space">
                 Address Space
             </a></li>
@@ -53,15 +56,15 @@
             <li class="clickable external-link"><a href="http://www.obelisk.me.uk/65C02/reference.html" target="_blank" rel="noopener noreferrer">
                 65C02 Reference
             </a></li>
-            <li class="clickable external-link"><a href="http://www.obelisk.me.uk/6502/addressing.html" target="_blank" rel="noopener noreferrer">
-                Addressing Modes
+            <li class="clickable external-link"><a href="https://github.com/ucsbieee/arcade/raw/main/assembly-level/tools/6502-emulator/6502.chm" target="_blank" rel="noopener noreferrer">
+                Kowalski 65C02 Reference
             </a></li>
             <li class="clickable external-link"><a href="https://youtu.be/WEliEAc3ZyA" target="_blank" rel="noopener noreferrer">
                 Stephen Edwards 6502 Instruction Overview Video
             </a></li>
-            <li class="clickable external-link"><a href="https://www.youtube.com/watch?v=LnzuMJLZRdU&list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH" target="_blank" rel="noopener noreferrer">
+            <!-- <li class="clickable external-link"><a href="https://www.youtube.com/watch?v=LnzuMJLZRdU&list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH" target="_blank" rel="noopener noreferrer">
                 Ben Eater 6502 Computer Video Series
-            </a></li>
+            </a></li> -->
         </ul>
 
 
@@ -84,36 +87,62 @@
             </li>
         </ul>
         <p>
-            To select your code, enter its path in <a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/rom.asm" target="_blank" rel="noopener noreferrer">rom.asm</a>.
+            To select your code, enter its path in <code><a class="blue" href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/rom.asm" target="_blank" rel="noopener noreferrer">rom.asm</a></code>.
         </p>
-        <h2>Kowalski Simulator</h2>
+        <h2>Kowalski Simulator Setup</h2>
         <ol>
             <li>
-                Set the value of <code>__KOWALSKI__</code> in <a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a> to 1.
+                Set the value of <code>__KOWALSKI__</code> in <code><a class="blue" href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a></code> to 1.
             </li>
             <li>
-                Open <code><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/arcade.asm" target="_blank" rel="noopener noreferrer">arcade.asm</a></code> in the Kowalski Simulator.
+                Open <code><a class="blue" href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/arcade.asm" target="_blank" rel="noopener noreferrer">arcade.asm</a></code> in the Kowalski Simulator.
             </li>
             <li>
-                Press <code>F7</code> to assemble then <code>F6</code> to debug.
+                While the <code>arcade.asm</code> window is active, press <code>F7</code> to assemble then <code>F6</code> to debug.
             </li>
             <li>
                 Press either <code>F5</code> to run, or <code>F11</code> to step through.
             </li>
         </ol>
 
-        <h2>VASM</h2>
+
+        <h2>VASM Setup</h2>
         <ol>
             <li>
-                Set the value of <code>__VASM__</code> in <code><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a></code> to 1.
+                Set the value of <code>__VASM__</code> in <code><a class="blue" href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/options.asm" target="_blank" rel="noopener noreferrer">options.asm</a></code> to 1.
             </li>
             <li>
-                Change directory to <code><a href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/src" target="_blank" rel="noopener noreferrer">assembly-level/src/</a></code> and run <code>make arcade</code>.
+                Change directory to <code><a class="blue" href="https://github.com/ucsbieee/arcade/tree/main/assembly-level/src" target="_blank" rel="noopener noreferrer">assembly-level/src/</a></code> and run <code>make arcade</code>.
             </li>
             <li>
                 View the assembled machine code in <code>arcade.bin</code> with a hex editor.
             </li>
+            <li>
+                Run the code assembled code in py65 with <code>make dump</code>.
+            </li>
         </ol>
+
+
+        <h1 id="Structure">ASM Code Structure</h1>
+        <p>
+            All assembly ROM files must have three subroutines: <code>do_logic</code>, <code>reset</code>, and <code>fill_vram</code>. Failure to include these subroutines will prevent the assembler from working.
+        </p>
+        <ul>
+            <li><code>reset</code>: run once at the beginning of the code</li>
+            <li><code>do_logic</code>: run 60 times a second. Put as much game logic here as you can. However, do not touch the VRAM (addresses <code>$3700-$3fff</code>)</li>
+            <li><code>fill_vram</code>: run after <code>do_logic</code>, once in the vertical blanking area. Here, you can touch the VRAM</li>
+        </ul>
+        <p>
+            For more information, watch this:
+        </p>
+        <div class="center-within">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/bQgF7crGjTo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p>
+            Example code:
+        </p>
+        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/arcade-game_template/assembly-level/game.asm"></textarea>
+
 
 
         <h1 id="Address-Space">Address Space</h1>
@@ -122,6 +151,12 @@
         </p>
         <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/blob/main/address%20space.txt" target="_blank" rel="noopener noreferrer">
             address space.txt
+        </a></div>
+        <p>
+            Here are the labels that you can use in assembly code:
+        </p>
+        <div class="clickable external-link center"><a href=" https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/labels.asm" target="_blank" rel="noopener noreferrer">
+            labels.asm
         </a></div>
         <!-- <textarea src="https://raw.githubusercontent.com/ucsbieee/arcade/main/address%20space.txt"></textarea> -->
         <div>Summary:</div>
@@ -136,11 +171,11 @@
                 The firmware ROM takes up <code>$4000-$6fff</code>. All firmware subroutines must have an origin within that range.
             </li>
             <li>
-                ROM takes up <code>$8000-$ffff</code>. Therefore, all programs must start with <code>.org $8000</code>.
+                ROM takes up <code>$8000-$ffff</code>.
             </li>
         </ul>
         <p>
-            It is important that we map this out ahead of time to be sure we stay consistent. Any time you refer to any memory location, please refer to this table. Any time you create a new entry in the zero page, please add it to the table.
+            It is important that we map this out ahead of time to be sure we stay consistent. Any time you use any memory location, please refer to this table. Any time you create a new entry in the zero page or I/O in <code><a class="blue" href=" https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/labels.asm" target="_blank" rel="noopener noreferrer">labels.asm</a></code>, please add it to the table.
         </p>
 
 

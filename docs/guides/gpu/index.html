@@ -19,6 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.js" integrity="sha512-M1DpFDDFHNgGdgVsSkTP1sjfWC7mQFJM3obQo8gyKHbZmbmr95Kl9wPYa5T70BFQBi0+/TlcG6IZDLowJCbKBQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css" integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/verilog/verilog.min.js" integrity="sha512-2xCdH/sTLQe5Zz5Ex2U0sGB+EJYY8ms/JDnrV3UGPqonytDVAMOH4SMWocAihLficzG56y2KfFm/osubL9Qo5g==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/mode/gas/gas.min.js" integrity="sha512-9kcKyiyWVRjJkMfhrkUfbrnFw/0CAgln6ISmRVoGMDaPWN+VjBKcvLpqhJNhO9fQEgULoZ8jcC5GVtMV4ZSAsQ==" crossorigin="anonymous"></script>
     <script src="/_scripts/init_codemirror.js" defer></script>
 </head>
 <body>
@@ -46,8 +47,8 @@
             <li class="clickable"><a href="#Object-Scanline-Memory">
                 Object Scanline Memory
             </a></li>
-            <li class="clickable"><a href="#VGA-Timing">
-                VGA Timing
+            <li class="clickable"><a href="#Video-Timing">
+                Video Timing
             </a></li>
         </ul>
 
@@ -161,27 +162,42 @@
 
 
 
-        <h1 id="VGA-Timing">VGA Timing</h1>
+        <h1 id="Video-Timing">Video Timing</h1>
         <p>
-            The GPU will follow the VGA protocol. Observe this timing diagram:
+            The GPU will follow the <a class="blue" href="http://www.tinyvga.com/vga-timing/640x480@60Hz" target="_blank" rel="noopener noreferrer">VESA 640&times;480 @ 60 Hz protocol</a>. Observe this timing diagram:
         </p>
         <a href="https://www.digikey.com/eewiki/pages/viewpage.action?pageId=15925278" target="_blank" rel="noopener noreferrer" class="center"><img src="/_media/GPU/VGA-Timing.jpg" alt="VGA Timing Diagram"></a>
         <p>
             The GPU updates each pixel row by row. After drawing a row, it waits for a horizonal blanking period. After finishing the entire frame, it waits for a vertical blanking period.
         </p>
         <p>
-            While the GPU is a drawing a frame, the CPU is halted. The CPU only does work in the GPU&rsquo;s vertical blanking period.
-        </p>
-        <p>
             In the horizonal blanking period, the GPU iterates through the Object Memory to find any objects that should be drawn on the next scanline. If they are to be drawn, they will be added to the Object Scanline Memory.
         </p>
         <br>
         <p>
-            If you want more information about VGA timings, watch this:
+            If you want more information about video timings, watch this:
         </p>
         <div class="clickable external-link center"><a href="https://youtu.be/l7rce6IQDWs" target="_blank" rel="noopener noreferrer">
             Ben Eater Graphics Card Video
         </a></div>
+
+        <h2>Interrupts</h2>
+        <p>
+            The CPU and GPU must communicate so they can agree on when the other can touch the VRAM. This is the order that will be taken on every frame:
+        </p>
+        <ol>
+            <li>disable interrupts</li>
+            <li>frame counter increments and <code>do_logic</code> is run</li>
+            <li>re-enable interrupts</li>
+            <li>wait until vertical blanking area</li>
+            <li>run <code>fill_vram</code></li>
+            <li>if vertical blanking area ends, stall CPU until vertical blanking area is re-entered</li>
+            <li>once fill_ram finishes, repeat</li>
+        </ol>
+        <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/firmware/interrupts.asm" target="_blank" rel="noopener noreferrer">
+            interrupts.asm
+        </a></div>
+        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/assembly-level/src/firmware/interrupts.asm"></textarea>
 
 
     </div>

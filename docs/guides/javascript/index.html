@@ -81,16 +81,32 @@
 
 
 
-        <h1 id="Game-Code-Structure">High-Level Game Code Structure</h1>
+        <h1 id="Game-Code-Structure">JavaScript Code Structure</h1>
         <p>
             To start a new game, create a new UCSB IEEE repository labeled &ldquo;arcade-&lt;game name&gt;&rdquo;, and copy over all the template files from <a href="https://github.com/ucsbieee/arcade/tree/main/arcade-game_template" target="_blank" rel="noopener noreferrer">arcade-game_template/</a>.
         </p>
+        <h2>HTML</h2>
         <p>
-            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/src/game.js" target="_blank" rel="noopener noreferrer">high-level/src/game.js</a> must have the function <code>updatePPU()</code>. This function will be called every frame.
+            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/index.html" target="_blank" rel="noopener noreferrer">high-level/index.html</a> must include the scripts <code>firmware.js</code>, <code>machine.js</code>, <code>game.js</code>, and <code>player.js</code> in that order; and it must include <code>div#Game</code> in <code>body</code>. Example code:
         </p>
+        <textarea class="code" mode="xml" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/arcade-game_template/high-level/index.html"></textarea>
+        <h2>JavaScript</h2>
         <p>
-            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/index.html" target="_blank" rel="noopener noreferrer">high-level/index.html</a> must include the scripts <code>firmware.js</code>, <code>machine.js</code>, <code>game.js</code>, and <code>player.js</code> in that order; and it must include <code>div#Game</code> in <code>body</code>.
+            <a href="https://github.com/ucsbieee/arcade/blob/main/arcade-game_template/high-level/src/game.js" target="_blank" rel="noopener noreferrer">high-level/src/game.js</a> must have the functions <code>reset()</code>, <code>do_logic()</code>, and <code>fill_vram()</code>. Example code:
         </p>
+        <textarea class="code" mode="javascript" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/arcade-game_template/high-level/src/game.js"></textarea>
+        <ul>
+            <li><code>reset()</code>: run once at the beginning of the code</li>
+            <li><code>do_logic()</code>: run 60 times a second. Put as much game logic here as you can. However, do not touch the VRAM</li>
+            <li><code>fill_vram()</code>: run after <code>do_logic()</code>, once in the vertical blanking area. Here, you can touch the VRAM</li>
+        </ul>
+        <p>
+            For more information, watch this:
+        </p>
+        <div class="center-within">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/bQgF7crGjTo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
 
 
 
