@@ -38,7 +38,7 @@ textarea {
     /* To be overwritten by JavaScript */
     opacity: 0;
 }
- 
+
 /* CodeMirror */
 .CodeMirror {
     height: auto !important;
@@ -87,7 +87,8 @@ textarea {
     background-position: center;
     background-repeat: no-repeat;
 }
-p a {
+p a,
+a.blue {
     color: #4c61a8c9;
 }
 
