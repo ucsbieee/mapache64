@@ -1,5 +1,7 @@
 #!bash
 
+pip install py65
+
 DUMP_PATH=dump/
 
 py65mon <<EOF
