@@ -69,6 +69,22 @@ function Q9_6_mul( a, b ) {
 
 /**
  * @param {Q9_6} a
+ * @return {Q9_6} negative_value
+ */
+ function Q9_6_neg( a ) {
+    return new Q9_6( -a.toNumber() );
+}
+
+/**
+ * @param {Q9_6} a
+ * @return {Q9_6} absolute_value
+ */
+ function Q9_6_abs( a ) {
+    return new Q9_6( Math.abs(a.toNumber()) );
+}
+
+/**
+ * @param {Q9_6} a
  * @param {Q9_6} b
  * @return {Q9_6} quotient
  */
@@ -90,6 +106,32 @@ function Q9_6_lt( a, b ) {
     return a.toNumber() < b.toNumber();
 }
 
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {boolean} comparison
+ */
+ function Q9_6_lte( a, b ) {
+    return a.toNumber() <= b.toNumber();
+}
+
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {boolean} comparison
+ */
+ function Q9_6_gt( a, b ) {
+    return a.toNumber() > b.toNumber();
+}
+
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {boolean} comparison
+ */
+ function Q9_6_gte( a, b ) {
+    return a.toNumber() >= b.toNumber();
+}
 
 /**
  * @param {Q9_6} a
@@ -98,4 +140,13 @@ function Q9_6_lt( a, b ) {
  */
 function Q9_6_eq( a, b ) {
     return a.toNumber() == b.toNumber();
+}
+
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {boolean} comparison
+ */
+ function Q9_6_ne( a, b ) {
+    return a.toNumber() != b.toNumber();
 }
