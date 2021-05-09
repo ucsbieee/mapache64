@@ -100,6 +100,24 @@ function Q9_6_div( a, b ) {
 /**
  * @param {Q9_6} a
  * @param {Q9_6} b
+ * @return {Q9_6} min
+ */
+ function Q9_6_min( a, b ) {
+    return new Q9_6(Math.min( a.toNumber(), b.toNumber() ));
+}
+
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
+ * @return {Q9_6} max
+ */
+ function Q9_6_max( a, b ) {
+    return new Q9_6(Math.max( a.toNumber(), b.toNumber() ));
+}
+
+/**
+ * @param {Q9_6} a
+ * @param {Q9_6} b
  * @return {boolean} comparison
  */
 function Q9_6_lt( a, b ) {
