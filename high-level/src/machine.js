@@ -65,9 +65,7 @@ var disableInterrupts = false;
 
 
 
-/* ====== GPU ====== */
-
-var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
+/* ====== VRAM ====== */
 
 // Pattern Memory Foreground
 const NumSprites            = 32;
@@ -77,13 +75,15 @@ var PMF                     = new Uint8Array( NumSprites * BytesPerSprite );
 // Pattern Memory Background
 const NumTiles              = 32;
 const BytesPerTile          = 16;
-var PMB = new Uint8Array( NumTiles * BytesPerTile );
+var PMB                     = new Uint8Array( NumTiles * BytesPerTile );
 
 // Nametable
-const NTBL_Size = 1024;
+const NTBL_Size             = 1024;
 var NTBL                    = new Uint8Array( NTBL_Size );
-var NTBL_Color1 = 0b111;
-var NTBL_Color2 = 0b001;
+var NTBL_Color1             = 0b111;
+var NTBL_Color2             = 0b001;
+
+// Nametable Methods
 const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));
 const NTBL_getColor = (index) => NTBL[index] >>> 7;
 const NTBL_getHFlip = (index) => (NTBL[index] >>> 6) & 0b1;
@@ -95,7 +95,9 @@ function NTBL_setVFlip(index,VFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |=
 function NTBL_setAddr(index,Addr) { NTBL[index] &= ~0b00011111; NTBL[index] |= (Addr & 0x1f); }
 
 // Current Tile Scanline
-var CTS = 0;
+var CTS                     = 0;
+
+// Current Tile Scanline Methods
 const CTS_getColor = () => CTS & 0b111;
 const CTS_getData = () => (CTS >>> 8) & 0xffff;
 function CTS_setColor(Color) { CTS &= ~0x000007; CTS |= (Color & 0b111); }
@@ -105,6 +107,8 @@ function CTS_setData(Data) { CTS &= ~0xffff00; CTS |= (Data & 0xffff) << 8; }
 const NumObjects            = 64;
 const BytesPerObject        = 4;
 var OBM                     = new Uint32Array( NumObjects );
+
+// Object Memory Methods
 const OBM_getX = (index) => (OBM[index] >>> 24);
 const OBM_getY = (index) => (OBM[index] >>> 16) & 0xff;
 const OBM_getHFlip = (index) => (OBM[index] >>> 15) & 0b1;
@@ -127,8 +131,10 @@ function OBM_setColor(index,Color) { OBM[index] &= ~0x00000007; OBM[index] |= (C
 // Object Scanline Memory
 const NumObjectScanlines    = 8;
 const BytesPerObjectScanline= 4;
-var OBSM    = new Uint32Array( NumObjectScanlines );
-var OBSM_Size = 0;
+var OBSM                    = new Uint32Array( NumObjectScanlines );
+var OBSM_Size               = 0;
+
+// Object Scanline Memory Methods
 const OBSM_getX = (index) => (OBSM[index] >>> 24);
 const OBSM_getData = (index) => (OBSM[index] >>> 8) & 0xffff;
 const OBSM_getColor = (index) => (OBSM[index]) & 0b111;
@@ -136,6 +142,7 @@ function OBSM_setX(index,X) { OBSM[index] &= ~0xff000000; OBSM[index] |= (X & 0x
 function OBSM_setData(index,Data) { OBSM[index] &= ~0x00ffff00; OBSM[index] |= (Data & 0xffff) << 8; }
 function OBSM_setColor(index,Color) { OBSM[index] &= ~0x00000007; OBSM[index] |= (Color & 0x7); }
 
+// For Debug Only
 function VRAM_RESET() {
     for ( let i = 0; i < PMF.length; i++ )
         PMF[i] = 0;
@@ -149,9 +156,15 @@ function VRAM_RESET() {
     }
 }
 
-// 24 bits - rgb
-var currentColor = 0;
 
+
+/* ============= GPU ============= */
+
+var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
+
+
+// 24 bits - rgb
+var currentColor            = 0;
 function drawScreen() {
     OBSM_Size = 0;
     for ( let i = 0; i < GameHeight; i++ ) {
