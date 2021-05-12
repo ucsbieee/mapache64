@@ -80,8 +80,8 @@ var PMB                     = new Uint8Array( NumTiles * BytesPerTile );
 // Nametable
 const NTBL_Size             = 1024;
 var NTBL                    = new Uint8Array( NTBL_Size );
-var NTBL_Color1             = 0b111;
-var NTBL_Color2             = 0b001;
+var NTBL_Color0             = 0b111;
+var NTBL_Color1             = 0b001;
 
 // Nametable Methods
 const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));

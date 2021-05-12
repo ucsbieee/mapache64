@@ -196,9 +196,9 @@ function reset() {
 
 function fill_NTBL() {
     // sky-blue
-    NTBL_Color1 = 0b011;
+    NTBL_Color0 = 0b011;
     // green
-    NTBL_Color2 = 0b010;
+    NTBL_Color1 = 0b010;
     // sky is blue, ground is green
     for ( let i = 0; i < NTBL_Size; i++ ) {
         if ( i < 896 ) {
