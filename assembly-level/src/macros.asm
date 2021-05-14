@@ -196,9 +196,10 @@ inc_mem .macro address, length
 
 ; load label16 into dst16
 ldlab16 .macro dst16, label16
-        lda #<\label16
+.label16\@ .set \label16
+        lda #<.label16\@
         sta \dst16
-        lda #>\label16
+        lda #>.label16\@
         sta \dst16+1
         .endm
 
