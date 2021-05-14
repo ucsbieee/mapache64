@@ -1,0 +1,3 @@
+[submodule "assembly-level/tools/py65/py65ucsbieee"]
+	path = assembly-level/tools/py65/py65ucsbieee
+	url = https://github.com/ucsbieee/py65
