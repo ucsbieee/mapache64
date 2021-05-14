@@ -15,7 +15,6 @@
 
         ; VASM settings
         .if __VASM__
-        .org 0          ; make vasm show all of address space
         .endif
 
         ; Kowalski settings
@@ -27,27 +26,26 @@
         .include "macros.asm"
         .include "labels.asm"
 
+; ====== start ====== ;
+        .org 0
+
 ; ====== firmware ====== ;
         .org _FIRMWARE_START
 
-        ; Kowalski entry point
-        .if __KOWALSKI__
-        jmp _handle_reset
-        .endif
+        .include "firmware/header.asm"
 
         .include "firmware/subroutines/add.asm"
         .include "firmware/subroutines/subtract.asm"
         .include "firmware/subroutines/multiply.asm"
         .include "firmware/subroutines/divide.asm"
+        .include "firmware/subroutines/transfer_mem.asm"
 
         .include "firmware/interrupts.asm"
 
 ; ====== IO ====== ;
         .org _IO_START
 
-        .if __KOWALSKI__
-        .include "io.asm"
-        .endif
+        .include "fake_io.asm"
 
 ; ====== ROM ====== ;
         .org _ROM_START

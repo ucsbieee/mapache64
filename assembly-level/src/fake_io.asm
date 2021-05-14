@@ -1,3 +1,4 @@
+
         .org _IN_VBLANK
         .byte 1
 
