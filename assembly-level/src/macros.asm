@@ -80,7 +80,7 @@ swp16   .macro t1, t2
         pla
         .endm
 
-; increment memory with specified size
+; increment memory with length
 inc_mem .macro address, length
         .if length < 1          ; ensure input is valid
         .error "Bad memory size in inc_mem"
@@ -99,6 +99,13 @@ inc_mem .macro address, length
 .end_inc:
         .endm
 
+; load label16 into dst16
+ldlab16 .macro dst16, label16
+        lda #<label16
+        sta dst16
+        lda #>label16
+        sta dst16+1
+        .endm
 
 ; ====================== ;
         .endif
@@ -185,6 +192,14 @@ inc_mem .macro address, length
         inc .address+.i
 
 .endinc\@:
+        .endm
+
+; load label16 into dst16
+ldlab16 .macro dst16, label16
+        lda #<\label16
+        sta \dst16
+        lda #>\label16
+        sta \dst16+1
         .endm
 
 
