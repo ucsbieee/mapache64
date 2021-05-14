@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
-pip install py65
-
+ASSEMBLY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 DUMP_PATH=dump
-PY65=/usr/local/bin/py65mon
+PY65=py65mon
+
+# Ensure py65ucsbieee is installed
+${PY65} -h > /dev/null 2>&1 || {
+    echo "[ERROR]: Could not run \$${PY65}.
+Please install it from ${ASSEMBLY_DIR}/tools/py65/py65ucsbieee.";
+    exit 1
+}
 
 # Dump Vectors
 ${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin <<EOF
