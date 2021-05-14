@@ -106,27 +106,27 @@ function CTS_setData(Data) { CTS &= ~0xffff00; CTS |= (Data & 0xffff) << 8; }
 // Object Memory
 const NumObjects            = 64;
 const BytesPerObject        = 4;
-var OBM                     = new Uint32Array( NumObjects );
+var OBM                     = new Uint8Array( NumObjects * 4 );
 
 // Object Memory Methods
-const OBM_getX = (index) => (OBM[index] >>> 24);
-const OBM_getY = (index) => (OBM[index] >>> 16) & 0xff;
-const OBM_getHFlip = (index) => (OBM[index] >>> 15) & 0b1;
-const OBM_getVFlip = (index) => (OBM[index] >>> 14) & 0b1;
-const OBM_getAddr = (index) => (OBM[index] >>> 8) & 0x1f;
-const OBM_getColor = (index) => (OBM[index]) & 0x7;
+const OBM_getX = (index) => (OBM[4*index]);
+const OBM_getY = (index) => (OBM[4*index+1]);
+const OBM_getHFlip = (index) => (OBM[4*index+2] >>> 7) & 0b1;
+const OBM_getVFlip = (index) => (OBM[4*index+2] >>> 6) & 0b1;
+const OBM_getAddr = (index) => (OBM[4*index+2]) & 0x1f;
+const OBM_getColor = (index) => (OBM[4*index+3]) & 0x7;
 const OBM_getScanline = (index, scanline) => {
     let line_address = OBM_getAddr(index) << 4;
     line_address += 2*( OBM_getVFlip(index) ? (7-scanline) : scanline );
     let out = (PMF[ line_address ] << 8) | (PMF[ line_address + 1 ]);
     return OBM_getHFlip(index) ? flip(out) : out;
 };
-function OBM_setX(index,X) { OBM[index] &= ~0xff000000; OBM[index] |= (X & 0xff) << 24; }
-function OBM_setY(index,Y) { OBM[index] &= ~0x00ff0000; OBM[index] |= (Y & 0xff) << 16; }
-function OBM_setHFlip(index,HFlip) { OBM[index] &= ~0x00008000; OBM[index] |= (HFlip & 0b1) << 15; }
-function OBM_setVFlip(index,VFlip) { OBM[index] &= ~0x00004000; OBM[index] |= (VFlip & 0b1) << 14; }
-function OBM_setAddr(index,Addr) { OBM[index] &= ~0x00001f00; OBM[index] |= (Addr & 0x1f) << 8; }
-function OBM_setColor(index,Color) { OBM[index] &= ~0x00000007; OBM[index] |= (Color & 0x7); }
+function OBM_setX(index,X) { OBM[4*index] = (X & 0xff); }
+function OBM_setY(index,Y) { OBM[4*index+1] = (Y & 0xff); }
+function OBM_setHFlip(index,HFlip) { OBM[4*index+2] &= ~0x80; OBM[4*index+2] |= (HFlip & 0b1) << 7; }
+function OBM_setVFlip(index,VFlip) { OBM[4*index+2] &= ~0x40; OBM[4*index+2] |= (VFlip & 0b1) << 6; }
+function OBM_setAddr(index,Addr) { OBM[4*index+2] &= ~0x1f; OBM[4*index+2] |= (Addr & 0x1f); }
+function OBM_setColor(index,Color) { OBM[4*index+3] &= ~0x07; OBM[4*index+3] |= (Color & 0x7); }
 
 // Object Scanline Memory
 const NumObjectScanlines    = 8;
@@ -218,7 +218,7 @@ function loadToCTS( x, y ) {
     address += 2*( NTBL_getVFlip(index) ? (7-y) : y );
     let data = (PMB[ address ] << 8) | (PMB[ address + 1 ]);
     CTS_setData( NTBL_getHFlip(index) ? flip(data) : data );
-    CTS_setColor( NTBL_getColor(index) ? NTBL_Color2 : NTBL_Color1 );
+    CTS_setColor( NTBL_getColor(index) ? NTBL_Color1 : NTBL_Color0 );
 }
 
 function loadCTSColor( x ) {
