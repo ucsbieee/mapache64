@@ -5,7 +5,7 @@ function reset() {
     setNumControllers(2);
 }
 
-function  do_logic() {
+function do_logic() {
     console.log(frame);
     // console.log(`CONTROLLER1_D: ${CONTROLLER1_D}`);
     // console.log(`CONTROLLER1_Q: ${CONTROLLER1_Q}`);
