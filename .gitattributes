@@ -1,0 +1,4 @@
+
+# All bash scripts use LF line ending
+*.sh        eol=lf
+**/*.sh     eol=lf
