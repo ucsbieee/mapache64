@@ -11,6 +11,9 @@ Please install it from ${ASSEMBLY_DIR}/tools/py65/py65ucsbieee.";
     exit 1
 }
 
+# Make sure that dump folder is ${ASSEMBLY_DIR}/src/dump
+cd `dirname "${BASH_SOURCE[0]}"`
+
 # Dump Vectors
 ${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin <<EOF
 save ${DUMP_PATH}/rom.bin       8000 ffff
