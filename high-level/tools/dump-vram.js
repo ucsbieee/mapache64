@@ -9,6 +9,8 @@ const ExpectedFileSize = PMF.length + PMB.length + NTBL.length + OBM.length;
 const FileInput = document.getElementById("FileInput");
 FileInput.addEventListener( "change", handleImageUpload, false );
 
+// Interrupts
+
 function reset() { }
 function do_logic() { }
 
