@@ -19,11 +19,11 @@ PY65=py65mon
 # Ensure py65ucsbieee is installed
 ${PY65} -h > /dev/null 2>&1 || {
     echo "[ERROR]: Could not run \$${PY65}.
-Please install it from ${ASSEMBLY_DIR}/tools/py65/py65ucsbieee.";
+Please install it from ${ASSEMBLY_SRC_DIR}/tools/py65/py65ucsbieee.";
     exit 1
 }
 
-# Make sure that dump folder is ${ASSEMBLY_DIR}/src/dump
+# Make sure that dump folder is ${ASSEMBLY_SRC_DIR}/dump
 cd `dirname "${BASH_SOURCE[0]}"`
 
 # Dump Vectors
