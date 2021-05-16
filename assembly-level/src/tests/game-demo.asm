@@ -1,43 +1,69 @@
-start_pedge = $80
-start_value = $81
-A_pedge = $82
-A_value = $83
-left_value = $84
-right_value = $85
 
+
+; ====================== ;
+; ======= Labels ======= ;
+; ====================== ;
+
+; === Input === ;
+
+start_pedge     = $80
+start_value     = $81
+A_pedge         = $82
+A_value         = $83
+left_value      = $84
+right_value     = $85
+
+
+; ====================== ;
+; ===== Interrupts ===== ;
+; ====================== ;
+
+reset:
+        stz start_pedge
+        stz start_value
+        stz A_pedge
+        stz A_value
+        stz left_value
+        stz right_value
+        rts
+
+do_logic:
+        jsr getInput
+        stp
+        rts
 
 fill_vram:
         rts
-do_logic:
-        jsr getInput
-        rts
-reset:
-        rts
+
+; ====================== ;
+; ======== Logic ======= ;
+; ====================== ;
+
 getInput:
         lda start_value
-        eor #1            ; !start_value
-        sta INT8_G1
-        c1start
-        and INT8_G1  ; start_pedge
+        eor #1
+        sta INT8_G1     ; !start_value
+        c1START
+        and INT8_G1
         sta start_pedge
 
-        c1start
-        sta start_value ;start_value
+        c1START
+        sta start_value
 
         lda A_value
         eor #1
         sta INT8_G1
-        c1a
+        c1A
         and INT8_G1
         sta A_pedge
 
-        c1a
+        c1A
         sta A_value
 
-        c1left
+        c1LEFT
         sta left_value
 
-        c1right
+        c1RIGHT
         sta right_value
 
         rts

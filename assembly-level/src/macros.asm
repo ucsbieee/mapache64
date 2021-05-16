@@ -1,8 +1,83 @@
 
-; All macros must be added both for VASM and Kowalski's.
+; Any macros with parameters must be added both for VASM and Kowalski's.
 ; Note, they have slightly different syntax.
 
 ; NP means registers are Not Preserved
+
+
+; ====================== ;
+; ===== Universal ====== ;
+; ====================== ;
+
+
+; Controller 1
+c1A     .macro
+        get_bit CONTROLLER_1, 0
+        sne
+        .endm
+c1B     .macro
+        get_bit CONTROLLER_1, 1
+        sne
+        .endm
+c1UP    .macro
+        get_bit CONTROLLER_1, 2
+        sne
+        .endm
+c1DOWN  .macro
+        get_bit CONTROLLER_1, 3
+        sne
+        .endm
+c1LEFT  .macro
+        get_bit CONTROLLER_1, 4
+        sne
+        .endm
+c1RIGHT .macro
+        get_bit CONTROLLER_1, 5
+        sne
+        .endm
+c1START .macro
+        get_bit CONTROLLER_1, 6
+        sne
+        .endm
+c1SEL   .macro
+        get_bit CONTROLLER_1, 7
+        sne
+        .endm
+
+; Controller 2
+c2A     .macro
+        get_bit CONTROLLER_2, 0
+        sne
+        .endm
+c2B     .macro
+        get_bit CONTROLLER_2, 1
+        sne
+        .endm
+c2UP    .macro
+        get_bit CONTROLLER_2, 2
+        sne
+        .endm
+c2DOWN  .macro
+        get_bit CONTROLLER_2, 3
+        sne
+        .endm
+c2LEFT  .macro
+        get_bit CONTROLLER_2, 4
+        sne
+        .endm
+c2RIGHT .macro
+        get_bit CONTROLLER_2, 5
+        sne
+        .endm
+c2START .macro
+        get_bit CONTROLLER_2, 6
+        sne
+        .endm
+c2SEL   .macro
+        get_bit CONTROLLER_2, 7
+        sne
+        .endm
+
 
 ; ====================== ;
 ; ===== Kowalski's ===== ;
@@ -106,25 +181,28 @@ ldlab16 .macro dst16, label16
         lda #>label16
         sta dst16+1
         .endm
-c1start .marcro
-       ; if 6th bit of controller 1 is set, set a reg to 1;
-        lda CONTROLLER_1 ; load entire 8 bits
-        lsr #6
-        and #1
-        .endm
-c1a     .macro
-        lda CONTROLLER_1
-        and #1
+
+; isolate "bit_i"th bit of "input"
+get_bit .macro input, bit_i
+.mask .set 1 << bit_i
+        lda #.mask
+        and input
         .endm
 
-c1left  .macro
-        lsr #4
-        and #1
+; Set A to A != 0
+sne     .macro
+        beq .exit       ; if 0, exit
+        lda #1
+.exit
         .endm
-c1right .macro
-        lsr #5
-        and #1
+
+; Set A to A == 0
+seq     .macro
+        sne
+        eor #1
         .endm
+
+
 
 ; ====================== ;
         .endif
@@ -220,6 +298,26 @@ ldlab16 .macro dst16, label16
         sta \dst16
         lda #>.label16\@
         sta \dst16+1
+        .endm
+
+; isolate "bit_i"th bit of "input"
+get_bit .macro input, bit_i
+.mask\@ .set 1 << \bit_i
+        lda #.mask\@
+        and \input
+        .endm
+
+; Set A to 1 iff A != 0
+sne     .macro
+        beq .exit\@     ; if 0, exit
+        lda #1
+.exit\@
+        .endm
+
+; Set A to 1 iff A == 0
+seq     .macro
+        sne
+        eor #1
         .endm
 
 
