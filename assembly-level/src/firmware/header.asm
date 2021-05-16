@@ -1,2 +1,2 @@
 
-        .string "version: 0.0.1"
+        .byte "version: 0.0.1", 0
