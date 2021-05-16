@@ -176,10 +176,12 @@ inc_mem .macro address, length
 
 ; load label16 into dst16
 ldlab16 .macro dst16, label16
+        pha
         lda #<label16
         sta dst16
         lda #>label16
         sta dst16+1
+        pla
         .endm
 
 ; isolate "bit_i"th bit of "input"
@@ -294,10 +296,12 @@ inc_mem .macro address, length
 ; load label16 into dst16
 ldlab16 .macro dst16, label16
 .label16\@ .set \label16
+        pha
         lda #<.label16\@
         sta \dst16
         lda #>.label16\@
         sta \dst16+1
+        pla
         .endm
 
 ; isolate "bit_i"th bit of "input"
