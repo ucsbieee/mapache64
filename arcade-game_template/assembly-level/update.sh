@@ -2,12 +2,14 @@
 
 # Files to download
 Dependencies="
+firmware/header.asm
 firmware/interrupts.asm
 firmware/subroutines/add.asm
 firmware/subroutines/divide.asm
 firmware/subroutines/multiply.asm
 firmware/subroutines/subtract.asm
-io.asm
+firmware/subroutines/transfer_mem.asm
+fake_io.asm
 labels.asm
 macros.asm
 options.asm
@@ -15,10 +17,10 @@ rom.asm
 arcade.asm
 "
 
-ASSEMBLY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-echo "Assembly directory: $ASSEMBLY_DIR"
+ASSEMBLY_SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "Assembly src directory: $ASSEMBLY_SRC_DIR"
 
-DEPENDENCY_DIR=$ASSEMBLY_DIR"/dependencies"
+DEPENDENCY_DIR=$ASSEMBLY_SRC_DIR"/dependencies"
 echo "Dependency directory: $DEPENDENCY_DIR"
 
 # Download all files from ucsbieee/arcade/main/assembly-level/src
