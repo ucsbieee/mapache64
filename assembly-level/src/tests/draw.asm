@@ -1,11 +1,11 @@
 
 ; ===== labels ===== ;
 
-zero_initialized = $70
-vram_initialized = $71
+zero_initialized        = $70
+vram_initialized        = $71
 
-person_xp       = $72
-person_yp       = $73
+person_xp               = $72
+person_yp               = $73
 
 
 ; ===== interrupts ===== ;
