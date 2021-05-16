@@ -59,3 +59,6 @@ FRAME           = $30   ; 3 bytes
 _IO_START       = $7000
 _IN_VBLANK      = $7000 ; 1 byte
 _CLR_VBLANK_IRQ = $7001 ; 1 byte
+
+CONTROLLER_1    = $7002 ; 1 byte
+CONTROLLER_2    = $7003 ; 1 byte
