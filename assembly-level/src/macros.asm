@@ -106,6 +106,25 @@ ldlab16 .macro dst16, label16
         lda #>label16
         sta dst16+1
         .endm
+c1start .marcro
+       ; if 6th bit of controller 1 is set, set a reg to 1;
+        lda CONTROLLER_1 ; load entire 8 bits
+        lsr #6
+        and #1
+        .endm
+c1a     .macro
+        lda CONTROLLER_1
+        and #1
+        .endm
+
+c1left  .macro
+        lsr #4
+        and #1
+        .endm
+c1right .macro
+        lsr #5
+        and #1
+        .endm
 
 ; ====================== ;
         .endif
