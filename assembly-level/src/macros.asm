@@ -2,8 +2,6 @@
 ; Any macros with parameters must be added both for VASM and Kowalski's.
 ; Note, they have slightly different syntax.
 
-; NP means registers are Not Preserved
-
 
 ; ====================== ;
 ; ===== Universal ====== ;
@@ -100,33 +98,19 @@ wai     .macro
 ; ===== General ===== ;
 
 ; copy byte at src to dst
-cp8NP   .macro src, dst
+cp8     .macro src, dst
         lda src
         sta dst
         .endm
 
-; copy byte at src to dst
-cp8     .macro src, dst
-        pha
-        cp8NP src, dst
-        pla
-        .endm
-
-; copy word at src to dst
-cp16NP  .macro src, dst
-        cp8NP src+1, dst+1 ; copy LSB
-        cp8NP src, dst     ; COPY MSB
-        .endm
-
 ; copy word at src to dst
 cp16    .macro src, dst
-        pha
-        cp16NP src, dst
-        pla
+        cp8 src+1, dst+1 ; copy LSB
+        cp8 src, dst     ; COPY MSB
         .endm
 
 ; swap bytes at t1 and t2
-swp8NP  .macro t1, t2
+swp8    .macro t1, t2
         lda t1
         pha             ; stack.push( t1 )
         lda t2
@@ -135,24 +119,10 @@ swp8NP  .macro t1, t2
         sta t2          ; t2 <= stack.pull()
         .endm
 
-; swap bytes at t1 and t2
-swp8    .macro t1, t2
-        pha
-        swp8NP t1, t2
-        pla
-        .endm
-
-; swap words at t1 and t2
-swp16NP .macro t1, t2
-        swp8NP t1+1, t2+1
-        swp8NP t1, t2
-        .endm
-
 ; swap words at t1 and t2
 swp16   .macro t1, t2
-        pha
-        swp16NP t1, t2
-        pla
+        swp8P t1+1, t2+1
+        swp8P t1, t2
         .endm
 
 ; increment memory with length
@@ -175,13 +145,11 @@ inc_mem .macro address, length
         .endm
 
 ; load label16 into dst16
-ldlab16 .macro dst16, label16
-        pha
+ldlab16 .macro label16, dst16
         lda #<label16
         sta dst16
         lda #>label16
         sta dst16+1
-        pla
         .endm
 
 ; isolate "bit_i"th bit of "input"
@@ -217,33 +185,19 @@ seq     .macro
 ; ===== General ===== ;
 
 ; copy byte at src to dst
-cp8NP   .macro src, dst
+cp8     .macro src, dst
         lda \src
         sta \dst
         .endm
 
-; copy byte at src to dst
-cp8     .macro src, dst
-        pha
-        cp8NP \src, \dst
-        pla
-        .endm
-
-; copy word at src to dst
-cp16NP  .macro src, dst
-        cp8NP \src+1, \dst+1    ; copy LSB
-        cp8NP \src, \dst        ; COPY MSB
-        .endm
-
 ; copy word at src to dst
 cp16    .macro src, dst
-        pha
-        cp16NP \src, \dst
-        pla
+        cp8 \src+1, \dst+1    ; copy LSB
+        cp8 \src, \dst        ; COPY MSB
         .endm
 
 ; swap bytes at t1 and t2
-swp8NP  .macro t1, t2
+swp8    .macro t1, t2
         lda \t1
         pha             ; stack.push( t1 )
         lda \t2
@@ -252,24 +206,10 @@ swp8NP  .macro t1, t2
         sta \t2         ; t2 <= stack.pull()
         .endm
 
-; swap bytes at t1 and t2
-swp8    .macro t1, t2
-        pha
-        swp8NP \t1, \t2
-        pla
-        .endm
-
-; swap words at t1 and t2
-swp16NP .macro t1, t2
-        swp8NP \t1+1, \t2+1
-        swp8NP \t1, \t2
-        .endm
-
 ; swap words at t1 and t2
 swp16   .macro t1, t2
-        pha
-        swp16NP \t1, \t2
-        pla
+        swp8 \t1+1, \t2+1
+        swp8 \t1, \t2
         .endm
 
 ; increment memory with specified size
@@ -294,14 +234,12 @@ inc_mem .macro address, length
         .endm
 
 ; load label16 into dst16
-ldlab16 .macro dst16, label16
+ldlab16 .macro label16, dst16
 .label16\@ .set \label16
-        pha
         lda #<.label16\@
         sta \dst16
         lda #>.label16\@
         sta \dst16+1
-        pla
         .endm
 
 ; isolate "bit_i"th bit of "input"
