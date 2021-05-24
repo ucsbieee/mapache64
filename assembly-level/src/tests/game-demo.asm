@@ -114,7 +114,6 @@ fill_vram:
         jsr vram_initialize
 .after_vram_initialized:
 
-        bne .exit
         jsr person_draw
 .exit:
         stp
@@ -249,13 +248,13 @@ clear_OBM:
 person_draw:
         ; load person_xp
         cp16 person_xp, Q9_6_I1
-        jsr Q9_6_to_int16
-        cp8 INT16_O, PERSON_O
+        jsr Q9_6_to_SINT8
+        cp8 INT8_O, PERSON_O
 
         ; load person_yp
         cp16 person_yp, Q9_6_I1
-        jsr Q9_6_to_int16
-        cp8 INT16_O, PERSON_O
+        jsr Q9_6_to_SINT8
+        cp8 INT8_O, PERSON_O+1
 
         rts
 
