@@ -4,13 +4,21 @@
 Q9_6_to_SINT8:
         pha
 
-        cp8 Q9_6_I1, INT8_G1
+        ; push lsb of Q9_6_I1
+        lda Q9_6_I1
+        pha
+
+        ; copy msb of Q9_6_I1 to out
         cp8 Q9_6_I1+1, INT8_O
 
-        rol INT8_G1
+        rol Q9_6_I1
         rol INT8_O
-        rol INT8_G1
+        rol Q9_6_I1
         rol INT8_O
+
+        ; pull msb of Q9_6_I1
+        pla
+        sta Q9_6_I1
 
         pla
         rts
@@ -43,14 +51,21 @@ Q9_6_to_SINT16:
 .last_bit_handled:
 
         ; LSB
-        cp8 Q9_6_I1, INT8_G1
+
+        ; push lsb of Q9_6_I1
+        lda Q9_6_I1
+        pha
+
         cp8 Q9_6_I1+1, INT16_O
 
-        rol INT8_G1
+        rol Q9_6_I1
         rol INT16_O
-        rol INT8_G1
+        rol Q9_6_I1
         rol INT16_O
 
+        ; pull msb of Q9_6_I1
+        pla
+        sta Q9_6_I1
 
         pla
         rts
