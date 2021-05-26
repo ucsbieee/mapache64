@@ -1,5 +1,5 @@
 
-`include "modules/gpu-top.v"
+`include "modules/gpu.v"
 
 `include "parameters.v"
 
@@ -15,7 +15,7 @@ reg [7:0] data;
 reg [`VRAM_ADDR_WIDTH-1:0] address;
 reg cs;
 
-gpu_top_m gpu_top (
+gpu_m gpu (
     clk_12_5875, rst,
     r,g,b, hsync, vsync,
     data, address, cs
@@ -24,10 +24,15 @@ gpu_top_m gpu_top (
 /* Test */
 initial begin
 $dumpfile( "dump.vcd" );
-$dumpvars( );
+$dumpvars();
+$timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
-#( 0.020 )
+rst = 1;
+#( `GPU_CLK_PERIOD / 2 )
+rst = 0;
+
+#( 0.02 )
 
 //\\ =========================== \\//
 $finish ;
