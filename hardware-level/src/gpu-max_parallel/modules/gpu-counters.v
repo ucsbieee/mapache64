@@ -6,14 +6,22 @@ module gpu_counters_m (
     input               clk, // 12.5875 MHz
     input               rst,
 
-    output reg    [9:0] hcounter,
+    output        [7:0] xp,
     output reg          hvisible,
     output reg          hsync,
 
-    output reg    [9:0] vcounter,
+    output        [7:0] yp,
     output reg          vvisible,
     output reg          vsync
 );
+
+    reg [9:0] hcounter;
+    reg [9:0] vcounter;
+
+    assign visible = hvisible && vvisible;
+
+    assign xp = visible ? hcounter[7:0] : {8{1'bx}};
+    assign yp = visible ? vcounter[7:0] : {8{1'bx}};
 
     always @ * begin
         if ( rst ) begin
