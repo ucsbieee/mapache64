@@ -20,12 +20,12 @@
 
 `define PMB_LINE(PMBA,PATTERN_Y)            {PMB[ 16*PMBA + 2*PATTERN_Y + 0 ],PMB[ 16*PMBA + 2*PATTERN_Y + 1 ]}
 
-`define OBM_OBJECT_XP(OBMA)                 OBM[ 4*OBMA + 3 ]
-`define OBM_OBJECT_YP(OBMA)                 OBM[ 4*OBMA + 2 ]
-`define OBM_OBJECT_HFLIP(OBMA)              OBM[ 4*OBMA + 1 ][6]
-`define OBM_OBJECT_VFLIP(OBMA)              OBM[ 4*OBMA + 1 ][5]
-`define OBM_OBJECT_PMFA(OBMA)               OBM[ 4*OBMA + 1 ][4:0]
-`define OBM_OBJECT_COLOR(OBMA)              OBM[ 4*OBMA + 0 ][2:0]
+`define OBM_OBJECT_XP(OBMA)                 OBM[ 4*OBMA + 0 ]
+`define OBM_OBJECT_YP(OBMA)                 OBM[ 4*OBMA + 1 ]
+`define OBM_OBJECT_HFLIP(OBMA)              OBM[ 4*OBMA + 2 ][6]
+`define OBM_OBJECT_VFLIP(OBMA)              OBM[ 4*OBMA + 2 ][5]
+`define OBM_OBJECT_PMFA(OBMA)               OBM[ 4*OBMA + 2 ][4:0]
+`define OBM_OBJECT_COLOR(OBMA)              OBM[ 4*OBMA + 3 ][2:0]
 
 module gpu_m (
     input                           clk, // 12.5875 MHz
