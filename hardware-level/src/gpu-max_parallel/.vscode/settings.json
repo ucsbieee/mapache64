@@ -1,0 +1,5 @@
+{
+    "verilog.linting.iverilog.runAtFileLocation": true,
+    "verilog.linting.linter": "iverilog",
+    "verilog.linting.iverilog.arguments": "-Wall -g2012"
+}

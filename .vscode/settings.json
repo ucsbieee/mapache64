@@ -7,6 +7,11 @@
         "*.asm": "asm-collection"
     },
 
+    // verilog
+    "verilog.linting.iverilog.runAtFileLocation": true,
+    "verilog.linting.iverilog.arguments": "-Wall -g2012",
+    "verilog.linting.linter": "iverilog",
+
     // Auto Formatting
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
