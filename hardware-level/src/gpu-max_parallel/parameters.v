@@ -5,7 +5,7 @@
 `define GPU_CLK_FREQ    12587500
 `define GPU_CLK_PERIOD  ( 1.0 / `GPU_CLK_FREQ )
 
-`timescale 1s/1fs
+`define TIMESCALE 1s/1fs
 
 `define TESTING     1
 

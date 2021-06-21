@@ -3,6 +3,8 @@
 
 `include "parameters.v"
 
+`timescale `TIMESCALE
+
 module top ();
 
 reg clk_12_5875 = 1;
