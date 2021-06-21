@@ -9,6 +9,7 @@
 
 `include "../parameters.v"
 
+`timescale `TIMESCALE
 
 module gpu_m (
     input                           clk, // 12.5875 MHz
@@ -16,6 +17,7 @@ module gpu_m (
 
     // DVI output
     output wire               [1:0] r, g, b,
+    output wire                     hsync, vsync,
 
     // VRAM interface
     input                     [7:0] data,
@@ -25,12 +27,13 @@ module gpu_m (
 
 
     wire [7:0] xp, yp;
-    wire hvisible, vvisible;
+    wire hvisible, vvisible, visible;
 
     gpu_counters_m gpu_counters (
         clk, rst,
         xp, hvisible, hsync,
-        yp, vvisible, vsync
+        yp, vvisible, vsync,
+        visible
     );
 
     wire [4:0] ntbl_r = yp[7:3];
@@ -80,7 +83,6 @@ module gpu_m (
     wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
     wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
 
-    // Send Nametable+PMB to BSM
     genvar i;
     generate
         // for all columns
@@ -102,12 +104,12 @@ module gpu_m (
             wire [2:0] vflipped_tile_y = vflip ? (7-tile_y) : tile_y;
 
             // get flipped line
+            wire [15:0] line;
             pattern_hflipper_m hflipper (
                 `PMB_LINE( pmba, vflipped_tile_y ),
                 hflip,
                 line
             );
-            wire [15:0] line;
             assign BSM[i][15:0] = line;
 
         end
