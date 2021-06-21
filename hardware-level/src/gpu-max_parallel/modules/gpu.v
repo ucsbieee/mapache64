@@ -2,11 +2,10 @@
 /* gpu.v */
 
 
-`include "modules/gpu-counters.v"
-`include "modules/pattern-hflipper.v"
 `default_nettype none
 
-`include "parameters.v"
+`include "gpu-counters.v"
+`include "pattern-hflipper.v"
 
 `define NTBL_COLORS                         NTBL[960]
 `define NTBL_COLOR_0                        `NTBL_COLORS[2:0]
@@ -16,6 +15,7 @@
 `define NTBL_TILE_HFLIP(R,C)                `NTBL_TILE(R,C)[6]
 `define NTBL_TILE_VFLIP(R,C)                `NTBL_TILE(R,C)[5]
 `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
+`include "../parameters.v"
 
 `define PMF_LINE(PMFA,PATTERN_Y)            {PMF[ 16*PMFA + 2*PATTERN_Y + 0 ],PMF[ 16*PMFA + 2*PATTERN_Y + 1 ]}
 
