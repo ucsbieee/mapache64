@@ -21,7 +21,7 @@ PYTHON		= python
 VCD_TO_PNG	= ../../tools/vcd_to_png/vcd_to_png.py
 
 # TOOL OPTIONS
-COFLAGS	=
+COFLAGS	= -g2012 -I modules/
 SFLAGS	=
 
 

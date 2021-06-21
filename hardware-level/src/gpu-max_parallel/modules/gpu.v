@@ -7,26 +7,8 @@
 `include "gpu-counters.v"
 `include "pattern-hflipper.v"
 
-`define NTBL_COLORS                         NTBL[960]
-`define NTBL_COLOR_0                        `NTBL_COLORS[2:0]
-`define NTBL_COLOR_1                        `NTBL_COLORS[5:3]
-`define NTBL_TILE(R,C)                      NTBL[ R*32 + C ]
-`define NTBL_TILE_COLORSELECT(R,C)          `NTBL_TILE(R,C)[7]
-`define NTBL_TILE_HFLIP(R,C)                `NTBL_TILE(R,C)[6]
-`define NTBL_TILE_VFLIP(R,C)                `NTBL_TILE(R,C)[5]
-`define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
 `include "../parameters.v"
 
-`define PMF_LINE(PMFA,PATTERN_Y)            {PMF[ 16*PMFA + 2*PATTERN_Y + 0 ],PMF[ 16*PMFA + 2*PATTERN_Y + 1 ]}
-
-`define PMB_LINE(PMBA,PATTERN_Y)            {PMB[ 16*PMBA + 2*PATTERN_Y + 0 ],PMB[ 16*PMBA + 2*PATTERN_Y + 1 ]}
-
-`define OBM_OBJECT_XP(OBMA)                 OBM[ 4*OBMA + 0 ]
-`define OBM_OBJECT_YP(OBMA)                 OBM[ 4*OBMA + 1 ]
-`define OBM_OBJECT_HFLIP(OBMA)              OBM[ 4*OBMA + 2 ][6]
-`define OBM_OBJECT_VFLIP(OBMA)              OBM[ 4*OBMA + 2 ][5]
-`define OBM_OBJECT_PMFA(OBMA)               OBM[ 4*OBMA + 2 ][4:0]
-`define OBM_OBJECT_COLOR(OBMA)              OBM[ 4*OBMA + 3 ][2:0]
 
 module gpu_m (
     input                           clk, // 12.5875 MHz
@@ -54,13 +36,47 @@ module gpu_m (
     wire [4:0] ntbl_r = yp[7:3];
     wire [2:0] tile_y = yp[2:0];
 
+    // Pattern Memory Foreground    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
     reg [7:0]   PMF     [ 511:0];
+
+    `define PMF_LINE(PMFA,PATTERN_Y)            { PMF[ {5'(PMFA), 3'(PATTERN_Y), 1'b0} ], PMF[ {5'(PMFA), 3'(PATTERN_Y), 1'b1} ] }
+    // -------------------------
+
+    // Pattern Memory Background    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
     reg [7:0]   PMB     [ 511:0];
+
+    `define PMB_LINE(PMBA,PATTERN_Y)            { PMB[ {5'(PMBA), 3'(PATTERN_Y), 1'b0} ], PMB[ {5'(PMBA), 3'(PATTERN_Y), 1'b1} ] }
+    // -------------------------
+
+    // Nametable                    https://arcade.ucsbieee.org/guides/gpu/#Nametable
     reg [7:0]   NTBL    [1023:0];
+
+    `define NTBL_COLORS                         NTBL[960]
+    `define NTBL_COLOR_0                        `NTBL_COLORS[2:0]
+    `define NTBL_COLOR_1                        `NTBL_COLORS[5:3]
+    `define NTBL_TILE(R,C)                      NTBL[ {5'(R), 5'(C)} ]
+    `define NTBL_TILE_COLORSELECT(R,C)          `NTBL_TILE(R,C)[7]
+    `define NTBL_TILE_HFLIP(R,C)                `NTBL_TILE(R,C)[6]
+    `define NTBL_TILE_VFLIP(R,C)                `NTBL_TILE(R,C)[5]
+    `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
+    // -------------------------
+
+    // Object Memory                https://arcade.ucsbieee.org/guides/gpu/#Object-Memory
     reg [7:0]   OBM     [ 255:0];
 
-    wire [18:0] BSM [31:0];
+    `define OBM_OBJECT_XP(OBMA)                 OBM[ {6'(OBMA), 2'd0} ]
+    `define OBM_OBJECT_YP(OBMA)                 OBM[ {6'(OBMA), 2'd1} ]
+    `define OBM_OBJECT_HFLIP(OBMA)              OBM[ {6'(OBMA), 2'd2} ][6]
+    `define OBM_OBJECT_VFLIP(OBMA)              OBM[ {6'(OBMA), 2'd2} ][5]
+    `define OBM_OBJECT_PMFA(OBMA)               OBM[ {6'(OBMA), 2'd2} ][4:0]
+    `define OBM_OBJECT_COLOR(OBMA)              OBM[ {6'(OBMA), 2'd3} ][2:0]
+    // -------------------------
 
+    // Background Scanline Memory
+    wire [18:0] BSM [31:0];
+    // -------------------------
+
+    // Send Nametable+PMB to BSM
     wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
     wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
 
