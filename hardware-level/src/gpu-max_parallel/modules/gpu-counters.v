@@ -2,17 +2,21 @@
 /* gpu-counters.v */
 
 
+`default_nettype none
+
 module gpu_counters_m (
     input               clk, // 12.5875 MHz
     input               rst,
 
-    output        [7:0] xp,
+    output wire   [7:0] xp,
     output reg          hvisible,
     output reg          hsync,
 
-    output        [7:0] yp,
+    output wire   [7:0] yp,
     output reg          vvisible,
-    output reg          vsync
+    output reg          vsync,
+
+    output wire         visible
 );
 
     reg [9:0] hcounter;

@@ -4,6 +4,7 @@
 
 `include "modules/gpu-counters.v"
 `include "modules/pattern-hflipper.v"
+`default_nettype none
 
 `include "parameters.v"
 
@@ -32,8 +33,7 @@ module gpu_m (
     input                           rst,
 
     // DVI output
-    output                    [1:0] r, g, b,
-    output                          hsync, vsync,
+    output wire               [1:0] r, g, b,
 
     // VRAM interface
     input                     [7:0] data,

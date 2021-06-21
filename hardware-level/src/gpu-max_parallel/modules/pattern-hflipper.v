@@ -2,10 +2,12 @@
 /* pattern-hflipper.v */
 
 
+`default_nettype none
+
 module pattern_hflipper_m (
-    input    [15:0] in,
-    input           hflip,
-    output   [15:0] out
+    input        [15:0] in,
+    input               hflip,
+    output wire  [15:0] out
 );
 
     assign out = ( hflip ) ? {
