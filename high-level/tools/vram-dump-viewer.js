@@ -1,5 +1,5 @@
 
-/* gpu-showcase.js */
+/* vram-dump-viewer.js */
 
 
 var drawn_file = true;
