@@ -9,6 +9,10 @@
 
 vram_initialized        = $80
 
+ground                  = %0011100000000000     ; 224
+gravity                 = %0000000000010100     ; 0.3125
+weakgravity             = %0000000000000100     ; 0.0625
+
 
 ; === Input === ;
 
@@ -28,9 +32,15 @@ person_yp               = $8b
 person_yv               = $8d
 
 ; constants
-horizonal_speed         = %0000000001110000     ; 1.7
 person_xp_initial       = %0010000000000000     ; 128
 person_yp_initial       = %0010000000000000     ; 128
+
+jump_strength           = %0000000101000000     ; 5
+walljump_strength       = %0000001010000000     ; 10
+
+horizonal_speed         = %0000000001110000     ; 1.75
+gnd_horizonal_deccel    = %0000000001100000     ; 1.5
+air_horizonal_deccel    = %0000000000001001     ; 1.4065
 
 
 ; === VRAM Labels === ;
@@ -197,7 +207,11 @@ person_initialize:
 
 
 person_jump:
+        cp16 person_yp Q9_6_I1
+        cp16 ground Q9_6_I2
+        jsr subQ9_6
         ; TO DO
+
         rts
 
 
