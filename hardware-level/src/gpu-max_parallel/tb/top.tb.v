@@ -1,11 +1,17 @@
 
-`include "modules/gpu.v"
 
-`include "parameters.v"
+`ifdef LINTER
+    `include "../rtl/gpu.v"
+    `include "../headers/parameters.vh"
+`endif
+
+`ifdef SIM
+    `include "../headers/sim.vh"
+`endif
 
 `timescale `TIMESCALE
 
-module top ();
+module top_tb_m ();
 
 reg clk_12_5875 = 1;
 always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;

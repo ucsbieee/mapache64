@@ -1,0 +1,48 @@
+CAPI=2:
+name: ucsbieee:arcade:gpu_max_parallel:1.0.0
+description: GPU draft, unoptimized
+
+filesets:
+  # default
+  rtl:
+    files:
+      - headers/parameters.vh
+      - rtl/gpu.v
+      - rtl/gpu-counters.v
+      - rtl/pattern-hflipper.v
+    file_type: verilogSource
+
+  # simulation
+  tb:
+    files:
+      - headers/sim.vh
+      - tb/top.tb.v
+      - headers/vram_test.vh:       {is_include_file: true}
+    file_type: verilogSource
+  vram:
+    files:
+      - vram-tests/random/ntbl.dat: {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
+      - vram-tests/random/obm.dat:  {is_include_file: true, copyto: vram-tests/random/obm.dat}
+      - vram-tests/random/pmb.dat:  {is_include_file: true, copyto: vram-tests/random/pmb.dat}
+      - vram-tests/random/pmf.dat:  {is_include_file: true, copyto: vram-tests/random/pmf.dat}
+    file_type: user
+
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+
+  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
+    <<: *default
+    description: Simulate the design
+    default_tool: icarus
+    filesets_append:
+      - tb
+      - vram
+    toplevel: top_tb_m
+    tools:
+      icarus:
+        iverilog_options:
+          - -g2012 # Use SystemVerilog-2012
+          - -DSIM=1
