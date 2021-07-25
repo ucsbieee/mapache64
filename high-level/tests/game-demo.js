@@ -38,7 +38,11 @@ class Person {
     }
     jump() {
         // if on ground or against a wall
-        if ( ( Math.floor(ground-this.yp.toNumber()) < 5 ) || this.xp.toNumber() == 0 || this.xp.toNumber() == GameWidth-p.width ) {
+        if (
+            ( Math.floor(ground-this.yp.toNumber()) < 5 )
+            || this.xp.toNumber() == 0
+            || this.xp.toNumber() == GameWidth-p.width
+            ) {
 
             this.yv.update(jump_strength);
 
