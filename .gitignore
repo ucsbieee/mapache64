@@ -15,3 +15,12 @@ assembly-level/**/*.bin
 
 # py65 output
 assembly-level/dump/
+
+# python
+__pycache__/
+
+# vcd_to_png output
+hardware-level/src/**/screen.png
+
+# icarus verilog output
+hardware-level/src/**/dump.vcd
