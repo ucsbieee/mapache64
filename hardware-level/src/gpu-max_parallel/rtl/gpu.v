@@ -4,18 +4,22 @@
 
 `default_nettype none
 
-`include "gpu-counters.v"
-`include "pattern-hflipper.v"
+`ifdef LINTER
+    `include "gpu-counters.v"
+    `include "pattern-hflipper.v"
+    `include "../headers/parameters.vh"
+`endif
 
-`include "../parameters.v"
+`ifdef SIM
+    `include "../headers/vram_test.vh"
+`endif
 
-`timescale `TIMESCALE
 
 module gpu_m (
     input                           clk, // 12.5875 MHz
     input                           rst,
 
-    // DVI output
+    // video output
     output wire               [1:0] r, g, b,
     output wire                     hsync, vsync,
 
@@ -115,13 +119,15 @@ module gpu_m (
         end
     endgenerate
 
-
+`ifdef SIM
     // load test VRAM
     initial begin
+        $display("About to load vram.");
         $readmemb( `TEST_PMF, PMF, 0, 511 );
         $readmemb( `TEST_PMB, PMB, 0, 511 );
         $readmemh( `TEST_NTBL, NTBL, 0, 1023 );
         $readmemh( `TEST_OBM, OBM, 0, 255 );
     end
+`endif
 
 endmodule
