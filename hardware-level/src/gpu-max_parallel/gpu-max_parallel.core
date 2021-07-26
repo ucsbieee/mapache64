@@ -7,9 +7,11 @@ filesets:
   rtl:
     files:
       - headers/parameters.vh
-      - rtl/gpu.v
-      - rtl/gpu-counters.v
       - rtl/pattern-hflipper.v
+      - rtl/video-timing.v
+      - rtl/foreground.v
+      - rtl/background.v
+      - rtl/gpu.v
     file_type: verilogSource
 
   # simulation
