@@ -21,12 +21,11 @@ wire [1:0] r, g, b;
 wire hsync, vsync;
 reg [7:0] data;
 reg [`VRAM_ADDR_WIDTH-1:0] address;
-reg cs;
 
 gpu_m gpu (
     clk_12_5875, rst,
     r,g,b, hsync, vsync,
-    data, address, cs
+    data, address
 );
 
 /* Test */

@@ -4,25 +4,22 @@
 
 `default_nettype none
 
-module gpu_counters_m (
+module video_timing_m (
     input               clk, // 12.5875 MHz
     input               rst,
 
-    output wire   [7:0] xp,
-    output reg          hvisible,
-    output reg          hsync,
+    output reg          hsync, vsync,
 
-    output wire   [7:0] yp,
-    output reg          vvisible,
-    output reg          vsync,
+    output wire   [7:0] xp, yp,
+    output wire         visible,
 
-    output wire         visible
+    output wire         writable
 );
 
-    reg [9:0] hcounter;
-    reg [9:0] vcounter;
+    reg [9:0] hcounter, vcounter;
+    reg hvisible, vvisible;
 
-    assign visible = hvisible && vvisible;
+    assign visible = hvisible & vvisible;
 
     assign xp = visible ? hcounter[7:0] : {8{1'bx}};
     assign yp = visible ? vcounter[7:0] : {8{1'bx}};
@@ -63,12 +60,17 @@ module gpu_counters_m (
         vcounter + 1;
 
 
+    assign writable = vvisible;
+
+
     always @ ( posedge clk ) begin
         hcounter <= hcounter_next;
         vcounter <= vcounter_next;
+        `ifndef SIM
         if ( vcounter != 0 && vcounter_next == 0 ) begin
             $display( "Next frame: [Time=%0t]", $realtime );
         end
+        `endif
     end
 
 endmodule
