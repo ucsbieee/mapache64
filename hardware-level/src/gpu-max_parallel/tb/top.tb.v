@@ -31,7 +31,7 @@ gpu_m gpu (
 
 /* Test */
 initial begin
-$dumpfile( "dump.vcd" );
+$dumpfile( "dump.fst" );
 $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
