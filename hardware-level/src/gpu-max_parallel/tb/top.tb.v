@@ -1,8 +1,8 @@
 
 
 `ifdef LINTER
-    `include "../rtl/gpu.v"
     `include "../headers/parameters.vh"
+    `include "../rtl/gpu.v"
 `endif
 
 `ifdef SIM
@@ -36,11 +36,11 @@ $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
 rst = 1;
-#( `GPU_CLK_PERIOD / 2 )
+#( `GPU_CLK_PERIOD )
 rst = 0;
 
-// #( 0.02 )
-#( 0.001 )
+#( 0.02 )
+// #( 0.001 )
 
 //\\ =========================== \\//
 $finish ;

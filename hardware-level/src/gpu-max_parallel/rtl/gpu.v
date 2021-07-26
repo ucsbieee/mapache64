@@ -2,12 +2,10 @@
 /* gpu.v */
 
 
-`default_nettype none
-
 `ifdef LINTER
     `include "video-timing.v"
-    `include "foreground.v"
-    `include "background.v"
+    `include "foreground.sv"
+    `include "background.sv"
     `include "../headers/parameters.vh"
 `endif
 
