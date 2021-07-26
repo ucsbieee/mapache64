@@ -2,7 +2,7 @@
 /* gpu-counters.v */
 
 
-`default_nettype none
+// `default_nettype none
 
 module video_timing_m (
     input               clk, // 12.5875 MHz
@@ -26,8 +26,6 @@ module video_timing_m (
 
     always @ * begin
         if ( rst ) begin
-            hcounter    = 0;
-            hvisible    = 0;
             hsync       = 0;
             vcounter    = 0;
             vvisible    = 0;
@@ -64,8 +62,13 @@ module video_timing_m (
 
 
     always @ ( posedge clk ) begin
-        hcounter <= hcounter_next;
-        vcounter <= vcounter_next;
+        if ( rst ) begin
+            hcounter <= 10'b0;
+            hvisible <= 10'b0;
+        end else begin
+            hcounter <= hcounter_next;
+            vcounter <= vcounter_next;
+        end
         `ifndef SIM
         if ( vcounter != 0 && vcounter_next == 0 ) begin
             $display( "Next frame: [Time=%0t]", $realtime );
