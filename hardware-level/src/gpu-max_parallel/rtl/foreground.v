@@ -2,6 +2,8 @@
 /* gpu.v */
 
 
+`default_nettype none
+
 `ifdef LINTER
     `include "pattern-hflipper.v"
     `include "../headers/parameters.vh"

@@ -2,6 +2,8 @@
 /* gpu.v */
 
 
+`default_nettype none
+
 `ifdef LINTER
     `include "pattern-hflipper.v"
     `include "../headers/parameters.vh"
@@ -22,7 +24,7 @@ module background_m (
 
     // VRAM interface
     input                     [7:0] data,
-    input                  [12-1:0] address
+    input    [`VRAM_ADDR_WIDTH-1:0] address
 );
 
     wire [4:0] ntbl_r = yp[7:3];
@@ -61,7 +63,7 @@ module background_m (
     wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
     wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
 
-    genvar ntbl_r_GEN, ntbl_c_GEN;
+    genvar ntbl_c_GEN;
     generate
         // for all columns
         for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : fill_BSM
@@ -98,33 +100,6 @@ module background_m (
     assign r = current_pixel & {2{current_color[2]}};
     assign g = current_pixel & {2{current_color[1]}};
     assign b = current_pixel & {2{current_color[0]}};
-
-
-    //======================================\\
-    initial begin
-        `NTBL_COLOR_0 = 3'b011;
-        `NTBL_COLOR_1 = 3'b110;
-        `PMB_LINE( 5'b0, 3'd0 ) = 16'b00_01_00_10_00_11_00_01;
-        `PMB_LINE( 5'b0, 3'd1 ) = 16'b01_00_10_00_11_00_01_00;
-        `PMB_LINE( 5'b0, 3'd2 ) = 16'b00_10_00_11_00_01_00_11;
-        `PMB_LINE( 5'b0, 3'd3 ) = 16'b10_00_11_00_01_00_11_00;
-        `PMB_LINE( 5'b0, 3'd4 ) = 16'b00_11_00_01_00_11_00_10;
-        `PMB_LINE( 5'b0, 3'd5 ) = 16'b11_00_01_00_11_00_10_00;
-        `PMB_LINE( 5'b0, 3'd6 ) = 16'b00_01_00_11_00_10_00_01;
-        `PMB_LINE( 5'b0, 3'd7 ) = 16'b01_00_11_00_10_00_01_00;
-    end
-    generate
-        for ( ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin
-            for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin
-                initial begin
-                    `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN) = ntbl_r_GEN & 1'b1;
-                    `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN) = 5'b0;
-                end
-            end
-        end
-    endgenerate
-    //======================================\\
-
 
 `ifdef SIM
     `include "../headers/vram_test.vh"
