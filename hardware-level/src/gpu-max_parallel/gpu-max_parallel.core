@@ -9,8 +9,8 @@ filesets:
       - headers/parameters.vh
       - rtl/pattern-hflipper.v
       - rtl/video-timing.v
-      - rtl/foreground.sv:          {file_type: systemVerilogSource}
-      - rtl/background.sv:          {file_type: systemVerilogSource}
+      - rtl/foreground.v
+      - rtl/background.v
       - rtl/gpu.v
     file_type: verilogSource
 
