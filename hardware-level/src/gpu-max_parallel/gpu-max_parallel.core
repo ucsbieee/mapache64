@@ -6,27 +6,36 @@ filesets:
   # default
   rtl:
     files:
-      - headers/parameters.vh
-      - rtl/pattern-hflipper.v
-      - rtl/video-timing.v
-      - rtl/foreground.v
-      - rtl/background.v
-      - rtl/gpu.v
+      - headers/parameters.vh:        {file_type: verilogSource}
+      - rtl/pattern-hflipper.v:       {file_type: verilogSource}
+      - rtl/video-timing.v:           {file_type: verilogSource}
+      # - rtl/foreground.sv:            {file_type: systemVerilogSource}
+      - rtl/background.sv:            {file_type: systemVerilogSource}
+      - rtl/gpu.v:                    {file_type: verilogSource}
+  synth:
+    files:
+      - synth/top.v
     file_type: verilogSource
+
+  # boards
+  nexys_a7:
+    files:
+      - ip/clk_freq_conversion_m.xci: {file_type: xci}
+      - boards/nexys_a7/pinout.xdc:   {file_type: xdc}
 
   # simulation
   tb:
     files:
       - headers/sim.vh
       - tb/top.tb.v
-      - headers/vram_test.vh:       {is_include_file: true}
+      - headers/vram_test.vh:         {is_include_file: true}
     file_type: verilogSource
   vram:
     files:
-      - vram-tests/random/ntbl.dat: {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
-      - vram-tests/random/obm.dat:  {is_include_file: true, copyto: vram-tests/random/obm.dat}
-      - vram-tests/random/pmb.dat:  {is_include_file: true, copyto: vram-tests/random/pmb.dat}
-      - vram-tests/random/pmf.dat:  {is_include_file: true, copyto: vram-tests/random/pmf.dat}
+      - vram-tests/random/ntbl.dat:   {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
+      - vram-tests/random/obm.dat:    {is_include_file: true, copyto: vram-tests/random/obm.dat}
+      - vram-tests/random/pmb.dat:    {is_include_file: true, copyto: vram-tests/random/pmb.dat}
+      - vram-tests/random/pmf.dat:    {is_include_file: true, copyto: vram-tests/random/pmf.dat}
     file_type: user
 
 
@@ -34,6 +43,11 @@ targets:
   default: &default
     filesets:
       - rtl
+  synth: &synth
+    filesets:
+      - rtl
+      - synth
+    toplevel: top_m
 
   sim: # fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
     <<: *default
@@ -48,3 +62,13 @@ targets:
         iverilog_options:
           - -g2012 # Use SystemVerilog-2012
           - -DSIM=1
+
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel
+    <<: *synth
+    description: Synthesize on Nexys A7
+    filesets_append:
+      - nexys_a7
+    default_tool: vivado
+    tools:
+      vivado:
+        part : xc7a100tcsg324-3
