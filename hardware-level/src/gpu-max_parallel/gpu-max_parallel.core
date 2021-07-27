@@ -22,6 +22,7 @@ filesets:
     files:
       - ip/clk_freq_conversion_m.xci:             {file_type: xci}
       - synth/boards/nexys_a7/pinout.xdc:         {file_type: xdc}
+      - synth/boards/nexys_a7/config.xdc:         {file_type: xdc}
       - synth/boards/nexys_a7/global_include.tcl: {file_type: tclSource}
 
   # simulation
@@ -52,6 +53,8 @@ targets:
       icarus:
         iverilog_options:
           - -g2012 # Use SystemVerilog-2012
+          - -Wall
+          - -Wno-timescale
           - -DSIM=1
 
   nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel

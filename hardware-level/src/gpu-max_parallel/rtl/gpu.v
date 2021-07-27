@@ -48,7 +48,6 @@ module gpu_m (
         writable
     );
 
-    // assign foreground_valid = 1'b0;
     foreground_m foreground (
         clk, rst,
         xp[7:0], yp[7:0],
