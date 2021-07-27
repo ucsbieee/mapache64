@@ -43,5 +43,61 @@ module foreground_m (
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
+    wire [5:0] obma = 6'b0;
+
+    `ifdef TEST
+    initial begin
+        `PMF_LINE( 5'd0, 3'd0 ) = 16'b11_11_11_11_11_11_11_11;
+        `PMF_LINE( 5'd0, 3'd1 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd2 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd3 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd4 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd5 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd6 ) = 16'b11_10_10_10_10_10_10_11;
+        `PMF_LINE( 5'd0, 3'd7 ) = 16'b11_11_11_11_11_11_11_11;
+
+        `OBM_OBJECT_XP(6'b0) = 256'd128;
+        `OBM_OBJECT_YP(6'b0) = 256'd128;
+
+        `OBM_OBJECT_HFLIP(6'b0) = 1'b0;
+        `OBM_OBJECT_VFLIP(6'b0) = 1'b0;
+
+        `OBM_OBJECT_PMFA(6'b0) = 5'd0;
+
+        `OBM_OBJECT_COLOR(6'b0) = 3'b111;
+    end
+    `endif
+
+    wire [7:0] object_xp = `OBM_OBJECT_XP(obma);
+    wire [7:0] object_yp = `OBM_OBJECT_YP(obma);
+
+    wire [2:0] sprite_x = xp[2:0] - object_xp[2:0];
+    wire [2:0] sprite_y = yp[2:0] - object_yp[2:0];
+
+    wire [2:0] color = `OBM_OBJECT_COLOR(obma);
+
+    wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma);
+
+    wire hflip = `OBM_OBJECT_HFLIP(obma);
+    wire vflip = `OBM_OBJECT_VFLIP(obma);
+
+    wire [2:0] hflipped_sprite_x = hflip ? (3'd7-sprite_x) : sprite_x;
+    wire [2:0] vflipped_sprite_y = vflip ? (3'd7-sprite_y) : sprite_y;
+
+    wire [15:0] line;
+    pattern_hflipper_m pmf_hflipper (
+        `PMF_LINE( pmfa, vflipped_sprite_y ),
+        hflip,
+        line
+    );
+
+    wire [1:0] current_pixel = line[ {3'd7-hflipped_sprite_x, 1'b0} +: 2 ];
+
+    assign r = current_pixel & {2{color[2]}};
+    assign g = current_pixel & {2{color[1]}};
+    assign b = current_pixel & {2{color[0]}};
+
+    assign valid = ( object_xp <= xp && xp < object_xp + 8 ) && ( object_yp <= yp && yp < object_yp + 8 );
+    // assign valid = 1'b1;
 
 endmodule
