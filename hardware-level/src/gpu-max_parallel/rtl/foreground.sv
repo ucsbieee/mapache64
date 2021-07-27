@@ -56,8 +56,8 @@ module foreground_m (
         `PMF_LINE( 5'd0, 3'd6 ) = 16'b11_10_10_10_10_10_10_11;
         `PMF_LINE( 5'd0, 3'd7 ) = 16'b11_11_11_11_11_11_11_11;
 
-        `OBM_OBJECT_XP(6'b0) = 256'd128;
-        `OBM_OBJECT_YP(6'b0) = 256'd128;
+        `OBM_OBJECT_XP(6'b0) = 8'd128;
+        `OBM_OBJECT_YP(6'b0) = 8'd128;
 
         `OBM_OBJECT_HFLIP(6'b0) = 1'b0;
         `OBM_OBJECT_VFLIP(6'b0) = 1'b0;
