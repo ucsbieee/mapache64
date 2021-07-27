@@ -75,15 +75,15 @@ module background_m (
             wire [4:0] pmba = `NTBL_TILE_PMBA(ntbl_r,ntbl_c_GEN);
 
             // get flip states
-            wire vflip = `NTBL_TILE_VFLIP(ntbl_r,ntbl_c_GEN);
             wire hflip = `NTBL_TILE_HFLIP(ntbl_r,ntbl_c_GEN);
+            wire vflip = `NTBL_TILE_VFLIP(ntbl_r,ntbl_c_GEN);
 
             // get vflipped address
             wire [2:0] vflipped_tile_y = vflip ? (7-tile_y) : tile_y;
 
             // get flipped line
             wire [15:0] line;
-            pattern_hflipper_m hflipper (
+            pattern_hflipper_m pmb_hflipper (
                 `PMB_LINE( pmba, vflipped_tile_y ),
                 hflip,
                 line
