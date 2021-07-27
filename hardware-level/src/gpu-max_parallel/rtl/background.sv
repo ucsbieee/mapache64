@@ -2,8 +2,6 @@
 /* gpu.v */
 
 
-`default_nettype none
-
 `ifdef LINTER
     `include "pattern-hflipper.v"
     `include "../headers/parameters.vh"
@@ -24,7 +22,7 @@ module background_m (
 
     // VRAM interface
     input                     [7:0] data,
-    input    [`VRAM_ADDR_WIDTH-1:0] address
+    input                  [12-1:0] address
 );
 
     wire [4:0] ntbl_r = yp[7:3];
@@ -63,7 +61,7 @@ module background_m (
     wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
     wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
 
-    genvar ntbl_c_GEN;
+    genvar ntbl_r_GEN, ntbl_c_GEN, pattern_GEN;
     generate
         // for all columns
         for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : fill_BSM
@@ -101,15 +99,82 @@ module background_m (
     assign g = current_pixel & {2{current_color[1]}};
     assign b = current_pixel & {2{current_color[0]}};
 
-`ifdef SIM
-    `include "../headers/vram_test.vh"
 
-    // load test VRAM
+    //======================================\\
     initial begin
-        $readmemb( `TEST_PMB, PMB, 0, 511 );
-        $readmemh( `TEST_NTBL, NTBL, 0, 1023 );
-        $display("Background VRAM loaded.");
+        `NTBL_COLOR_0 = 3'b011;
+        `NTBL_COLOR_1 = 3'b110;
+
+        `PMB_LINE( 5'd0, 3'd0 ) = 16'b00_01_00_10_00_11_00_01;
+        `PMB_LINE( 5'd0, 3'd1 ) = 16'b01_00_10_00_11_00_01_00;
+        `PMB_LINE( 5'd0, 3'd2 ) = 16'b00_10_00_11_00_01_00_11;
+        `PMB_LINE( 5'd0, 3'd3 ) = 16'b10_00_11_00_01_00_11_00;
+        `PMB_LINE( 5'd0, 3'd4 ) = 16'b00_11_00_01_00_11_00_10;
+        `PMB_LINE( 5'd0, 3'd5 ) = 16'b11_00_01_00_11_00_10_00;
+        `PMB_LINE( 5'd0, 3'd6 ) = 16'b00_01_00_11_00_10_00_01;
+        `PMB_LINE( 5'd0, 3'd7 ) = 16'b01_00_11_00_10_00_01_00;
+
+        `PMB_LINE( 5'd1, 3'd0 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd1 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd2 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd3 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd4 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd5 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd6 ) = 16'b11_00_11_00_11_00_11_00;
+        `PMB_LINE( 5'd1, 3'd7 ) = 16'b11_00_11_00_11_00_11_00;
+
+        `PMB_LINE( 5'd2, 3'd0 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd1 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd2 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd3 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd4 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd5 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd6 ) = 16'b00_01_10_11_11_10_01_00;
+        `PMB_LINE( 5'd2, 3'd7 ) = 16'b00_01_10_11_11_10_01_00;
     end
-`endif
+    generate
+        for ( ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
+            for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
+                wire colorselect = `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN);
+                wire hflip = `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN);
+                wire vflip = `NTBL_TILE_VFLIP(ntbl_r_GEN,ntbl_c_GEN);
+                wire [4:0] pmba = `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN);
+                initial begin
+                    `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN) = ntbl_r_GEN & 1'b1;
+                    `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN) = 1'b0;
+                    `NTBL_TILE_VFLIP(ntbl_r_GEN,ntbl_c_GEN) = 1'b0;
+                    if ( ntbl_r_GEN == 0 || ntbl_r_GEN == 29 || ntbl_c_GEN == 0 || ntbl_c_GEN == 31 )
+                        `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN) = 5'd1;
+                    else
+                        `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN) = 5'd0;
+                end
+            end
+        end
+    endgenerate
+    generate
+        for ( pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
+            wire [15:0] line0 = `PMB_LINE(pattern_GEN,3'd0);
+            wire [15:0] line1 = `PMB_LINE(pattern_GEN,3'd1);
+            wire [15:0] line2 = `PMB_LINE(pattern_GEN,3'd2);
+            wire [15:0] line3 = `PMB_LINE(pattern_GEN,3'd3);
+            wire [15:0] line4 = `PMB_LINE(pattern_GEN,3'd4);
+            wire [15:0] line5 = `PMB_LINE(pattern_GEN,3'd5);
+            wire [15:0] line6 = `PMB_LINE(pattern_GEN,3'd6);
+            wire [15:0] line7 = `PMB_LINE(pattern_GEN,3'd7);
+        end
+    endgenerate
+    //======================================\\
+
+
+// `ifdef SIM
+//     `include "../headers/vram_test.vh"
+
+//     // load test VRAM
+//     initial begin
+//         $readmemb( `TEST_PMB, PMB, 0, 511 );
+//         $readmemh( `TEST_NTBL, NTBL, 0, 1023 );
+//         $display("Background VRAM loaded.");
+//     end
+// `endif
 
 endmodule
