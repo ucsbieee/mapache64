@@ -6,12 +6,12 @@ filesets:
   # default
   rtl:
     files:
-      - headers/parameters.vh:              {file_type: verilogSource}
-      - rtl/pattern-hflipper.v:             {file_type: verilogSource}
-      - rtl/video-timing.v:                 {file_type: verilogSource}
-      - rtl/foreground.sv:                  {file_type: systemVerilogSource}
-      - rtl/background.sv:                  {file_type: systemVerilogSource}
-      - rtl/gpu.v:                          {file_type: verilogSource}
+      - rtl/headers/parameters.vh:                {file_type: verilogSource}
+      - rtl/pattern-hflipper.v:                   {file_type: verilogSource}
+      - rtl/video-timing.v:                       {file_type: verilogSource}
+      - rtl/foreground.sv:                        {file_type: systemVerilogSource}
+      - rtl/background.sv:                        {file_type: systemVerilogSource}
+      - rtl/gpu.v:                                {file_type: verilogSource}
   synth:
     files:
       - synth/top.v
@@ -20,25 +20,16 @@ filesets:
   # boards
   nexys_a7:
     files:
-      - ip/clk_freq_conversion_m.xci:       {file_type: xci}
-      - boards/nexys_a7/pinout.xdc:         {file_type: xdc}
-      - boards/nexys_a7/global_include.tcl: {file_type: tclSource}
+      - ip/clk_freq_conversion_m.xci:             {file_type: xci}
+      - synth/boards/nexys_a7/pinout.xdc:         {file_type: xdc}
+      - synth/boards/nexys_a7/global_include.tcl: {file_type: tclSource}
 
   # simulation
-  tb:
+  sim:
     files:
-      - headers/sim.vh
-      - tb/top.tb.v
-      - headers/vram_test.vh:               {is_include_file: true}
+      - sim/headers/timing.vh
+      - sim/tb/top.tb.v
     file_type: verilogSource
-  vram:
-    files:
-      - vram-tests/random/ntbl.dat:         {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
-      - vram-tests/random/obm.dat:          {is_include_file: true, copyto: vram-tests/random/obm.dat}
-      - vram-tests/random/pmb.dat:          {is_include_file: true, copyto: vram-tests/random/pmb.dat}
-      - vram-tests/random/pmf.dat:          {is_include_file: true, copyto: vram-tests/random/pmf.dat}
-    file_type: user
-
 
 targets:
   default: &default
@@ -55,8 +46,7 @@ targets:
     description: Simulate the design
     default_tool: icarus
     filesets_append:
-      - tb
-      - vram
+      - sim
     toplevel: top_tb_m
     tools:
       icarus:

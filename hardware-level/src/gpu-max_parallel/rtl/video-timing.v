@@ -1,5 +1,5 @@
 
-/* gpu-counters.v */
+/* video-timing.v */
 
 
 module video_timing_m (

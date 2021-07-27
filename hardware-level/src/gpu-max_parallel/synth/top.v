@@ -1,7 +1,7 @@
 
 
-`ifdef LINTER
-    `include "../headers/parameters.vh"
+`ifdef INCLUDE
+    `include "../rtl/headers/parameters.vh"
     `include "../rtl/gpu.v"
 `endif
 
