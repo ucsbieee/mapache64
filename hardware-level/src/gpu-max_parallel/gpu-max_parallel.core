@@ -6,12 +6,12 @@ filesets:
   # default
   rtl:
     files:
-      - headers/parameters.vh:        {file_type: verilogSource}
-      - rtl/pattern-hflipper.v:       {file_type: verilogSource}
-      - rtl/video-timing.v:           {file_type: verilogSource}
-      # - rtl/foreground.sv:            {file_type: systemVerilogSource}
-      - rtl/background.sv:            {file_type: systemVerilogSource}
-      - rtl/gpu.v:                    {file_type: verilogSource}
+      - headers/parameters.vh:              {file_type: verilogSource}
+      - rtl/pattern-hflipper.v:             {file_type: verilogSource}
+      - rtl/video-timing.v:                 {file_type: verilogSource}
+      - rtl/foreground.sv:                  {file_type: systemVerilogSource}
+      - rtl/background.sv:                  {file_type: systemVerilogSource}
+      - rtl/gpu.v:                          {file_type: verilogSource}
   synth:
     files:
       - synth/top.v
@@ -20,22 +20,23 @@ filesets:
   # boards
   nexys_a7:
     files:
-      - ip/clk_freq_conversion_m.xci: {file_type: xci}
-      - boards/nexys_a7/pinout.xdc:   {file_type: xdc}
+      - ip/clk_freq_conversion_m.xci:       {file_type: xci}
+      - boards/nexys_a7/pinout.xdc:         {file_type: xdc}
+      - boards/nexys_a7/global_include.tcl: {file_type: tclSource}
 
   # simulation
   tb:
     files:
       - headers/sim.vh
       - tb/top.tb.v
-      - headers/vram_test.vh:         {is_include_file: true}
+      - headers/vram_test.vh:               {is_include_file: true}
     file_type: verilogSource
   vram:
     files:
-      - vram-tests/random/ntbl.dat:   {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
-      - vram-tests/random/obm.dat:    {is_include_file: true, copyto: vram-tests/random/obm.dat}
-      - vram-tests/random/pmb.dat:    {is_include_file: true, copyto: vram-tests/random/pmb.dat}
-      - vram-tests/random/pmf.dat:    {is_include_file: true, copyto: vram-tests/random/pmf.dat}
+      - vram-tests/random/ntbl.dat:         {is_include_file: true, copyto: vram-tests/random/ntbl.dat}
+      - vram-tests/random/obm.dat:          {is_include_file: true, copyto: vram-tests/random/obm.dat}
+      - vram-tests/random/pmb.dat:          {is_include_file: true, copyto: vram-tests/random/pmb.dat}
+      - vram-tests/random/pmf.dat:          {is_include_file: true, copyto: vram-tests/random/pmf.dat}
     file_type: user
 
 

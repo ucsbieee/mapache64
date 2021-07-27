@@ -2,8 +2,6 @@
 /* pattern-hflipper.v */
 
 
-`default_nettype none
-
 module pattern_hflipper_m (
     input        [15:0] in,
     input               hflip,
