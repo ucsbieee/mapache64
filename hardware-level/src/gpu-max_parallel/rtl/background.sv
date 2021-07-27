@@ -1,10 +1,10 @@
 
-/* gpu.v */
+/* background.v */
 
 
-`ifdef LINTER
+`ifdef INCLUDE
     `include "pattern-hflipper.v"
-    `include "../headers/parameters.vh"
+    `include "headers/parameters.vh"
 `endif
 
 
@@ -101,6 +101,7 @@ module background_m (
 
 
     //======================================\\
+    `ifdef TEST
     initial begin
         `NTBL_COLOR_0 = 3'b011;
         `NTBL_COLOR_1 = 3'b110;
@@ -132,6 +133,7 @@ module background_m (
         `PMB_LINE( 5'd2, 3'd6 ) = 16'b00_01_10_11_11_10_01_00;
         `PMB_LINE( 5'd2, 3'd7 ) = 16'b00_01_10_11_11_10_01_00;
     end
+    `endif
     generate
         for ( ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
             for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
@@ -139,6 +141,7 @@ module background_m (
                 wire hflip = `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN);
                 wire vflip = `NTBL_TILE_VFLIP(ntbl_r_GEN,ntbl_c_GEN);
                 wire [4:0] pmba = `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN);
+                `ifdef TEST
                 initial begin
                     `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN) = ntbl_r_GEN & 1'b1;
                     `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN) = 1'b0;
@@ -148,6 +151,7 @@ module background_m (
                     else
                         `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN) = 5'd0;
                 end
+                `endif
             end
         end
     endgenerate
@@ -165,16 +169,5 @@ module background_m (
     endgenerate
     //======================================\\
 
-
-// `ifdef SIM
-//     `include "../headers/vram_test.vh"
-
-//     // load test VRAM
-//     initial begin
-//         $readmemb( `TEST_PMB, PMB, 0, 511 );
-//         $readmemh( `TEST_NTBL, NTBL, 0, 1023 );
-//         $display("Background VRAM loaded.");
-//     end
-// `endif
 
 endmodule

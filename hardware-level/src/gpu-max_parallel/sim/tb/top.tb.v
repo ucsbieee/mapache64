@@ -1,12 +1,9 @@
 
 
-`ifdef LINTER
-    `include "../rtl/gpu.v"
-    `include "../headers/parameters.vh"
-`endif
-
-`ifdef SIM
-    `include "../headers/sim.vh"
+`ifdef INCLUDE
+    `include "../../rtl/gpu.v"
+    `include "../../rtl/headers/parameters.vh"
+    `include "../headers/timing.vh"
 `endif
 
 `timescale `TIMESCALE
