@@ -24,3 +24,7 @@ hardware-level/src/**/screen.png
 
 # icarus verilog output
 hardware-level/src/**/dump.vcd
+
+# fusesoc
+build/
+fusesoc.conf
