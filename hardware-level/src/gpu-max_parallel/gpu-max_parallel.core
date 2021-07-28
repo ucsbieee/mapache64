@@ -1,0 +1,69 @@
+CAPI=2:
+name: ucsbieee:arcade:gpu_max_parallel:1.0.0
+description: GPU draft, unoptimized
+
+filesets:
+  # default
+  rtl:
+    files:
+      - rtl/headers/parameters.vh:                {file_type: verilogSource}
+      - rtl/pattern-hflipper.v:                   {file_type: verilogSource}
+      - rtl/video-timing.v:                       {file_type: verilogSource}
+      - rtl/foreground.sv:                        {file_type: systemVerilogSource}
+      - rtl/background.sv:                        {file_type: systemVerilogSource}
+      - rtl/gpu.v:                                {file_type: verilogSource}
+  synth:
+    files:
+      - synth/top.v
+    file_type: verilogSource
+
+  # boards
+  nexys_a7:
+    files:
+      - ip/clk_freq_conversion_m.xci:             {file_type: xci}
+      - synth/boards/nexys_a7/pinout.xdc:         {file_type: xdc}
+      - synth/boards/nexys_a7/config.xdc:         {file_type: xdc}
+      - synth/boards/nexys_a7/global_include.tcl: {file_type: tclSource}
+
+  # simulation
+  sim:
+    files:
+      - sim/headers/timing.vh
+      - sim/tb/top.tb.v
+    file_type: verilogSource
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+  synth: &synth
+    filesets:
+      - rtl
+      - synth
+    toplevel: top_m
+
+  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
+    <<: *default
+    description: Simulate the design
+    default_tool: icarus
+    filesets_append:
+      - sim
+    toplevel: top_tb_m
+    tools:
+      icarus:
+        iverilog_options:
+          - -g2012 # Use SystemVerilog-2012
+          - -Wall
+          - -Wno-timescale
+          - -DSIM=1
+          - -DTEST=1
+
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel
+    <<: *synth
+    description: Synthesize on Nexys A7
+    filesets_append:
+      - nexys_a7
+    default_tool: vivado
+    tools:
+      vivado:
+        part : xc7a100tcsg324-3

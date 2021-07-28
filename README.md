@@ -95,14 +95,14 @@ Nothing yet. Check back soon!
 ### Hardware Guides/References Used
 
 * [VGA Documentation](http://www.tinyvga.com/)
-* [GreatScott VGA](https://youtu.be/ZNunxg7o8l0)
 * [Ben Eater VGA](https://youtu.be/uqY3FMuMuRo)
-* [bitluni VGA](https://youtu.be/qJ68fRff5_k)
 
 ### Hardware Libraries/Tools Used
 
-* [Verilog of MOS 6502 CPU](https://github.com/Arlet/verilog-6502)
-* [nextpnr -- FPGA Place and Route Tool](https://github.com/YosysHQ/nextpnr)
+* [FuseSoC](https://github.com/olofk/fusesoc)
+* [Icarus Verilog](http://iverilog.icarus.com/)
+* [Vivado ML Enterprise](https://www.xilinx.com/products/design-tools/vivado.html)
+* [Nexys A7-100T](https://store.digilentinc.com/nexys-a7-fpga-trainer-board-recommended-for-ece-curriculum/)
 
 ---
 
