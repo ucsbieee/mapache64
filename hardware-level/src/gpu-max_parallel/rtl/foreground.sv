@@ -141,8 +141,8 @@ module foreground_m (
         );
 
         wire counter_at_object = ( object_xp <= xp && {1'b0, xp} < {1'b0, object_xp} + 9'd8 ) && ( object_yp <= yp && yp < object_yp + 8'd8 );
-        wire transparent = ( current_pixel == 2'b0 );
         wire [1:0] current_pixel = line[ {3'd7-sprite_x, 1'b0} +: 2 ] & {2{counter_at_object}};
+        wire transparent = ( current_pixel == 2'b0 );
 
 
         wire [1:0] object_r = current_pixel & {2{color[2]}};
@@ -159,15 +159,16 @@ module foreground_m (
     end endgenerate
 
 
-    reg [$clog2(`NUM_OBJECTS):0] top_object;
-    always @ valid_collection begin
-        reg [$clog2(`NUM_OBJECTS):0] i;
+    reg [$clog2(`NUM_OBJECTS)-1:0] top_object;
+    reg [$clog2(`NUM_OBJECTS):0] i;
+    always_comb begin
         reg done;
-        done = 0;
-        for ( i = 0; i < {1'b0,`NUM_OBJECTS}; i = i+1 )
+        top_object = 1'b0;
+        done = 1'b0;
+        for ( i = 0; i < `NUM_OBJECTS; i = i+1 )
             if ( !done && valid_collection[i] ) begin
-                done = 1;
-                top_object = i;
+                done = 1'b1;
+                top_object = i[$clog2(`NUM_OBJECTS)-1:0];
             end
     end
 

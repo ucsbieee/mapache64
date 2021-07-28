@@ -137,10 +137,12 @@ module background_m (
     generate
         for ( ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
             for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
+                `ifdef SIM
                 wire colorselect = `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN);
                 wire hflip = `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN);
                 wire vflip = `NTBL_TILE_VFLIP(ntbl_r_GEN,ntbl_c_GEN);
                 wire [4:0] pmba = `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN);
+                `endif
                 `ifdef TEST
                 initial begin
                     `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN) = ntbl_r_GEN & 1'b1;
@@ -155,6 +157,7 @@ module background_m (
             end
         end
     endgenerate
+    `ifdef SIM
     generate
         for ( pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
             wire [15:0] line0 = `PMB_LINE(pattern_GEN,3'd0);
@@ -167,6 +170,7 @@ module background_m (
             wire [15:0] line7 = `PMB_LINE(pattern_GEN,3'd7);
         end
     endgenerate
+    `endif
     //======================================\\
 
 

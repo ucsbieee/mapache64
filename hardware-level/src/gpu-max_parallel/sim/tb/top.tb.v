@@ -1,4 +1,8 @@
 
+`ifndef SIM
+    `ERROR__SIM_undefined
+    exit
+`endif
 
 `ifdef INCLUDE
     `include "../../rtl/gpu.v"
