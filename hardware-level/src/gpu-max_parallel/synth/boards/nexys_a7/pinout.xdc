@@ -1,6 +1,6 @@
 
-set_property PACKAGE_PIN E3 [get_ports clk_100]
-set_property IOSTANDARD LVCMOS33 [get_ports clk_100]
+set_property PACKAGE_PIN E3 [get_ports clk_in]
+set_property IOSTANDARD LVCMOS33 [get_ports clk_in]
 
 set_property IOSTANDARD LVCMOS33 [get_ports rst]
 set_property PACKAGE_PIN N17 [get_ports rst]

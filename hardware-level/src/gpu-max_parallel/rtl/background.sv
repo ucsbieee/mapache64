@@ -61,10 +61,9 @@ module background_m (
     wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
     wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
 
-    genvar ntbl_r_GEN, ntbl_c_GEN, pattern_GEN;
     generate
         // for all columns
-        for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : fill_BSM
+        for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : fill_BSM
 
             // find BSM color
             wire color_select = `NTBL_TILE_COLORSELECT(ntbl_r,ntbl_c_GEN);
@@ -135,8 +134,8 @@ module background_m (
     end
     `endif
     generate
-        for ( ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
-            for ( ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
+        for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
+            for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
                 `ifdef SIM
                 wire colorselect = `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN);
                 wire hflip = `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN);
@@ -158,18 +157,16 @@ module background_m (
         end
     endgenerate
     `ifdef SIM
-    generate
-        for ( pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
-            wire [15:0] line0 = `PMB_LINE(pattern_GEN,3'd0);
-            wire [15:0] line1 = `PMB_LINE(pattern_GEN,3'd1);
-            wire [15:0] line2 = `PMB_LINE(pattern_GEN,3'd2);
-            wire [15:0] line3 = `PMB_LINE(pattern_GEN,3'd3);
-            wire [15:0] line4 = `PMB_LINE(pattern_GEN,3'd4);
-            wire [15:0] line5 = `PMB_LINE(pattern_GEN,3'd5);
-            wire [15:0] line6 = `PMB_LINE(pattern_GEN,3'd6);
-            wire [15:0] line7 = `PMB_LINE(pattern_GEN,3'd7);
-        end
-    endgenerate
+    generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
+        wire [15:0] line0 = `PMB_LINE(pattern_GEN,3'd0);
+        wire [15:0] line1 = `PMB_LINE(pattern_GEN,3'd1);
+        wire [15:0] line2 = `PMB_LINE(pattern_GEN,3'd2);
+        wire [15:0] line3 = `PMB_LINE(pattern_GEN,3'd3);
+        wire [15:0] line4 = `PMB_LINE(pattern_GEN,3'd4);
+        wire [15:0] line5 = `PMB_LINE(pattern_GEN,3'd5);
+        wire [15:0] line6 = `PMB_LINE(pattern_GEN,3'd6);
+        wire [15:0] line7 = `PMB_LINE(pattern_GEN,3'd7);
+    end endgenerate
     `endif
     //======================================\\
 
