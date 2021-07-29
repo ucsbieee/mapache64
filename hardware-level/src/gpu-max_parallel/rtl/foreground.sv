@@ -46,6 +46,86 @@ module foreground_m (
 
     wire [5:0] obma = 6'b0;
 
+    `define NUM_OBJECTS 7'd64
+    wire [1:0] r_collection [`NUM_OBJECTS-1:0];
+    wire [1:0] b_collection [`NUM_OBJECTS-1:0];
+    wire [1:0] g_collection [`NUM_OBJECTS-1:0];
+    wire [`NUM_OBJECTS-1:0] valid_collection;
+
+    generate for ( genvar obma_GEN = 0; obma_GEN < `NUM_OBJECTS; obma_GEN = obma_GEN+1 ) begin : object
+
+        `ifdef TEST
+        if (obma_GEN >= 24)
+            initial `OBM_OBJECT_YP(obma_GEN) = 8'hff;
+        `endif
+
+        // object position on screen
+        wire [7:0] object_xp = `OBM_OBJECT_XP(obma_GEN);
+        wire [7:0] object_yp = `OBM_OBJECT_YP(obma_GEN);
+
+        // pixel location within object
+        wire [2:0] in_object_xp = xp[2:0] - object_xp[2:0];
+        wire [2:0] in_object_yp = yp[2:0] - object_yp[2:0];
+
+        // object color, sprite, and flip modifiers
+        wire [2:0] color = `OBM_OBJECT_COLOR(obma_GEN);
+        wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma_GEN);
+        wire hflip = `OBM_OBJECT_HFLIP(obma_GEN);
+        wire vflip = `OBM_OBJECT_VFLIP(obma_GEN);
+
+        // get vertical position in sprite
+        wire [2:0] in_sprite_yp = vflip ? (3'd7-in_object_yp) : in_object_yp;
+
+        // get object scanline line
+        wire [15:0] line;
+        pattern_hflipper_m pmf_hflipper (
+            `PMF_LINE( pmfa, in_sprite_yp ),
+            hflip,
+            line
+        );
+
+        // if the video timing counter is at the location of the object
+        wire counter_at_object = ( object_xp <= xp && {1'b0, xp} < {1'b0, object_xp} + 9'd8 ) && ( object_yp <= yp && yp < object_yp + 8'd8 );
+        // value of pixel not including color
+        wire [1:0] current_pixel = line[ {3'd7-in_object_xp, 1'b0} +: 2 ] & {2{counter_at_object}};
+        // whether the current pixel is transparent
+        wire transparent = ( current_pixel == 2'b0 );
+
+        // colors of current pixel
+        wire [1:0] object_r = current_pixel & {2{color[2]}};
+        wire [1:0] object_g = current_pixel & {2{color[1]}};
+        wire [1:0] object_b = current_pixel & {2{color[0]}};
+        wire current_pixel_valid = counter_at_object && !transparent;
+
+        // send to collection arrays
+        assign r_collection[obma_GEN]       = object_r;
+        assign b_collection[obma_GEN]       = object_b;
+        assign g_collection[obma_GEN]       = object_g;
+        assign valid_collection[obma_GEN]   = current_pixel_valid;
+
+    end endgenerate
+
+    // run Find First Set on valid bits
+    reg [$clog2(`NUM_OBJECTS)-1:0] top_object;
+    reg [$clog2(`NUM_OBJECTS):0] i;
+    always_comb begin
+        reg done;
+        top_object = 1'b0;
+        done = 1'b0;
+        for ( i = 0; i < `NUM_OBJECTS; i = i+1 )
+            if ( !done && valid_collection[i] ) begin
+                done = 1'b1;
+                top_object = i[$clog2(`NUM_OBJECTS)-1:0];
+            end
+    end
+
+    assign r = r_collection[top_object];
+    assign g = g_collection[top_object];
+    assign b = b_collection[top_object];
+    assign valid = |valid_collection;
+
+
+    //======================================\\
     `ifdef TEST
     initial begin
         `PMF_LINE( 5'd0, 3'd0 ) = 16'b11_11_11_11_11_11_11_11;
@@ -91,90 +171,20 @@ module foreground_m (
         `OBM_OBJECT(6'd21) = {8'd121, 8'd124, 1'bx,1'b0,1'b1,5'b1, {5{1'bx}},3'd5};
         `OBM_OBJECT(6'd22) = {8'd105, 8'd121, 1'bx,1'b1,1'b0,5'b1, {5{1'bx}},3'd6};
         `OBM_OBJECT(6'd23) = {8'd110, 8'd136, 1'bx,1'b1,1'b1,5'b1, {5{1'bx}},3'd7};
-
-        // `OBM_OBJECT_XP(6'b0) = 8'd128;
-        // `OBM_OBJECT_YP(6'b0) = 8'd128;
-
-        // `OBM_OBJECT_HFLIP(6'b0) = 1'b0;
-        // `OBM_OBJECT_VFLIP(6'b0) = 1'b0;
-
-        // `OBM_OBJECT_PMFA(6'b0) = 5'd0;
-
-        // `OBM_OBJECT_COLOR(6'b0) = 3'b111;
     end
     `endif
-
-
-    `define NUM_OBJECTS 7'd64
-    wire [`NUM_OBJECTS-1:0]
-        valid_collection;
-    wire [`NUM_OBJECTS-1:0][1:0]
-        r_collection,
-        b_collection,
-        g_collection;
-
-    genvar obma_GEN;
-    generate for ( obma_GEN = 0; obma_GEN < `NUM_OBJECTS; obma_GEN = obma_GEN+1 ) begin : object
-
-        initial if (obma_GEN >= 24) `OBM_OBJECT_YP(obma_GEN) = 8'hff;
-
-        wire [7:0] object_xp = `OBM_OBJECT_XP(obma_GEN);
-        wire [7:0] object_yp = `OBM_OBJECT_YP(obma_GEN);
-
-        wire [2:0] sprite_x = xp[2:0] - object_xp[2:0];
-        wire [2:0] sprite_y = yp[2:0] - object_yp[2:0];
-
-        wire [2:0] color = `OBM_OBJECT_COLOR(obma_GEN);
-
-        wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma_GEN);
-
-        wire hflip = `OBM_OBJECT_HFLIP(obma_GEN);
-        wire vflip = `OBM_OBJECT_VFLIP(obma_GEN);
-
-        wire [2:0] vflipped_sprite_y = vflip ? (3'd7-sprite_y) : sprite_y;
-
-        wire [15:0] line;
-        pattern_hflipper_m pmf_hflipper (
-            `PMF_LINE( pmfa, vflipped_sprite_y ),
-            hflip,
-            line
-        );
-
-        wire counter_at_object = ( object_xp <= xp && {1'b0, xp} < {1'b0, object_xp} + 9'd8 ) && ( object_yp <= yp && yp < object_yp + 8'd8 );
-        wire [1:0] current_pixel = line[ {3'd7-sprite_x, 1'b0} +: 2 ] & {2{counter_at_object}};
-        wire transparent = ( current_pixel == 2'b0 );
-
-
-        wire [1:0] object_r = current_pixel & {2{color[2]}};
-        wire [1:0] object_g = current_pixel & {2{color[1]}};
-        wire [1:0] object_b = current_pixel & {2{color[0]}};
-
-        wire object_valid = counter_at_object && !transparent;
-
-        assign r_collection[obma_GEN]       = object_r;
-        assign b_collection[obma_GEN]       = object_b;
-        assign g_collection[obma_GEN]       = object_g;
-        assign valid_collection[obma_GEN]   = object_valid;
-
+    `ifdef SIM
+    generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
+        wire [15:0] line0 = `PMF_LINE(pattern_GEN,3'd0);
+        wire [15:0] line1 = `PMF_LINE(pattern_GEN,3'd1);
+        wire [15:0] line2 = `PMF_LINE(pattern_GEN,3'd2);
+        wire [15:0] line3 = `PMF_LINE(pattern_GEN,3'd3);
+        wire [15:0] line4 = `PMF_LINE(pattern_GEN,3'd4);
+        wire [15:0] line5 = `PMF_LINE(pattern_GEN,3'd5);
+        wire [15:0] line6 = `PMF_LINE(pattern_GEN,3'd6);
+        wire [15:0] line7 = `PMF_LINE(pattern_GEN,3'd7);
     end endgenerate
-
-
-    reg [$clog2(`NUM_OBJECTS)-1:0] top_object;
-    reg [$clog2(`NUM_OBJECTS):0] i;
-    always_comb begin
-        reg done;
-        top_object = 1'b0;
-        done = 1'b0;
-        for ( i = 0; i < `NUM_OBJECTS; i = i+1 )
-            if ( !done && valid_collection[i] ) begin
-                done = 1'b1;
-                top_object = i[$clog2(`NUM_OBJECTS)-1:0];
-            end
-    end
-
-    assign r = r_collection[top_object];
-    assign g = g_collection[top_object];
-    assign b = b_collection[top_object];
-    assign valid = |valid_collection;
+    `endif
+    //======================================\\
 
 endmodule
