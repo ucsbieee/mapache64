@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CORE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/.."
+CORE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
 
 [ -d "${CORE_DIR}/fusesoc" ]  && ${CORE_DIR}/scripts/clean.sh
 mkdir ${CORE_DIR}/fusesoc &> /dev/null

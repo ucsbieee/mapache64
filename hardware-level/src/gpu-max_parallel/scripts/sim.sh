@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CORE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/.."
+CORE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
 
 if [ ! -d "${CORE_DIR}/fusesoc" ]
 then
