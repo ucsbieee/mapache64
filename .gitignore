@@ -27,4 +27,5 @@ hardware-level/src/**/dump.vcd
 
 # fusesoc
 build/
+fusesoc_libraries/
 fusesoc.conf

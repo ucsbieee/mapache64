@@ -5,6 +5,7 @@
 `ifdef INCLUDE
     `include "pattern-hflipper.v"
     `include "headers/parameters.vh"
+    `include "../fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"
 `endif
 
 
@@ -107,22 +108,15 @@ module foreground_m (
 
     // run Find First Set on valid bits
     reg [$clog2(`NUM_OBJECTS)-1:0] top_object;
-    reg [$clog2(`NUM_OBJECTS):0] i;
-    always_comb begin
-        reg done;
-        top_object = 1'b0;
-        done = 1'b0;
-        for ( i = 0; i < `NUM_OBJECTS; i = i+1 )
-            if ( !done && valid_collection[i] ) begin
-                done = 1'b1;
-                top_object = i[$clog2(`NUM_OBJECTS)-1:0];
-            end
-    end
+    ffs_m #(`NUM_OBJECTS) ffs (
+        valid_collection,
+        valid,
+        top_object
+    );
 
     assign r = r_collection[top_object];
     assign g = g_collection[top_object];
     assign b = b_collection[top_object];
-    assign valid = |valid_collection;
 
 
     //======================================\\
