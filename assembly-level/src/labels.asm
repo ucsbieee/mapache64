@@ -74,24 +74,30 @@ MAGENTA_C       = %101
 YELLOW_C        = %110
 WHITE_C         = %111
 
-BLACK_C0         = BLACK_C      << 0
-BLUE_C0          = BLUE_C       << 0
-GREEN_C0         = GREEN_C      << 0
-CYAN_C0          = CYAN_C       << 0
-RED_C0           = RED_C        << 0
-MAGENTA_C0       = MAGENTA_C    << 0
-YELLOW_C0        = YELLOW_C     << 0
-WHITE_C0         = WHITE_C      << 0
+BLACK_C0        = BLACK_C      << 0
+BLUE_C0         = BLUE_C       << 0
+GREEN_C0        = GREEN_C      << 0
+CYAN_C0         = CYAN_C       << 0
+RED_C0          = RED_C        << 0
+MAGENTA_C0      = MAGENTA_C    << 0
+YELLOW_C0       = YELLOW_C     << 0
+WHITE_C0        = WHITE_C      << 0
 
-BLACK_C1         = BLACK_C      << 3
-BLUE_C1          = BLUE_C       << 3
-GREEN_C1         = GREEN_C      << 3
-CYAN_C1          = CYAN_C       << 3
-RED_C1           = RED_C        << 3
-MAGENTA_C1       = MAGENTA_C    << 3
-YELLOW_C1        = YELLOW_C     << 3
-WHITE_C1         = WHITE_C      << 3
+BLACK_C1        = BLACK_C      << 3
+BLUE_C1         = BLUE_C       << 3
+GREEN_C1        = GREEN_C      << 3
+CYAN_C1         = CYAN_C       << 3
+RED_C1          = RED_C        << 3
+MAGENTA_C1      = MAGENTA_C    << 3
+YELLOW_C1       = YELLOW_C     << 3
+WHITE_C1        = WHITE_C      << 3
 
 COLOR_ALT       = %10000000
 HFLIP           = %01000000
 VFLIP           = %00100000
+
+; ===== ROM Locations ===== ;
+
+reset           = $9000
+do_logic        = $a000
+fill_vram       = $b000

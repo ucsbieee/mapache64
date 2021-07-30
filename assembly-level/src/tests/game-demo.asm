@@ -76,7 +76,10 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 ; ===== Interrupts ===== ;
 ; ====================== ;
 
-reset:
+;==========================;
+        .org reset
+;==========================;
+
         stz start_pedge
         stz start_value
         stz A_pedge
@@ -92,7 +95,10 @@ reset:
 
 
 
-do_logic:
+;==========================;
+        .org do_logic
+;==========================;
+
         ; update start_pedge, A_pedge, left_value, right_value
         jsr getInput
 
@@ -136,7 +142,10 @@ do_logic:
 
 
 
-fill_vram:
+;==========================;
+        .org fill_vram
+;==========================;
+
         lda vram_initialized
         bne .after_vram_initialized
         jsr vram_initialize
