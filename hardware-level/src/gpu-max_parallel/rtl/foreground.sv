@@ -108,6 +108,7 @@ module foreground_m (
 
     // run Find First Set on valid bits
     reg [$clog2(`NUM_OBJECTS)-1:0] top_object;
+    // https://github.com/E4tHam/find_first_set/blob/main/rtl/ffs.v
     ffs_m #(`NUM_OBJECTS) ffs (
         valid_collection,
         valid,
