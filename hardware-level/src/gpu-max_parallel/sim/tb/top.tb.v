@@ -4,7 +4,7 @@
     exit
 `endif
 
-`ifdef INCLUDE
+`ifdef LINTER
     `include "../../rtl/gpu.v"
     `include "../../rtl/headers/parameters.vh"
     `include "../headers/timing.vh"

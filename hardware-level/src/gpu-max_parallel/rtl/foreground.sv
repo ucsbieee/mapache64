@@ -2,7 +2,7 @@
 /* foreground.v */
 
 
-`ifdef INCLUDE
+`ifdef LINTER
     `include "pattern-hflipper.v"
     `include "headers/parameters.vh"
     `include "../fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"

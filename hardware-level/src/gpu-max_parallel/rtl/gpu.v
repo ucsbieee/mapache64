@@ -2,7 +2,7 @@
 /* gpu.v */
 
 
-`ifdef INCLUDE
+`ifdef LINTER
     `include "video-timing.v"
     `include "foreground.sv"
     `include "background.sv"

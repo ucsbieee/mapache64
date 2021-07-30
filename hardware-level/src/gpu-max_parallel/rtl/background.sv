@@ -2,7 +2,7 @@
 /* background.v */
 
 
-`ifdef INCLUDE
+`ifdef LINTER
     `include "pattern-hflipper.v"
     `include "headers/parameters.vh"
 `endif
