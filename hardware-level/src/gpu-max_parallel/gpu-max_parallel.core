@@ -12,6 +12,9 @@ filesets:
       - rtl/foreground.sv:                        {file_type: systemVerilogSource}
       - rtl/background.sv:                        {file_type: systemVerilogSource}
       - rtl/gpu.v:                                {file_type: verilogSource}
+    file_type: verilogSource
+    depend:
+      - e4tham::ffs
   synth:
     files:
       - synth/top.v
