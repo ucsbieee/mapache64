@@ -18,20 +18,14 @@ This is a draft of the GPU described in [GPU](https://arcade.ucsbieee.org/guides
 
 ## Usage
 
-To initialize the FuseSoC core:
-
-```bash
-fusesoc library add gpu ${arcade_location}/hardware-level/src/gpu-max_parallel --sync-type=local
-```
-
 To simulate in Icarus Verilog:
 
 ```bash
-fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
+./scripts/sim.sh
 ```
 
 To synthesize for Nexys A7-100T:
 
 ```bash
-fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel
+./scripts/nexys_a7.sh
 ```
