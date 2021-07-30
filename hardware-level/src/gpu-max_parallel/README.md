@@ -29,3 +29,7 @@ To synthesize for Nexys A7-100T:
 ```bash
 ./scripts/nexys_a7.sh
 ```
+
+Libraries Used:
+
+* [E4tHam/find_first_set](https://github.com/E4tHam/find_first_set)
