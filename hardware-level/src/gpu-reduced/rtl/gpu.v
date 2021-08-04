@@ -22,14 +22,36 @@ module gpu_m (
     output wire                     hsync, vsync,
 
     // VRAM interface
-    input                     [7:0] data,
+    inout                     [7:0] data,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
-    input                           write_enable
+    input                           write_enable,
+
+    input                           SELECT_in_vblank,
+    input                           SELECT_clr_vblank_irq,
+    output reg                      vblank_irq
 );
 
+    // VBLANK IRQ
+    wire writable;
+    assign data = SELECT_in_vblank ? {7'b0,writable} : {8{1'bz}};
+
+    reg writable_prev;
+
+    always @ ( posedge clk ) begin
+        if ( write_enable && SELECT_clr_vblank_irq )
+            vblank_irq <= 0;
+        else if ( writable_prev != writable )
+            vblank_irq <= 1;
+        else
+            vblank_irq <= vblank_irq;
+        writable_prev <= writable;
+    end
+
+
+    // GPU
     wire [8:0] xp, yp;
     wire [9:0] hcounter, vcounter;
-    wire visible, writable, foreground_valid;
+    wire visible, foreground_valid;
 
     wire [1:0] foreground_r, foreground_g, foreground_b;
     wire [1:0] background_r, background_g, background_b;
@@ -55,7 +77,7 @@ module gpu_m (
     foreground_m #(32) foreground (
         clk, rst,
         xp[7:0], yp[7:0],
-        visible, writable,
+        writable,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
         data, address, write_enable
@@ -64,7 +86,7 @@ module gpu_m (
     background_m background (
         clk, rst,
         xp[7:0], yp[7:0],
-        visible, writable,
+        writable,
         background_r, background_g, background_b,
         data, address, write_enable
     );

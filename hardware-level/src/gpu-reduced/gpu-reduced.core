@@ -61,7 +61,7 @@ targets:
           - -g2012 # Use SystemVerilog-2012
           - -Wall
           - -Wno-timescale
-          - -DSIM=0
+          - -DSIM=1
     parameters:
       - TEST=0
 

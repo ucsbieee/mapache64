@@ -17,7 +17,6 @@ module background_m (
 
     // video timing input
     input                     [7:0] xp, yp,
-    input                           visible,
     input                           writable,
 
     // video output
