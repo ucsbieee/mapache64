@@ -18,7 +18,7 @@ filesets:
       - e4tham::ffs
   synth:
     files:
-      - synth/top.v
+      - synth/top.synth.v
     file_type: verilogSource
 
   # boards
@@ -44,7 +44,7 @@ targets:
     filesets:
       - rtl
       - synth
-    toplevel: top_m
+    toplevel: top_synth_m
     parameters:
       - TEST=0
 

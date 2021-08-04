@@ -6,7 +6,7 @@
 `endif
 
 
-module top_m (
+module top_synth_m (
     input               clk_in, rst,
     output wire   [1:0] r,g,b,
     output wire         hsync, vsync
