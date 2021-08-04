@@ -18,9 +18,10 @@ module top_tb_m ();
 
 reg [13:0] address;
 wire [7:0] data;
+wire SELECT_firmware = 1;
 
 firmware_m fw (
-    address, data
+    address, data, SELECT_firmware
 );
 
 /* Test */

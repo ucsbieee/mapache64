@@ -1,8 +1,8 @@
 
 /* pattern-hflipper.v */
 
-`ifndef __UCSBIEEE__GPU_OPTIMIZED__RTL__PATTERN_HFLIPPER_V
-`define __UCSBIEEE__GPU_OPTIMIZED__RTL__PATTERN_HFLIPPER_V
+`ifndef __UCSBIEEE__GPU_REDUCED__RTL__PATTERN_HFLIPPER_V
+`define __UCSBIEEE__GPU_REDUCED__RTL__PATTERN_HFLIPPER_V
 
 
 module pattern_hflipper_m (
