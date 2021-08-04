@@ -20,7 +20,7 @@ targets:
     filesets:
       - rtl
 
-  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_reduced
+  sim: # fusesoc run --target sim ucsbieee:arcade:address_bus
     <<: *default
     description: Simulate the design
     default_tool: icarus
