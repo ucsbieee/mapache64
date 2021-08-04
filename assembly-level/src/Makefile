@@ -49,7 +49,10 @@ arcade:
 	${VASM} ${VASM_FLAGS} -o ${DUMP_PATH}/${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
 
 dump: arcade
-	./dump.sh
+	./dump.sh dump
+
+run: arcade
+	./dump run
 
 clean:
 	rm -rf ${DUMP_PATH}

@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+
+objective=
+
+if [ "$1" = "run" ]; then
+    objective=run
+elif [ "$1" = "dump" ]; then
+    objective=dump
+else
+    >&2 echo "[Argument Error]: Valid argument not given."
+    exit 1
+fi
+
 ASSEMBLY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 DUMP_PATH=dump
 PY65=py65mon
@@ -17,9 +29,14 @@ cd `dirname "${BASH_SOURCE[0]}"`
 # Dump Vectors
 ${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin <<EOF
 save ${DUMP_PATH}/rom.bin       8000 ffff
+save ${DUMP_PATH}/firmware.bin  4000 6fff
 save ${DUMP_PATH}/vectors.bin   fffa ffff
 quit
 EOF
+
+if [ "$objective" = "dump" ]; then
+    exit 0
+fi
 
 # Get Addreses for Interrupt/Reset Vectors
 vectors="${DUMP_PATH}/vectors.bin"
