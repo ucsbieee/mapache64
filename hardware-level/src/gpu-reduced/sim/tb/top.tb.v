@@ -28,23 +28,28 @@ reg rst;
 wire [1:0] r, g, b;
 wire hsync, vsync;
 
-reg [7:0] data;
+wire [7:0] data;
 reg [`VRAM_ADDR_WIDTH-1:0] address;
 reg write_enable;
+
+wire vblank_irq;
+wire SELECT_in_vblank;
+wire SELECT_clr_vblank_irq;
 
 generate
     if ( TEST ) begin : using_fill_vram_m
 
-        reg [7:0] data_fill_vram;
-        reg [`VRAM_ADDR_WIDTH-1:0] address_fill_vram;
-        reg write_enable_fill_vram;
+        wire [7:0] data_fill_vram;
+        wire [`VRAM_ADDR_WIDTH-1:0] address_fill_vram;
+        wire write_enable_fill_vram;
 
         wire fill_vram_in_progress;
 
         gpu_m gpu (
             clk_12_5875, (fill_vram_in_progress|rst),
             r,g,b, hsync, vsync,
-            data_fill_vram, address_fill_vram, write_enable_fill_vram
+            data_fill_vram, address_fill_vram, write_enable_fill_vram,
+            SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
         );
 
         fill_vram_m fill_vram (
@@ -64,7 +69,7 @@ generate
         #( `GPU_CLK_PERIOD );
         rst = 0;
 
-        #( 0.02 )
+        #( 0.022 )
 
         //\\ =========================== \\//
         $finish ;
@@ -72,10 +77,14 @@ generate
 
     end else begin : manual
 
+        reg [7:0] data_out;
+        assign data = data_out;
+
         gpu_m gpu (
             clk_12_5875, rst,
             r,g,b, hsync, vsync,
-            data, address, write_enable
+            data, address, write_enable,
+            SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
         );
 
         /* Test */
@@ -90,7 +99,7 @@ generate
 
         // pmf
         address = 12'h000;
-        data = 8'b0000_1111;
+        data_out = 8'b0000_1111;
         #( `GPU_CLK_PERIOD );
         address = 12'h001;
         #( `GPU_CLK_PERIOD );
@@ -109,22 +118,22 @@ generate
 
         // obm x
         address = 12'h800;
-        data = 8'b0000_1111;
+        data_out = 8'b0000_1111;
         #( `GPU_CLK_PERIOD );
 
         // obm y
         address = 12'h801;
-        data = 8'b0000_1111;
+        data_out = 8'b0000_1111;
         #( `GPU_CLK_PERIOD );
 
         // obm pmfa
         address = 12'h802;
-        data = 8'b0000_0000;
+        data_out = 8'b0000_0000;
         #( `GPU_CLK_PERIOD );
 
         // obm color
         address = 12'h803;
-        data = 8'b0000_0111;
+        data_out = 8'b0000_0111;
         #( `GPU_CLK_PERIOD );
 
         write_enable = 0;

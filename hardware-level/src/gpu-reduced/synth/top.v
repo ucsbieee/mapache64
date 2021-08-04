@@ -17,9 +17,13 @@ module top_m #(
     output wire               [1:0] r,g,b,
     output wire                     hsync, vsync,
 
-    input                     [7:0] data,
+    inout                     [7:0] data,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
-    input                           write_enable
+    input                           write_enable,
+
+    input                           SELECT_in_vblank,
+    input                           SELECT_clr_vblank_irq,
+    output wire                     vblank_irq
 );
 
     wire clk_12_5875;
@@ -41,7 +45,8 @@ module top_m #(
             gpu_m gpu (
                 clk_12_5875, (fill_vram_in_progress|rst),
                 r,g,b, hsync, vsync,
-                data_fill_vram, address_fill_vram, write_enable_fill_vram
+                data_fill_vram, address_fill_vram, write_enable_fill_vram,
+                SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
             );
 
             fill_vram_m fill_vram (
@@ -55,7 +60,8 @@ module top_m #(
             gpu_m gpu (
                 clk_12_5875, rst,
                 r,g,b, hsync, vsync,
-                data, address, write_enable
+                data, address, write_enable,
+                SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
             );
 
         end

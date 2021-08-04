@@ -76,3 +76,11 @@ set_property IOSTANDARD LVCMOS33 [get_ports {data[0]}]
 
 set_property PACKAGE_PIN N17 [get_ports write_enable]
 set_property IOSTANDARD LVCMOS33 [get_ports write_enable]
+
+set_property PACKAGE_PIN E18 [get_ports SELECT_in_vblank]
+set_property IOSTANDARD LVCMOS33 [get_ports SELECT_in_vblank]
+set_property PACKAGE_PIN F18 [get_ports SELECT_clr_vblank_irq]
+set_property IOSTANDARD LVCMOS33 [get_ports SELECT_clr_vblank_irq]
+
+set_property PACKAGE_PIN D14 [get_ports vblank_irq]
+set_property IOSTANDARD LVCMOS33 [get_ports vblank_irq]
