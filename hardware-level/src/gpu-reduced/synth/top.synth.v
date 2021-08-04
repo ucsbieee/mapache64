@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_SYNTH_V
-`define __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_SYNTH_V
+`ifndef __UCSBIEEE__GPU_REDUCED__SYNTH__TOP_SYNTH_V
+`define __UCSBIEEE__GPU_REDUCED__SYNTH__TOP_SYNTH_V
 
 
 `ifdef LINTER
@@ -29,6 +29,8 @@ module top_synth_m #(
     wire clk_12_5875;
     clk_freq_conversion_m clk_freq_conversion(clk_12_5875, clk_in);
 
+    wire SELECT_vram = 1;
+
     generate
         if ( TEST ) begin : fill_vram_input
 
@@ -45,7 +47,7 @@ module top_synth_m #(
             gpu_m gpu (
                 clk_12_5875, (fill_vram_in_progress|rst),
                 r,g,b, hsync, vsync,
-                data_fill_vram, address_fill_vram, write_enable_fill_vram,
+                data_fill_vram, address_fill_vram, write_enable_fill_vram, SELECT_vram,
                 SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
             );
 
@@ -60,7 +62,7 @@ module top_synth_m #(
             gpu_m gpu (
                 clk_12_5875, rst,
                 r,g,b, hsync, vsync,
-                data, address, write_enable,
+                data, address, write_enable, SELECT_vram,
                 SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
             );
 

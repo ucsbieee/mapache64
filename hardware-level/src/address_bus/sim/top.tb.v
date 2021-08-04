@@ -19,8 +19,8 @@ reg [15:0] cpu_address;
 
 wire [14:0] output_address;
 
-wire SELECT_vram;
 wire SELECT_ram;
+wire SELECT_vram;
 wire SELECT_firmware;
 wire SELECT_rom;
 
@@ -31,14 +31,15 @@ wire SELECT_clr_vblank_irq;
 address_bus_m address_bus(
     cpu_address,
     output_address,
-    SELECT_vram,
     SELECT_ram,
+    SELECT_vram,
     SELECT_firmware,
     SELECT_rom,
-    SELECT_controller,
     SELECT_in_vblank,
-    SELECT_clr_vblank_irq
+    SELECT_clr_vblank_irq,
+    SELECT_controller
 );
+
 
 /* Test */
 initial begin
@@ -47,7 +48,7 @@ $dumpvars();
 //\\ =========================== \\//
 
 cpu_address = 16'h0000; #1
-cpu_address = 16'h3fff; #1
+cpu_address = 16'h36ff; #1
 
 cpu_address = 16'h3700; #1
 cpu_address = 16'h3fff; #1

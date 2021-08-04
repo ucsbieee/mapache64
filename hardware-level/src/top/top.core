@@ -11,11 +11,16 @@ filesets:
       - ucsbieee:arcade:gpu_reduced
       - ucsbieee:arcade:firmware
       - ucsbieee:arcade:address_bus
+  synth:
+    files:
+      - synth/top.synth.v
+    file_type: verilogSource
 
   # simulation
   sim:
     files:
-      - sim/top.tb.v
+      - sim/headers/timing.vh
+      - sim/tb/top.tb.v
     file_type: verilogSource
 
   # boards

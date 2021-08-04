@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__GPU_OPTIMIZED__SIM__TB__TOP_TB_V
-`define __UCSBIEEE__GPU_OPTIMIZED__SIM__TB__TOP_TB_V
+`ifndef __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
+`define __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
 
 
 `ifndef SIM
@@ -31,6 +31,8 @@ wire hsync, vsync;
 wire [7:0] data;
 reg [`VRAM_ADDR_WIDTH-1:0] address;
 reg write_enable;
+wire SELECT_vram = 1;
+
 
 wire vblank_irq;
 wire SELECT_in_vblank;
@@ -83,7 +85,7 @@ generate
         gpu_m gpu (
             clk_12_5875, rst,
             r,g,b, hsync, vsync,
-            data, address, write_enable,
+            data, address, write_enable, SELECT_vram,
             SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
         );
 

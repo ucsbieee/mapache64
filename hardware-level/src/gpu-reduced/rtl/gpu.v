@@ -1,8 +1,8 @@
 
 /* gpu.v */
 
-`ifndef __UCSBIEEE__GPU_OPTIMIZED__RTL__GPU_V
-`define __UCSBIEEE__GPU_OPTIMIZED__RTL__GPU_V
+`ifndef __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
+`define __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
 
 
 `ifdef LINTER
@@ -25,6 +25,7 @@ module gpu_m (
     inout                     [7:0] data,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable,
+    input                           SELECT_vram,
 
     input                           SELECT_in_vblank,
     input                           SELECT_clr_vblank_irq,
@@ -40,7 +41,7 @@ module gpu_m (
     always @ ( posedge clk ) begin
         if ( write_enable && SELECT_clr_vblank_irq )
             vblank_irq <= 0;
-        else if ( writable_prev != writable )
+        else if ( rst || (writable_prev != writable) )
             vblank_irq <= 1;
         else
             vblank_irq <= vblank_irq;
@@ -74,13 +75,13 @@ module gpu_m (
         writable
     );
 
-    foreground_m #(32) foreground (
+    foreground_m #(48) foreground (
         clk, rst,
         xp[7:0], yp[7:0],
         writable,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
-        data, address, write_enable
+        data, address, (write_enable&SELECT_vram)
     );
 
     background_m background (
@@ -88,7 +89,7 @@ module gpu_m (
         xp[7:0], yp[7:0],
         writable,
         background_r, background_g, background_b,
-        data, address, write_enable
+        data, address, (write_enable&SELECT_vram)
     );
 
 endmodule

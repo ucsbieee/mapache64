@@ -7,12 +7,13 @@
 
 module firmware_m (
     input        [$clog2(`__FIRMWARE_SIZE)-1:0] address,
-    output wire                           [7:0] data
+    output wire                           [7:0] data,
+    input                                       SELECT_firmware
 );
 
     reg [7:0] mem [`__FIRMWARE_SIZE-1:0];
 
-    assign data = mem[address];
+    assign data = SELECT_firmware ? mem[address] : {8{1'bz}};
 
     initial $readmemh( "firmware.mem", mem, 0, `__FIRMWARE_SIZE-1 );
 
