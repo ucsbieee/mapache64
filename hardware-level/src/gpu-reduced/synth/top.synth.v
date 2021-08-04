@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_V
-`define __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_V
+`ifndef __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_SYNTH_V
+`define __UCSBIEEE__GPU_OPTIMIZED__SYNTH__TOP_SYNTH_V
 
 
 `ifdef LINTER
@@ -9,7 +9,7 @@
 `endif
 
 
-module top_m #(
+module top_synth_m #(
     parameter TEST = 0
 ) (
     input                           clk_in, rst,

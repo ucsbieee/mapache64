@@ -24,5 +24,5 @@ module firmware_m (
 
 endmodule
 
-
+`undef __FIRMWARE_SIZE
 `endif

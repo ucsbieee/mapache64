@@ -1,6 +1,6 @@
 CAPI=2:
 name: ucsbieee:arcade:firmware:1.0.0
-description: Address space mux
+description: ROM for firmware
 
 filesets:
   # default
