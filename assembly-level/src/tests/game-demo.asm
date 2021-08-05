@@ -216,8 +216,8 @@ person_initialize:
 
 
 person_jump:
-        cp16 person_yp Q9_6_I1
-        cp16 ground Q9_6_I2
+        cp16 person_yp, Q9_6_I1
+        cp16 ground, Q9_6_I2
         jsr subQ9_6
         ; TO DO
 
