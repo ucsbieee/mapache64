@@ -1,23 +1,26 @@
 CAPI=2:
-name: ucsbieee:arcade:gpu_max_parallel:1.0.0
-description: GPU draft, unoptimized
+name: ucsbieee:arcade:top:1.0.0
+description: Address space mux
 
 filesets:
   # default
   rtl:
     files:
-      - rtl/headers/parameters.vh:                {file_type: verilogSource}
-      - rtl/pattern-hflipper.v:                   {file_type: verilogSource}
-      - rtl/video-timing.v:                       {file_type: verilogSource}
-      - rtl/foreground.sv:                        {file_type: systemVerilogSource}
-      - rtl/background.sv:                        {file_type: systemVerilogSource}
-      - rtl/gpu.v:                                {file_type: verilogSource}
-    file_type: verilogSource
+      - rtl/top.v:           {file_type: verilogSource}
     depend:
-      - e4tham::ffs
+      - ucsbieee:arcade:gpu_reduced
+      - ucsbieee:arcade:firmware
+      - ucsbieee:arcade:address_bus
   synth:
     files:
       - synth/top.synth.v
+    file_type: verilogSource
+
+  # simulation
+  sim:
+    files:
+      - sim/headers/timing.vh
+      - sim/tb/top.tb.v
     file_type: verilogSource
 
   # boards
@@ -27,13 +30,6 @@ filesets:
       - synth/boards/nexys_a7/pinout.xdc:         {file_type: xdc}
       - synth/boards/nexys_a7/config.xdc:         {file_type: xdc}
       - synth/boards/nexys_a7/global_include.tcl: {file_type: tclSource}
-
-  # simulation
-  sim:
-    files:
-      - sim/headers/timing.vh
-      - sim/tb/top.tb.v
-    file_type: verilogSource
 
 targets:
   default: &default
@@ -45,7 +41,7 @@ targets:
       - synth
     toplevel: top_synth_m
 
-  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
+  sim: # fusesoc run --target sim ucsbieee:arcade:top
     <<: *default
     description: Simulate the design
     default_tool: icarus
@@ -58,10 +54,9 @@ targets:
           - -g2012 # Use SystemVerilog-2012
           - -Wall
           - -Wno-timescale
-          - -DSIM=1
-          - -DTEST=1
+          - -DSIM=0
 
-  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:top
     <<: *synth
     description: Synthesize on Nexys A7
     filesets_append:
