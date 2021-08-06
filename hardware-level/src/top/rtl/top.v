@@ -43,7 +43,7 @@ module top_m (
         output_address[13:0], data, SELECT_firmware
     );
 
-    gpu_m gpu (
+    gpu_m #(1) gpu (
         clk_12_5875, rst,
         r,g,b, hsync, vsync,
         data, output_address[11:0], write_enable, SELECT_vram,

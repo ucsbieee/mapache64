@@ -6,8 +6,8 @@ filesets:
   # default
   rtl:
     files:
-      - rtl/firmware.v:           {file_type: verilogSource}
-      - fusesoc/rom/firmware.mem: {file_type: user, copyto: firmware.mem}
+      - rtl/firmware.v:   {file_type: verilogSource}
+      - rom/firmware.mem: {file_type: user, copyto: firmware.mem}
 
   # simulation
   sim:
