@@ -21,18 +21,6 @@ module address_bus_m (
 );
 
 
-    // mux
-    assign output_address =
-        SELECT_ram          ? {1'bz,ram_address}                :
-        SELECT_vram         ? {2'bzz,vram_address}              :
-        SELECT_firmware     ? {1'bz,firmware_address}           :
-        SELECT_rom          ? rom_address                       :
-
-        SELECT_controller   ? {{14{1'bz}},controller_address}   :
-
-        {15{1'bz}};
-
-
 
     // memory
     assign SELECT_ram = `__INCBOUND(16'h0000,cpu_address,16'h36ff);
@@ -56,6 +44,19 @@ module address_bus_m (
 
     assign SELECT_controller = `__INCBOUND(16'h7002,cpu_address,16'h7003);
     wire controller_address = cpu_address[0] & 1'b1;
+
+
+
+    // mux
+    assign output_address =
+        SELECT_ram          ? {1'bz,ram_address}                :
+        SELECT_vram         ? {2'bzz,vram_address}              :
+        SELECT_firmware     ? {1'bz,firmware_address}           :
+        SELECT_rom          ? rom_address                       :
+
+        SELECT_controller   ? {{14{1'bz}},controller_address}   :
+
+        {15{1'bz}};
 
 
 

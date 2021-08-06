@@ -13,7 +13,9 @@
 `endif
 
 
-module gpu_m (
+module gpu_m #(
+        parameter FOREGROUND_NUM_OBJECTS = 51
+) (
     input                           clk, // 12.5875 MHz
     input                           rst,
 
@@ -75,7 +77,7 @@ module gpu_m (
         writable
     );
 
-    foreground_m #(48) foreground (
+    foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk, rst,
         xp[7:0], yp[7:0],
         writable,
