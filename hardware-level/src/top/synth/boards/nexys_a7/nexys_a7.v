@@ -1,6 +1,7 @@
 
 `ifdef LINTER
     `include "../../../rtl/top.v"
+    `include "modules/clk_100_TO_clk_1.v"
 `endif
 
 module nexys_a7 (
@@ -12,22 +13,29 @@ module nexys_a7 (
     inout
         JC_1, JC_2, JC_3, JC_4, JC_7, JC_8, JC_9, JC_10,
     output wire
-        JD_2, JD_7, JD_9,
+        JD_1, JD_2, JD_4, JD_7, JD_8, JD_9,
     input
         JD_3,
     output wire [3:0] VGA_R,
     output wire [3:0] VGA_G,
     output wire [3:0] VGA_B,
     output wire VGA_HS,
-    output wire VGA_VS
+    output wire VGA_VS,
+
+    output wire [15:0] LED,
+    input [15:0] SW,
+    input BTNC
 );
+
 
     // internal
     wire        fpga_data_enable;
 
 
+
     // inout
     wire  [7:0] data;
+
 
 
     // input
@@ -41,10 +49,16 @@ module nexys_a7 (
         CLK100MHZ
     );
 
+    clk_100_TO_clk_1_m clk_100_TO_clk_1 (
+        clk_1,
+        CLK100MHZ
+    );
+
     assign  rst             = ~CPU_RESETN;
     assign  cpu_address     = {JB_10,JB_9,JB_8,JB_7,JB_4,JB_3,JB_2,JB_1,JA_10,JA_9,JA_8,JA_7,JA_4,JA_3,JA_2,JA_1};
     assign  data            = fpga_data_enable ? {8{1'bz}} : {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1};
     assign  write_enable_B  = JD_3;
+
 
 
     // output
@@ -57,18 +71,28 @@ module nexys_a7 (
     wire  [1:0] b;
     wire        hsync;
     wire        vsync;
+    wire        cpu_clk;
 
     assign {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1}
                             = fpga_data_enable ? data : {8{1'bz}};
-    assign  JD_7           = SELECT_ram_B;
-    assign  JD_9           = SELECT_rom_B;
-    assign  JD_2           = vblank_irq_B;
+    assign  JD_7            = SELECT_ram_B;
+    assign  JD_8            = ram_OE_B;
+    assign  JD_9            = SELECT_rom_B;
+    assign  JD_2            = vblank_irq_B;
+    assign  JD_1            = ~rst;
+    assign  JD_4            = cpu_clk;
 
     assign VGA_R = {r, 2'b0};
     assign VGA_G = {g, 2'b0};
     assign VGA_B = {b, 2'b0};
     assign VGA_HS = hsync;
     assign VGA_VS = vsync;
+
+    // switch 0 controls led output
+    assign LED = SW[0] ? cpu_address : {8'b0, data};
+    // switch 1 controls cpu clock source
+    assign cpu_clk = SW[1] ? clk_1 : BTNC;
+
 
 
     // unused
@@ -92,6 +116,8 @@ module nexys_a7 (
         r, g, b,
         hsync, vsync
     );
+
+    assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
 
 
 endmodule
