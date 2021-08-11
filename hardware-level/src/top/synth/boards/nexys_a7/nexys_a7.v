@@ -36,7 +36,7 @@ module nexys_a7 (
     wire [15:0] cpu_address;
     wire        write_enable_B;
 
-    clk_freq_conversion_m clk_freq_conversion (
+    clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
         clk_12_5875,
         CLK100MHZ
     );
