@@ -62,7 +62,6 @@ module foreground_m #(
 
     wire [5:0] obma = 6'b0;
 
-    `define NUM_OBJECTS 7'd32
     wire [1:0] r_collection [NUM_OBJECTS-1:0];
     wire [1:0] b_collection [NUM_OBJECTS-1:0];
     wire [1:0] g_collection [NUM_OBJECTS-1:0];
@@ -117,7 +116,7 @@ module foreground_m #(
     end endgenerate
 
     // run Find First Set on valid bits
-    reg [$clog2(NUM_OBJECTS)-1:0] top_object;
+    wire [$clog2((NUM_OBJECTS>=2)?NUM_OBJECTS:2)-1:0] top_object;
     // https://github.com/E4tHam/find_first_set/blob/main/rtl/ffs.v
     ffs_m #(NUM_OBJECTS) ffs (
         valid_collection,
