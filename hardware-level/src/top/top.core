@@ -1,20 +1,21 @@
 CAPI=2:
 name: ucsbieee:arcade:top:1.0.0
-description: Address space mux
+description: Arcade FPGA, gpu + firmware + address bus
 
 filesets:
   # default
   rtl:
     files:
-      - rtl/top.v:           {file_type: verilogSource}
+      - rtl/top.v:                                          {file_type: verilogSource}
     depend:
       - ucsbieee:arcade:gpu_reduced
       - ucsbieee:arcade:firmware
       - ucsbieee:arcade:address_bus
-  synth:
+
+  # synth
+  vivado:
     files:
-      - synth/top.synth.v
-    file_type: verilogSource
+      - synth/vivado/global_include.tcl:                    {file_type: tclSource}
 
   # simulation
   sim:
@@ -23,13 +24,19 @@ filesets:
       - sim/tb/top.tb.v
     file_type: verilogSource
 
-  # boards
+  # hardware
   nexys_a7:
     files:
-      - ip/clk_freq_conversion_m.xci:             {file_type: xci}
-      - synth/boards/nexys_a7/pinout.xdc:         {file_type: xdc}
-      - synth/boards/nexys_a7/config.xdc:         {file_type: xdc}
-      - synth/boards/nexys_a7/global_include.tcl: {file_type: tclSource}
+      - synth/boards/nexys_a7/ip/clk_freq_conversion_m.xci: {file_type: xci}
+      - synth/boards/nexys_a7/nexys_a7.xdc:                 {file_type: xdc}
+      - synth/boards/nexys_a7/nexys_a7.v:                   {file_type: verilogSource}
+  cmod_a7:
+    files:
+      - synth/boards/cmod_a7/cmod_a7.xdc:                   {file_type: xdc}
+      - synth/boards/cmod_a7/cmod_a7.v:                     {file_type: verilogSource}
+  artix_7:
+    files:
+      - synth/vivado/a7_config.xdc:                         {file_type: xdc}
 
 targets:
   default: &default
@@ -38,30 +45,44 @@ targets:
   synth: &synth
     filesets:
       - rtl
-      - synth
-    toplevel: top_synth_m
 
   sim: # fusesoc run --target sim ucsbieee:arcade:top
     <<: *default
     description: Simulate the design
+    toplevel: top_tb_m
     default_tool: icarus
     filesets_append:
       - sim
-    toplevel: top_tb_m
     tools:
       icarus:
         iverilog_options:
           - -g2012 # Use SystemVerilog-2012
           - -Wall
           - -Wno-timescale
-          - -DSIM=0
+          - -DSIM=1
 
   nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:top
     <<: *synth
     description: Synthesize on Nexys A7
+    toplevel: nexys_a7
     filesets_append:
+      - artix_7
       - nexys_a7
+      - vivado
     default_tool: vivado
     tools:
       vivado:
-        part : xc7a100tcsg324-3
+        part: xc7a100tcsg324-3
+
+  cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:arcade:top
+    <<: *synth
+    description: Synthesize on Digilent Cmod A7
+    toplevel: cmod_a7
+    filesets_append:
+      - artix_7
+      - cmod_a7
+      - vivado
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7a35tcpg236-1

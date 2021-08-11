@@ -10,7 +10,7 @@
 
 
 module top_synth_m #(
-    parameter TEST = 0
+    parameter TEST = 1'b0
 ) (
     input                           clk_in, rst,
 

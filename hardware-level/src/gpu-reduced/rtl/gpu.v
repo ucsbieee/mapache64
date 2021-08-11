@@ -14,7 +14,7 @@
 
 
 module gpu_m #(
-        parameter FOREGROUND_NUM_OBJECTS = 51
+        parameter FOREGROUND_NUM_OBJECTS = 4
 ) (
     input                           clk, // 12.5875 MHz
     input                           rst,
