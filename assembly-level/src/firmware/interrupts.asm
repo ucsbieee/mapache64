@@ -12,13 +12,14 @@ _handle_reset:
         sta FRAME
         sta FRAME+1
         sta FRAME+2
+        sta FRAME+3
         jsr reset
 _next_frame:    ; handle frame timing
-        inc_mem FRAME, 3        ; increment frame count
+        inc_mem FRAME, 4        ; increment frame count
         jsr do_logic            ; do non-vram logic
 
-        wai                     ; jump to irq
-        cli                     ; enable irq
+        wai                     ; wait for interrupt
+        cli                     ; enable irq (irq is immediately handled)
         jsr fill_vram           ; fill vram while in vblank
         sei                     ; disble irq
         jmp _next_frame         ; repeat
