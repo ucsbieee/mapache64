@@ -29,6 +29,9 @@
 ; ====== start ====== ;
         .org 0
 
+; ====== RAM ====== ;
+        .include "zero_page.asm"
+
 ; ====== firmware ====== ;
         .org _FIRMWARE_START
 
@@ -50,6 +53,7 @@
 
 ; ====== ROM ====== ;
         .org _ROM_START
+        .include "firmware/header.asm"
         .include "rom.asm"
         stp
 
