@@ -34,8 +34,9 @@ _vblank_irq:    ; wait for vblank; clear irq and return
 .check_if_in_vblank:
         lda _IN_VBLANK
         bne .in_vblank          ; if in vblank, return
-        wai                     ; otherwise, wait for interrupt and check again
-        jmp .check_if_in_vblank
+        stz _CLR_VBLANK_IRQ     ; otherwise, clear interrupt,
+        wai                     ;   wait for next interrupt
+        jmp .check_if_in_vblank ;   and check again
 
 .in_vblank:
         stz _CLR_VBLANK_IRQ     ; clear interrupt
