@@ -22,31 +22,36 @@ always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;
 
 reg             rst;
 reg      [15:0] cpu_address;
-wire      [7:0] data;
-reg             write_enable;
+wire      [7:0] data, data_in, data_out;
+wire            fpga_data_enable;
+reg             write_enable_B;
 
 wire     [14:0] output_address;
-wire            SELECT_ram;
-wire            SELECT_rom;
+wire            SELECT_ram_B;
+wire            SELECT_rom_B;
 wire            SELECT_controller;
 
 wire      [1:0] r, g, b;
-wire            hsync, vsync, vblank_irq;
+wire            hsync, vsync, vblank_irq_B;
 
 reg       [7:0] write_data;
-assign data = write_enable ? write_data : {8{1'bz}};
+assign data_in = write_data;
+assign data = write_enable_B ? data_out : data_in;
+
 
 top_m top (
     clk_12_5875, rst,
     cpu_address,
-    data,
-    write_enable,
+    data_in,
+    data_out,
+    fpga_data_enable,
+    write_enable_B,
 
     output_address,
-    SELECT_ram,
-    SELECT_rom,
+    SELECT_ram_B,
+    SELECT_rom_B,
     SELECT_controller,
-    vblank_irq,
+    vblank_irq_B,
 
     r, g, b,
     hsync, vsync
@@ -59,14 +64,14 @@ $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
-write_enable = 0;
+write_enable_B = 1;
 
 rst = 1;
 write_data = 8'hea;
-write_enable = 1;
+write_enable_B = 1;
 cpu_address = 16'h3700; #( `GPU_CLK_PERIOD );
 
-write_enable = 0;
+write_enable_B = 1;
 cpu_address = 16'h3fff; #( `GPU_CLK_PERIOD );
 rst = 0;
 
@@ -86,14 +91,12 @@ cpu_address = 16'h7001; #( `GPU_CLK_PERIOD );
 cpu_address = 16'h7002; #( `GPU_CLK_PERIOD );
 cpu_address = 16'h7003; #( `GPU_CLK_PERIOD );
 
-write_enable = 1;
+write_enable_B = 1;
 cpu_address = 16'h7001; #( `GPU_CLK_PERIOD );
-write_enable = 0;
-
-@ ( vsync );
+write_enable_B = 1;
 
 write_data = 8'h81;
-write_enable = 1;
+write_enable_B = 1;
 cpu_address = 16'h3900; #( `GPU_CLK_PERIOD );
 
 #( `GPU_CLK_PERIOD );
