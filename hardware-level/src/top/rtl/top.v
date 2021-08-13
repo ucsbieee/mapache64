@@ -14,11 +14,12 @@ module top_m #(
 ) (
     input               clk_12_5875, rst,
     input        [15:0] cpu_address,
-    inout         [7:0] data,
+    input         [7:0] data_in,
+    output        [7:0] data_out,
+    output wire         fpga_data_enable,
     input               write_enable_B,
 
     output wire  [14:0] output_address,
-    output wire         fpga_data_enable,
     output wire         SELECT_ram_B,
     output wire         SELECT_rom_B,
     output wire         SELECT_controller,
@@ -32,9 +33,12 @@ module top_m #(
     wire SELECT_vram, SELECT_firmware, SELECT_in_vblank, SELECT_clr_vblank_irq;
 
     // inputs
-    assign write_enable = ~write_enable_B;
+    wire write_enable = ~write_enable_B;
 
     // outputs
+    wire SELECT_ram;
+    wire SELECT_rom;
+    wire vblank_irq;
     assign SELECT_ram_B = ~SELECT_ram;
     assign SELECT_rom_B = ~SELECT_rom;
     assign vblank_irq_B = ~vblank_irq;
@@ -54,14 +58,21 @@ module top_m #(
         SELECT_controller
     );
 
+    wire [7:0] firmware_data_out, gpu_data_in, gpu_data_out;
+
+    assign data_out =
+        SELECT_firmware         ? firmware_data_out :
+        SELECT_in_vblank        ? gpu_data_out      :
+        {8{1'bz}};
+
     firmware_m firmware (
-        output_address[13:0], data, SELECT_firmware
+        output_address[13:0], firmware_data_out, SELECT_firmware
     );
 
     gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
         clk_12_5875, rst,
         r,g,b, hsync, vsync,
-        data, output_address[11:0], write_enable, SELECT_vram,
+        gpu_data_in, gpu_data_out, output_address[11:0], write_enable, SELECT_vram,
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 

@@ -34,7 +34,7 @@ module nexys_a7 (
 
 
     // inout
-    wire  [7:0] data;
+    wire  [7:0] data, data_in, data_out;
 
 
 
@@ -56,7 +56,8 @@ module nexys_a7 (
 
     assign  rst             = ~CPU_RESETN;
     assign  cpu_address     = {JB_10,JB_9,JB_8,JB_7,JB_4,JB_3,JB_2,JB_1,JA_10,JA_9,JA_8,JA_7,JA_4,JA_3,JA_2,JA_1};
-    assign  data            = fpga_data_enable ? {8{1'bz}} : {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1};
+    assign  data_in         = {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1};
+    assign  data            = fpga_data_enable ? data_out : data_in;
     assign  write_enable_B  = JD_3;
 
 
@@ -74,7 +75,17 @@ module nexys_a7 (
     wire        cpu_clk;
 
     assign {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1}
-                            = fpga_data_enable ? data : {8{1'bz}};
+                            = fpga_data_enable ? data_out : {8{1'bz}};
+
+    assign JC_10            = fpga_data_enable ? data_out[7] : {1'bz};
+    assign JC_9             = fpga_data_enable ? data_out[6] : {1'bz};
+    assign JC_8             = fpga_data_enable ? data_out[5] : {1'bz};
+    assign JC_7             = fpga_data_enable ? data_out[4] : {1'bz};
+    assign JC_4             = fpga_data_enable ? data_out[3] : {1'bz};
+    assign JC_3             = fpga_data_enable ? data_out[2] : {1'bz};
+    assign JC_2             = fpga_data_enable ? data_out[1] : {1'bz};
+    assign JC_1             = fpga_data_enable ? data_out[0] : {1'bz};
+
     assign  JD_7            = SELECT_ram_B;
     assign  JD_8            = ram_OE_B;
     assign  JD_9            = SELECT_rom_B;
@@ -103,11 +114,12 @@ module nexys_a7 (
     top_m #(32) top (
         clk_12_5875, rst,
         cpu_address,
-        data,
+        data_in,
+        data_out,
+        fpga_data_enable,
         write_enable_B,
 
         output_address,
-        fpga_data_enable,
         SELECT_ram_B,
         SELECT_rom_B,
         SELECT_controller,
