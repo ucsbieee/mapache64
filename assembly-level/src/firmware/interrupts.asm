@@ -30,10 +30,14 @@ _next_frame:    ; handle frame timing
 _handle_irq:
 _vblank_irq:    ; wait for vblank; clear irq and return
         pha
-.poll:
-        lda _IN_VBLANK
-        beq .poll               ; keep looping while not in vblank
 
+.check_if_in_vblank:
+        lda _IN_VBLANK
+        bne .in_vblank          ; if in vblank, return
+        wai                     ; otherwise, wait for interrupt and check again
+        jmp .check_if_in_vblank
+
+.in_vblank:
         stz _CLR_VBLANK_IRQ     ; clear interrupt
         pla
         rti
