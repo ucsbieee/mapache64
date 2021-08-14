@@ -27,7 +27,7 @@ module foreground_m #(
     output wire                     valid,
 
     // VRAM interface
-    input                     [7:0] data,
+    input                     [7:0] data_in,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable
 );
@@ -50,13 +50,15 @@ module foreground_m #(
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
+    wire in_pmf = ( address >= 12'h000 && address < 12'h200 );
+    wire in_obm = ( address >= 12'h800 && address < 12'h900 );
 
     always_ff @ ( posedge clk ) begin : write_to_vram
         if ( write_enable && writable ) begin
-            if ( address >= 12'h000 && address < 12'h200 )
-                PMF[ address - 12'h000 ] <= data;
-            if ( address >= 12'h800 && address < 12'h900 )
-                OBM[ address - 12'h800 ] <= data;
+            if ( in_pmf )
+                PMF[ address - 12'h000 ] <= data_in;
+            if ( in_obm )
+                OBM[ address - 12'h800 ] <= data_in;
         end
     end
 
