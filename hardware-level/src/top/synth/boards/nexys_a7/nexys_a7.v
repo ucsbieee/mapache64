@@ -1,7 +1,7 @@
 
 `ifdef LINTER
     `include "../../../rtl/top.v"
-    `include "modules/clk_100_TO_clk_1.v"
+    `include "modules/clk_100_TO_clk_PARAM.v"
 `endif
 
 module nexys_a7 (
@@ -40,6 +40,7 @@ module nexys_a7 (
 
     // input
     wire        clk_12_5875;
+    wire        clk_cpu;
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
@@ -49,8 +50,8 @@ module nexys_a7 (
         CLK100MHZ
     );
 
-    clk_100_TO_clk_1_m clk_100_TO_clk_1 (
-        clk_1,
+    clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
+        clk_cpu,
         CLK100MHZ
     );
 
@@ -74,8 +75,8 @@ module nexys_a7 (
     wire        vsync;
     wire        cpu_clk;
 
-    assign {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1}
-                            = fpga_data_enable ? data_out : {8{1'bz}};
+    // assign {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1}
+    //                         = fpga_data_enable ? data_out : {8{1'bz}};
 
     assign JC_10            = fpga_data_enable ? data_out[7] : {1'bz};
     assign JC_9             = fpga_data_enable ? data_out[6] : {1'bz};
@@ -102,7 +103,7 @@ module nexys_a7 (
     // switch 0 controls led output
     assign LED = SW[0] ? cpu_address : {8'b0, data};
     // switch 1 controls cpu clock source
-    assign cpu_clk = SW[1] ? clk_1 : BTNC;
+    assign cpu_clk = SW[1] ? clk_cpu : BTNC;
 
 
 
