@@ -23,7 +23,7 @@ module background_m (
     output wire               [1:0] r, g, b,
 
     // VRAM interface
-    input                     [7:0] data,
+    input                     [7:0] data_in,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable
 );
@@ -53,13 +53,15 @@ module background_m (
     `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
     // -------------------------
 
+    wire in_pmb = ( address >= 12'h200 && address < 12'h400 );
+    wire in_ntbl = ( address >= 12'h400 && address < 12'h800 );
 
     always_ff @ ( posedge clk ) begin : write_to_vram
         if ( write_enable && writable ) begin
-            if ( address >= 12'h200 && address < 12'h400 )
-                PMB[ address - 12'h200 ] <= data;
-            if ( address >= 12'h400 && address < 12'h800 )
-                NTBL[ address - 12'h400 ] <= data;
+            if ( in_pmb )
+                PMB[ address - 12'h200 ] <= data_in;
+            if ( in_ntbl )
+                NTBL[ address - 12'h400 ] <= data_in;
         end
     end
 

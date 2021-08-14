@@ -58,7 +58,7 @@ module top_m #(
         SELECT_controller
     );
 
-    wire [7:0] firmware_data_out, gpu_data_in, gpu_data_out;
+    wire [7:0] firmware_data_out, gpu_data_out;
 
     assign data_out =
         SELECT_firmware         ? firmware_data_out :
@@ -72,7 +72,7 @@ module top_m #(
     gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
         clk_12_5875, rst,
         r,g,b, hsync, vsync,
-        gpu_data_in, gpu_data_out, output_address[11:0], write_enable, SELECT_vram,
+        data_in, gpu_data_out, output_address[11:0], write_enable, SELECT_vram,
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 
