@@ -16,7 +16,7 @@ module background_m (
     input                           rst,
 
     // video timing input
-    input                     [7:0] xp, yp,
+    input                     [7:0] current_x, current_y,
     input                           writable,
 
     // video output
@@ -28,10 +28,10 @@ module background_m (
     input                           write_enable
 );
 
-    wire [4:0] ntbl_r = yp[7:3];
-    wire [2:0] tile_x = xp[2:0];
-    wire [4:0] ntbl_c = xp[7:3];
-    wire [2:0] tile_y = yp[2:0];
+    wire [4:0] ntbl_r       = current_y[7:3];
+    wire [2:0] in_tile_x    = current_x[2:0];
+    wire [4:0] ntbl_c       = current_x[7:3];
+    wire [2:0] in_tile_y    = current_y[2:0];
 
 
     // Pattern Memory Background    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
@@ -83,18 +83,13 @@ module background_m (
     wire vflip = `NTBL_TILE_VFLIP(ntbl_r,ntbl_c);
 
     // get vflipped address
-    wire [2:0] vflipped_tile_y = vflip ? (7-tile_y) : tile_y;
+    wire [2:0] in_pattern_y = vflip ? (3'h7-in_tile_y) : in_tile_y;
+    wire [2:0] in_pattern_x = hflip ? (3'h7-in_tile_x) : in_tile_x;
 
-    // get flipped line
-    wire [15:0] line;
-    pattern_hflipper_m pmb_hflipper (
-        `PMB_LINE( pmba, vflipped_tile_y ),
-        hflip,
-        line
-    );
+    // get flipped line of pixels to draw
+    wire [15:0] line = `PMB_LINE( pmba, in_pattern_y );
 
-
-    wire [1:0] current_pixel = line[ {tile_x,1'b0} +: 2 ];
+    wire [1:0] current_pixel = line[ {(3'h7-in_pattern_x),1'b0} +: 2 ];
     assign r = current_pixel & {2{color[2]}};
     assign g = current_pixel & {2{color[1]}};
     assign b = current_pixel & {2{color[0]}};

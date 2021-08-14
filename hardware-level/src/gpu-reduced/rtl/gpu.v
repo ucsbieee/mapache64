@@ -53,22 +53,22 @@ module gpu_m #(
 
 
     // GPU
-    wire [8:0] xp, yp;
+    wire [8:0] current_x, current_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
 
     wire [1:0] foreground_r, foreground_g, foreground_b;
     wire [1:0] background_r, background_g, background_b;
 
-    wire drawing = visible && (0 <= xp && xp < 256) && (0 <= yp && yp < 240);
+    wire drawing = visible && (0 <= current_x && current_x < 256) && (0 <= current_y && current_y < 240);
 
     assign {r,g,b} = !drawing           ? 3'b0 :
                     foreground_valid    ? {foreground_r,foreground_g,foreground_b} :
                     {background_r,background_g,background_b};
 
 
-    assign xp = hcounter[8:0] - 9'd32;
-    assign yp = vcounter[9:1];
+    assign current_x = hcounter[8:0] - 9'd32;
+    assign current_y = vcounter[9:1];
 
     video_timing_m video_timing (
         clk, rst,
@@ -80,7 +80,7 @@ module gpu_m #(
 
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk, rst,
-        xp[7:0], yp[7:0],
+        current_x[7:0], current_y[7:0],
         writable,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
@@ -89,7 +89,7 @@ module gpu_m #(
 
     background_m background (
         clk, rst,
-        xp[7:0], yp[7:0],
+        current_x[7:0], current_y[7:0],
         writable,
         background_r, background_g, background_b,
         data_in, address, (write_enable&SELECT_vram)

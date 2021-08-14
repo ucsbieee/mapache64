@@ -19,7 +19,7 @@ module foreground_m #(
     input                           rst,
 
     // video timing input
-    input                     [7:0] xp, yp,
+    input                     [7:0] current_x, current_y,
     input                           writable,
 
     // video output
@@ -42,8 +42,8 @@ module foreground_m #(
     reg [7:0]   OBM     [ 255:0];
 
     `define OBM_OBJECT(OBMA)                    { OBM[ {$unsigned(6'(OBMA)), 2'd0} ], OBM[ {$unsigned(6'(OBMA)), 2'd1} ], OBM[ {$unsigned(6'(OBMA)), 2'd2} ], OBM[ {$unsigned(6'(OBMA)), 2'd3} ] }
-    `define OBM_OBJECT_XP(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd0} ]
-    `define OBM_OBJECT_YP(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd1} ]
+    `define OBM_OBJECT_X(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd0} ]
+    `define OBM_OBJECT_Y(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd1} ]
     `define OBM_OBJECT_HFLIP(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd2} ][6]
     `define OBM_OBJECT_VFLIP(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd2} ][5]
     `define OBM_OBJECT_PMFA(OBMA)               OBM[ {$unsigned(6'(OBMA)), 2'd2} ][4:0]
@@ -72,12 +72,13 @@ module foreground_m #(
     generate for ( genvar obma_GEN = 0; obma_GEN < NUM_OBJECTS; obma_GEN = obma_GEN+1 ) begin : object
 
         // object position on screen
-        wire [7:0] object_xp = `OBM_OBJECT_XP(obma_GEN);
-        wire [7:0] object_yp = `OBM_OBJECT_YP(obma_GEN);
+        wire [7:0] object_x = `OBM_OBJECT_X(obma_GEN);
+        wire [7:0] object_y = `OBM_OBJECT_Y(obma_GEN);
+        `ifdef SIM initial `OBM_OBJECT_Y(obma_GEN) = 8'hff; `endif
 
         // pixel location within object
-        wire [2:0] in_object_xp = xp[2:0] - object_xp[2:0];
-        wire [2:0] in_object_yp = yp[2:0] - object_yp[2:0];
+        wire [2:0] in_object_y = current_y[2:0] - object_y[2:0];
+        wire [2:0] in_object_x = current_x[2:0] - object_x[2:0];
 
         // object color, sprite, and flip modifiers
         wire [2:0] color = `OBM_OBJECT_COLOR(obma_GEN);
@@ -86,20 +87,16 @@ module foreground_m #(
         wire vflip = `OBM_OBJECT_VFLIP(obma_GEN);
 
         // get vertical position in sprite
-        wire [2:0] in_sprite_yp = vflip ? (3'd7-in_object_yp) : in_object_yp;
+        wire [2:0] in_pattern_y = vflip ? (3'd7-in_object_y) : in_object_y;
+        wire [2:0] in_pattern_x = hflip ? (3'd7-in_object_x) : in_object_x;
 
         // get object scanline line
-        wire [15:0] line;
-        pattern_hflipper_m pmf_hflipper (
-            `PMF_LINE( pmfa, in_sprite_yp ),
-            hflip,
-            line
-        );
+        wire [15:0] line = `PMF_LINE( pmfa, in_pattern_y );
 
         // if the video timing counter is at the location of the object
-        wire counter_at_object = ( object_xp <= xp && {1'b0, xp} < {1'b0, object_xp} + 9'd8 ) && ( object_yp <= yp && yp < object_yp + 8'd8 );
+        wire counter_at_object = ( object_x <= current_x && {1'b0, current_x} < {1'b0, object_x} + 9'd8 ) && ( object_y <= current_y && current_y < object_y + 8'd8 );
         // value of pixel not including color
-        wire [1:0] current_pixel = line[ {3'd7-in_object_xp, 1'b0} +: 2 ] & {2{counter_at_object}};
+        wire [1:0] current_pixel = line[ {3'h7-in_pattern_x, 1'b0} +: 2 ] & {2{counter_at_object}};
         // whether the current pixel is transparent
         wire transparent = ( current_pixel == 2'b0 );
 
