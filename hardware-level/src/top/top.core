@@ -64,7 +64,7 @@ targets:
 
   nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:top
     <<: *synth
-    description: Synthesize on Nexys A7
+    description: Synthesize on Nexys A7-100T
     toplevel: nexys_a7
     filesets_append:
       - artix_7
@@ -73,11 +73,11 @@ targets:
     default_tool: vivado
     tools:
       vivado:
-        part: xc7a100tcsg324-3
+        part: xc7a100tcsg324-1
 
   cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:arcade:top
     <<: *synth
-    description: Synthesize on Digilent Cmod A7
+    description: Synthesize on Digilent Cmod A7-35T
     toplevel: cmod_a7
     filesets_append:
       - artix_7

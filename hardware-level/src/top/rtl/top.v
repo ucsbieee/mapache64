@@ -21,6 +21,7 @@ module top_m #(
 
     output wire  [14:0] output_address,
     output wire         SELECT_ram_B,
+    output wire         ram_OE_B,
     output wire         SELECT_rom_B,
     output wire         SELECT_controller,
     output wire         vblank_irq_B,
@@ -43,6 +44,7 @@ module top_m #(
     assign SELECT_rom_B = ~SELECT_rom;
     assign vblank_irq_B = ~vblank_irq;
 
+    assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
     assign fpga_data_enable = !write_enable && ( SELECT_firmware || SELECT_vram || SELECT_in_vblank || SELECT_clr_vblank_irq );
 
 

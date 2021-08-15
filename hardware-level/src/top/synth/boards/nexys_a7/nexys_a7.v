@@ -29,38 +29,38 @@ module nexys_a7 (
 
 
     // internal
-    wire        fpga_data_enable;
+    wire fpga_data_enable;
 
 
 
     // inout
-    wire  [7:0] data, data_in, data_out;
+    wire [7:0] data, data_in, data_out;
+    assign data = fpga_data_enable ? data_out : data_in;
 
 
 
     // input
     wire        clk_12_5875;
-    wire        clk_cpu;
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
+
+    wire        clk_cpu;
 
     clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
         clk_12_5875,
         CLK100MHZ
     );
 
+    assign  rst             = ~CPU_RESETN;
+    assign  cpu_address     = {JB_10,JB_9,JB_8,JB_7,JB_4,JB_3,JB_2,JB_1,JA_10,JA_9,JA_8,JA_7,JA_4,JA_3,JA_2,JA_1};
+    assign  data_in         = {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1};
+    assign  write_enable_B  = JD_3;
+
     clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
         clk_cpu,
         CLK100MHZ
     );
-
-    assign  rst             = ~CPU_RESETN;
-    assign  cpu_address     = {JB_10,JB_9,JB_8,JB_7,JB_4,JB_3,JB_2,JB_1,JA_10,JA_9,JA_8,JA_7,JA_4,JA_3,JA_2,JA_1};
-    assign  data_in         = {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1};
-    assign  data            = fpga_data_enable ? data_out : data_in;
-    assign  write_enable_B  = JD_3;
-
 
 
     // output
@@ -68,37 +68,37 @@ module nexys_a7 (
     wire        ram_OE_B;
     wire        SELECT_rom_B;
     wire        vblank_irq_B;
+
     wire  [1:0] r;
     wire  [1:0] g;
     wire  [1:0] b;
     wire        hsync;
     wire        vsync;
+
     wire        cpu_clk;
 
-    // assign {JC_10,JC_9,JC_8,JC_7,JC_4,JC_3,JC_2,JC_1}
-    //                         = fpga_data_enable ? data_out : {8{1'bz}};
+    assign  JC_10   = fpga_data_enable ? data_out[7] : {1'bz};
+    assign  JC_9    = fpga_data_enable ? data_out[6] : {1'bz};
+    assign  JC_8    = fpga_data_enable ? data_out[5] : {1'bz};
+    assign  JC_7    = fpga_data_enable ? data_out[4] : {1'bz};
+    assign  JC_4    = fpga_data_enable ? data_out[3] : {1'bz};
+    assign  JC_3    = fpga_data_enable ? data_out[2] : {1'bz};
+    assign  JC_2    = fpga_data_enable ? data_out[1] : {1'bz};
+    assign  JC_1    = fpga_data_enable ? data_out[0] : {1'bz};
 
-    assign JC_10            = fpga_data_enable ? data_out[7] : {1'bz};
-    assign JC_9             = fpga_data_enable ? data_out[6] : {1'bz};
-    assign JC_8             = fpga_data_enable ? data_out[5] : {1'bz};
-    assign JC_7             = fpga_data_enable ? data_out[4] : {1'bz};
-    assign JC_4             = fpga_data_enable ? data_out[3] : {1'bz};
-    assign JC_3             = fpga_data_enable ? data_out[2] : {1'bz};
-    assign JC_2             = fpga_data_enable ? data_out[1] : {1'bz};
-    assign JC_1             = fpga_data_enable ? data_out[0] : {1'bz};
+    assign  JD_7    = SELECT_ram_B;
+    assign  JD_8    = ram_OE_B;
+    assign  JD_9    = SELECT_rom_B;
+    assign  JD_2    = vblank_irq_B;
 
-    assign  JD_7            = SELECT_ram_B;
-    assign  JD_8            = ram_OE_B;
-    assign  JD_9            = SELECT_rom_B;
-    assign  JD_2            = vblank_irq_B;
-    assign  JD_1            = ~rst;
-    assign  JD_4            = cpu_clk;
+    assign  VGA_R   = {r, 2'b0};
+    assign  VGA_G   = {g, 2'b0};
+    assign  VGA_B   = {b, 2'b0};
+    assign  VGA_HS  = hsync;
+    assign  VGA_VS  = vsync;
 
-    assign VGA_R = {r, 2'b0};
-    assign VGA_G = {g, 2'b0};
-    assign VGA_B = {b, 2'b0};
-    assign VGA_HS = hsync;
-    assign VGA_VS = vsync;
+    assign  JD_1    = ~rst;
+    assign  JD_4    = cpu_clk;
 
     // switch 0 controls led output
     assign LED = SW[0] ? cpu_address : {8'b0, data};
@@ -112,6 +112,8 @@ module nexys_a7 (
     wire        SELECT_controller;
 
 
+
+    // module
     top_m #(32) top (
         clk_12_5875, rst,
         cpu_address,
@@ -122,6 +124,7 @@ module nexys_a7 (
 
         output_address,
         SELECT_ram_B,
+        ram_OE_B,
         SELECT_rom_B,
         SELECT_controller,
         vblank_irq_B,
@@ -130,7 +133,6 @@ module nexys_a7 (
         hsync, vsync
     );
 
-    assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
 
 
 endmodule
