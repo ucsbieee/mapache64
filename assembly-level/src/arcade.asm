@@ -29,18 +29,22 @@
 ; ====== start ====== ;
         .org 0
 
+; ====== RAM ====== ;
+        .include "zero_page.asm"
+
 ; ====== firmware ====== ;
         .org _FIRMWARE_START
 
         .include "firmware/header.asm"
 
+        .include "firmware/interrupts.asm"
+
         .include "firmware/subroutines/add.asm"
         .include "firmware/subroutines/subtract.asm"
         .include "firmware/subroutines/multiply.asm"
         .include "firmware/subroutines/divide.asm"
+        .include "firmware/subroutines/misc_Q9_6.asm"
         .include "firmware/subroutines/transfer_mem.asm"
-
-        .include "firmware/interrupts.asm"
 
 ; ====== IO ====== ;
         .org _IO_START
@@ -49,6 +53,7 @@
 
 ; ====== ROM ====== ;
         .org _ROM_START
+        .include "firmware/header.asm"
         .include "rom.asm"
         stp
 
