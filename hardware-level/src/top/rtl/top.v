@@ -15,7 +15,7 @@ module top_m #(
     input               clk_12_5875, rst,
     input        [15:0] cpu_address,
     input         [7:0] data_in,
-    output        [7:0] data_out,
+    output wire   [7:0] data_out,
     output wire         fpga_data_enable,
     input               write_enable_B,
 

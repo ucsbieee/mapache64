@@ -6,7 +6,7 @@
 module cmod_a7 (
     input
         sysclk,
-                pio2,           pio4,   pio5,   pio6,
+                pio2,   pio3,   pio4,   pio5,   pio6,
         pio7,   pio8,   pio9,   pio10,  pio11,  pio12,
         pio13,  pio14,                  pio17,  pio18,
         pio19,  pio20,  pio21,
@@ -15,7 +15,7 @@ module cmod_a7 (
                 pio26,  pio27,  pio28,  pio29,  pio30,
         pio31,
     output wire
-                pio32,          pio34,  pio35,  pio36,
+                                pio34,  pio35,  pio36,
                 pio38,  pio39,  pio40,  pio41,  pio42,
         pio43,  pio44,  pio45,  pio46
 );
@@ -44,7 +44,7 @@ module cmod_a7 (
     assign  rst             = pio2;
     assign  cpu_address     = {pio4,pio5,pio6,pio7,pio8,pio9,pio10,pio11,pio12,pio13,pio14,pio17,pio18,pio19,pio20,pio21};
     assign  data_in         = {pio31,pio30,pio29,pio28,pio27,pio26,pio23,pio22};
-    assign  write_enable_B  = pio32;
+    assign  write_enable_B  = pio3;
 
 
 
@@ -89,7 +89,7 @@ module cmod_a7 (
 
 
     // module
-    top_m #(16) top (
+    top_m #(12) top (
         clk_12_5875, rst,
         cpu_address,
         data_in,

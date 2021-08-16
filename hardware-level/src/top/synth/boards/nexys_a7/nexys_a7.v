@@ -114,7 +114,7 @@ module nexys_a7 (
 
 
     // module
-    top_m #(32) top (
+    top_m #(16) top (
         clk_12_5875, rst,
         cpu_address,
         data_in,
