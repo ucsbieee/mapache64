@@ -15,7 +15,7 @@ filesets:
   # synth
   vivado:
     files:
-      - synth/vivado/global_include.tcl:                            {file_type: tclSource}
+      - synth/vivado/project_config.tcl:                            {file_type: tclSource}
 
   # simulation
   sim:
