@@ -6,8 +6,8 @@
 module cmod_a7 (
     input
         sysclk,
-                pio2,   pio3,   pio4,   pio5,   pio6,
-        pio7,   pio8,   pio9,   pio10,  pio11,  pio12,
+                pio02,  pio03,  pio04,  pio05,  pio06,
+        pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
         pio13,  pio14,                  pio17,  pio18,
         pio19,  pio20,  pio21,
     inout
@@ -41,10 +41,10 @@ module cmod_a7 (
 
     assign  clk_12_5875     = sysclk;
 
-    assign  rst             = pio2;
-    assign  cpu_address     = {pio4,pio5,pio6,pio7,pio8,pio9,pio10,pio11,pio12,pio13,pio14,pio17,pio18,pio19,pio20,pio21};
+    assign  rst             = pio02;
+    assign  cpu_address     = {pio21,pio20,pio19,pio18,pio17,pio14,pio13,pio12,pio11,pio10,pio09,pio08,pio07,pio06,pio05,pio04};
     assign  data_in         = {pio31,pio30,pio29,pio28,pio27,pio26,pio23,pio22};
-    assign  write_enable_B  = pio3;
+    assign  write_enable_B  = pio03;
 
 
 
@@ -69,16 +69,16 @@ module cmod_a7 (
     assign pio23 = fpga_data_enable ? data_out[1] : {1'bz};
     assign pio22 = fpga_data_enable ? data_out[0] : {1'bz};
 
-    assign  pio34           = SELECT_ram_B;
-    assign  pio35           = ram_OE_B;
-    assign  pio36           = SELECT_rom_B;
-    assign  pio38           = vblank_irq_B;
+    assign pio34            = SELECT_ram_B;
+    assign pio35            = ram_OE_B;
+    assign pio36            = SELECT_rom_B;
+    assign pio38            = vblank_irq_B;
 
-    assign  {pio39,pio40}   = r;
-    assign  {pio41,pio42}   = g;
-    assign  {pio43,pio44}   = b;
-    assign  pio45           = hsync;
-    assign  pio46           = vsync;
+    assign {pio39,pio40}    = r;
+    assign {pio41,pio42}    = g;
+    assign {pio43,pio44}    = b;
+    assign pio45            = hsync;
+    assign pio46            = vsync;
 
 
 
