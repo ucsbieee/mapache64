@@ -1,22 +1,26 @@
 
 ; ===== labels ===== ;
 
-zero_initialized = $70
-vram_initialized = $71
+zero_initialized        = $70
+vram_initialized        = $71
 
-person_xp       = $72
-person_yp       = $73
+person_xp               = $72
+person_yp               = $73
 
 
 ; ===== interrupts ===== ;
 
-reset:
+;==========================;
+        .org reset
+;==========================;
         stz zero_initialized
         stz vram_initialized
         rts
 
 
-do_logic:
+;==========================;
+        .org do_logic
+;==========================;
         lda zero_initialized
         bne .exit
         jsr zero_initialize
@@ -24,7 +28,9 @@ do_logic:
         rts
 
 
-fill_vram:
+;==========================;
+        .org fill_vram
+;==========================;
         lda vram_initialized
         bne .exit
         jsr vram_initialize
@@ -76,7 +82,7 @@ vram_initialize:
 
 
 ; patterns
-        .org $8100
+        .org $e000
 NORMAL:
         .db %00001010, %10100000
         .db %00101111, %11111000
