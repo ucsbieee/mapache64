@@ -7,7 +7,6 @@ filesets:
   rtl:
     files:
       - rtl/headers/parameters.vh:                {file_type: verilogSource}
-      - rtl/pattern-hflipper.v:                   {file_type: verilogSource}
       - rtl/video-timing.v:                       {file_type: verilogSource}
       - rtl/foreground.sv:                        {file_type: systemVerilogSource}
       - rtl/background.sv:                        {file_type: systemVerilogSource}
