@@ -1,17 +1,17 @@
 CAPI=2:
-name: ucsbieee:arcade:gpu_max_parallel:1.0.0
-description: GPU draft, unoptimized
+name: ucsbieee:arcade:gpu:0.3.0-gpu-reduced
+description: GPU draft, optimized
 
 filesets:
   # default
   rtl:
     files:
       - rtl/headers/parameters.vh:                {file_type: verilogSource}
-      - rtl/pattern-hflipper.v:                   {file_type: verilogSource}
       - rtl/video-timing.v:                       {file_type: verilogSource}
       - rtl/foreground.sv:                        {file_type: systemVerilogSource}
       - rtl/background.sv:                        {file_type: systemVerilogSource}
       - rtl/gpu.v:                                {file_type: verilogSource}
+      - tests/fill_vram.sv:                       {file_type: systemVerilogSource}
     file_type: verilogSource
     depend:
       - e4tham::ffs
@@ -44,8 +44,10 @@ targets:
       - rtl
       - synth
     toplevel: top_synth_m
+    parameters:
+      - TEST=0
 
-  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_max_parallel
+  sim: # fusesoc run --target sim ucsbieee:arcade:gpu_reduced
     <<: *default
     description: Simulate the design
     default_tool: icarus
@@ -59,9 +61,10 @@ targets:
           - -Wall
           - -Wno-timescale
           - -DSIM=1
-          - -DTEST=1
+    parameters:
+      - TEST=0
 
-  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_max_parallel
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:gpu_reduced
     <<: *synth
     description: Synthesize on Nexys A7
     filesets_append:
@@ -70,3 +73,9 @@ targets:
     tools:
       vivado:
         part : xc7a100tcsg324-3
+
+parameters:
+  TEST:
+    datatype: int
+    description: Whether fill_vram_m is added.
+    paramtype: vlogparam
