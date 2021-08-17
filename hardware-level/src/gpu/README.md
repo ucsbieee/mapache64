@@ -3,7 +3,7 @@
 
 # GPU
 
-Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/src/gpu-reduced>
+Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/src/gpu>
 
 ## About
 
@@ -15,6 +15,7 @@ This is a draft of the GPU described in [GPU](https://arcade.ucsbieee.org/guides
 * [Icarus Verilog](http://iverilog.icarus.com/) ([installation](https://iverilog.fandom.com/wiki/Installation_Guide))
 * [Vivado ML Enterprise](https://www.xilinx.com/products/design-tools/vivado.html) ([installation](https://www.xilinx.com/support/download.html))
 * [Nexys A7-100T](https://store.digilentinc.com/nexys-a7-fpga-trainer-board-recommended-for-ece-curriculum/)
+* [CMOD A7-35T](https://store.digilentinc.com/cmod-a7-breadboardable-artix-7-fpga-module/)
 
 ## Usage
 
@@ -28,6 +29,12 @@ To synthesize for Nexys A7-100T:
 
 ```bash
 ./scripts/nexys_a7.sh
+```
+
+To synthesize for CMOD A7-35T:
+
+```bash
+./scripts/cmod_a7.sh
 ```
 
 Libraries Used:

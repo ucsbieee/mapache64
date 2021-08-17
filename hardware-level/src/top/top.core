@@ -8,7 +8,7 @@ filesets:
     files:
       - rtl/top.v:                                                  {file_type: verilogSource}
     depend:
-      - ucsbieee:arcade:gpu_reduced
+      - ucsbieee:arcade:gpu
       - ucsbieee:arcade:firmware
       - ucsbieee:arcade:address_bus
 
