@@ -1,5 +1,6 @@
 
 `ifdef LINTER
+    `undef LINTER
     `include "../../../rtl/top.v"
     `include "../../misc/clk_100_TO_clk_PARAM.v"
     `include "../../misc/clk_100_TO_clk_12_5875.vh"

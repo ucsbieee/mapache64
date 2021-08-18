@@ -9,6 +9,7 @@
 `endif
 
 `ifdef LINTER
+    `undef LINTER
     `include "../rtl/firmware.v"
 `endif
 

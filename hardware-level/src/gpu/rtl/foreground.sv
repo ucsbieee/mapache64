@@ -7,6 +7,7 @@
 
 `ifdef LINTER
     `include "pattern-hflipper.v"
+    `undef LINTER
     `include "headers/parameters.vh"
     `include "../fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"
 `endif

@@ -9,6 +9,7 @@
 `endif
 
 `ifdef LINTER
+    `undef LINTER
     `include "../../rtl/gpu.v"
     `include "../../rtl/headers/parameters.vh"
     `include "../headers/timing.vh"

@@ -4,8 +4,10 @@
 
 
 `ifdef LINTER
+    `undef LINTER
     `include "../rtl/headers/parameters.vh"
     `include "../rtl/gpu.v"
+    `include "../tests/fill_vram.sv"
 `endif
 
 
@@ -33,10 +35,6 @@ module top_synth_m #(
 
     generate
         if ( TEST ) begin : fill_vram_input
-
-            `ifdef LINTER
-                `include "../tests/fill_vram.sv"
-            `endif
 
             wire [7:0] data_fill_vram;
             wire [`VRAM_ADDR_WIDTH-1:0] address_fill_vram;

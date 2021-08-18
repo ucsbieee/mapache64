@@ -9,6 +9,7 @@
 `endif
 
 `ifdef LINTER
+    `undef LINTER
     `include "../../rtl/top.v"
     `include "../headers/timing.vh"
 `endif

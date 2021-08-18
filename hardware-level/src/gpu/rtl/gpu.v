@@ -6,6 +6,7 @@
 
 
 `ifdef LINTER
+    `undef LINTER
     `include "video-timing.v"
     `include "foreground.sv"
     `include "background.sv"
