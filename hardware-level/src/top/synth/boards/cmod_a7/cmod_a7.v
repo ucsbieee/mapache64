@@ -1,6 +1,8 @@
 
 `ifdef LINTER
     `include "../../../rtl/top.v"
+    `include "../../misc/clk_100_TO_clk_PARAM.v"
+    `include "../../misc/clk_100_TO_clk_12_5875.vh"
 `endif
 
 module cmod_a7 (
@@ -35,17 +37,27 @@ module cmod_a7 (
 
     // input
     wire        clk_12_5875;
+    wire        clk_PARAM;
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
 
     assign  clk_12_5875     = sysclk;
+    wire controller_2_data_in_B;
+
+        // modified Cmod A7 to have a 100 MHz Oscillator
+    clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
+        clk_12_5875,
+        sysclk
 
     assign  rst             = pio02;
     assign  cpu_address     = {pio21,pio20,pio19,pio18,pio17,pio14,pio13,pio12,pio11,pio10,pio09,pio08,pio07,pio06,pio05,pio04};
     assign  data_in         = {pio31,pio30,pio29,pio28,pio27,pio26,pio23,pio22};
     assign  write_enable_B  = pio03;
 
+    clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
+        clk_PARAM,
+        sysclk
 
 
     // output
