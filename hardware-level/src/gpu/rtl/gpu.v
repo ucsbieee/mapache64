@@ -1,8 +1,8 @@
 
 /* gpu.v */
 
-`ifndef __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
-`define __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
+`ifndef __UCSBIEEE__GPU__RTL__GPU_V
+`define __UCSBIEEE__GPU__RTL__GPU_V
 
 
 `ifdef LINTER
@@ -15,7 +15,7 @@
 
 
 module gpu_m #(
-        parameter FOREGROUND_NUM_OBJECTS = 4
+        parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
     input                           clk, // 12.5875 MHz
     input                           rst,
@@ -23,6 +23,7 @@ module gpu_m #(
     // video output
     output wire               [1:0] r, g, b,
     output wire                     hsync, vsync,
+    output wire                     controller_start_fetch,
 
     // VRAM interface
     input                     [7:0] data_in,
@@ -53,7 +54,6 @@ module gpu_m #(
     end
 
 
-    // GPU
     wire [8:0] current_x, current_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;

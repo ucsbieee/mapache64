@@ -7,11 +7,12 @@
     `undef LINTER
     `include "../../address_bus/rtl/address_bus.v"
     `include "../../firmware/rtl/firmware.v"
-    `include "../../gpu-reduced/rtl/gpu.v"
+    `include "../../gpu/rtl/gpu.v"
+    `include "../../controller_interface/rtl/controller_interface.sv"
 `endif
 
 module top_m #(
-    parameter FOREGROUND_NUM_OBJECTS = 4
+    parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
     input               clk_12_5875, rst,
     input        [15:0] cpu_address,
