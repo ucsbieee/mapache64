@@ -11,6 +11,7 @@ filesets:
       - ucsbieee:arcade:gpu
       - ucsbieee:arcade:firmware
       - ucsbieee:arcade:address_bus
+      - ucsbieee:arcade:controller_interface
 
   # synth
   vivado:

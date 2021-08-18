@@ -79,6 +79,8 @@ module gpu_m #(
         writable
     );
 
+    assign controller_start_fetch = ( hcounter < 10'd50 ) && ( vcounter == 10'b0 );
+
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk, rst,
         current_x[7:0], current_y[7:0],
