@@ -1,12 +1,11 @@
 
 /* foreground.v */
 
-`ifndef __UCSBIEEE__GPU_REDUCED__RTL__FOREGROUND_SV
-`define __UCSBIEEE__GPU_REDUCED__RTL__FOREGROUND_SV
+`ifndef __UCSBIEEE__GPU__RTL__FOREGROUND_SV
+`define __UCSBIEEE__GPU__RTL__FOREGROUND_SV
 
 
 `ifdef LINTER
-    `include "pattern-hflipper.v"
     `undef LINTER
     `include "headers/parameters.vh"
     `include "../fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"

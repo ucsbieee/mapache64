@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
-`define __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
+`ifndef __UCSBIEEE__GPU__SIM__TB__TOP_TB_V
+`define __UCSBIEEE__GPU__SIM__TB__TOP_TB_V
 
 
 `ifndef SIM
