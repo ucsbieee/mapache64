@@ -1,38 +1,40 @@
 
 `ifdef LINTER
     `undef LINTER
+    `include "../../../../controller_interface/rtl/controller.sv"
     `include "../../../rtl/top.v"
     `include "../../misc/clk_100_TO_clk_PARAM.v"
     `include "../../misc/clk_100_TO_clk_12_5875.vh"
 `endif
 
 module nexys_a7 (
-    input CLK100MHZ,
-    input CPU_RESETN,
-    input
-        JA_01, JA_02, JA_03, JA_04, JA_07, JA_08, JA_09, JA_10,
-        JB_01, JB_02, JB_03, JB_04, JB_07, JB_08, JB_09, JB_10,
-    inout
-        JC_01, JC_02, JC_03, JC_04, JC_07, JC_08, JC_09, JC_10,
-    output wire
-        JD_01, JD_02, JD_04, JD_07, JD_08, JD_09,
-    input
-        JD_03,
-    output wire [3:0] VGA_R,
-    output wire [3:0] VGA_G,
-    output wire [3:0] VGA_B,
-    output wire VGA_HS,
-    output wire VGA_VS,
+    input               CLK100MHZ,
+    input               CPU_RESETN,
 
-    output wire [15:0] LED,
-    input [15:0] SW,
-    input BTNC
+    input               JA_01, JA_02, JA_03, JA_04, JA_07, JA_08, JA_09, JA_10,
+    input               JB_01, JB_02, JB_03, JB_04, JB_07, JB_08, JB_09, JB_10,
+    inout               JC_01, JC_02, JC_03, JC_04, JC_07, JC_08, JC_09, JC_10,
+    output wire         JD_01, JD_02,        JD_04, JD_07, JD_08, JD_09,
+    input                             JD_03,
+
+    output wire   [3:0] VGA_R,
+    output wire   [3:0] VGA_G,
+    output wire   [3:0] VGA_B,
+    output wire         VGA_HS,
+    output wire         VGA_VS,
+
+    input               BTNC, BTNU, BTNL, BTNR, BTND,
+    input        [15:0] SW,
+    output wire  [15:0] LED
 );
 
 
     // internal
     wire fpga_data_enable;
 
+    wire controller_clk;
+    wire controller_latch;
+    wire controller_1_data_in_B;
 
 
     // inout
@@ -43,11 +45,12 @@ module nexys_a7 (
 
     // input
     wire        clk_12_5875;
+    wire        clk_PARAM;
+
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
 
-    wire        clk_cpu;
 
     clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
         clk_12_5875,
@@ -60,12 +63,17 @@ module nexys_a7 (
     assign  write_enable_B  = JD_03;
 
     clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
-        clk_cpu,
+        clk_PARAM,
         CLK100MHZ
     );
 
+    wire [7:0] buttons;
+    assign buttons = {BTNC, 1'b0, 1'b0, 1'b0, BTNU, BTND, BTNL, BTNR};
+
 
     // output
+    wire        cpu_clk;
+
     wire        SELECT_ram_B;
     wire        ram_OE_B;
     wire        SELECT_rom_B;
@@ -76,8 +84,6 @@ module nexys_a7 (
     wire  [1:0] b;
     wire        hsync;
     wire        vsync;
-
-    wire        cpu_clk;
 
     assign  JC_01   = fpga_data_enable ? data_out[0] : {1'bz};
     assign  JC_02   = fpga_data_enable ? data_out[1] : {1'bz};
@@ -104,37 +110,45 @@ module nexys_a7 (
 
     // switch 0 controls led output
     assign LED = SW[0] ? cpu_address : {8'b0, data};
-    // switch 1 controls cpu clock source
-    assign cpu_clk = SW[1] ? clk_cpu : BTNC;
-
 
 
     // unused
-    wire [14:0] output_address;
-    wire        SELECT_controller;
-
+    wire controller_2_data_in_B = 1;
 
 
     // module
     top_m #(16) top (
-        clk_12_5875, rst,
+        clk_12_5875, cpu_clk, rst,
         cpu_address,
         data_in,
         data_out,
         fpga_data_enable,
         write_enable_B,
 
-        output_address,
         SELECT_ram_B,
         ram_OE_B,
         SELECT_rom_B,
-        SELECT_controller,
+
         vblank_irq_B,
 
         r, g, b,
-        hsync, vsync
+        hsync, vsync,
+
+        controller_clk,
+        controller_latch,
+        controller_1_data_in_B,
+        controller_2_data_in_B
     );
 
+
+    controller_m #(1'b1) controller (
+        ~buttons,
+        controller_clk,
+        controller_latch,
+        controller_1_data_in_B
+    );
+
+    assign cpu_clk = clk_PARAM;
 
 
 endmodule

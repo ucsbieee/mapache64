@@ -15,6 +15,7 @@ echo ${CORE_DIR}/fusesoc > ${CORE_DIR}/fusesoc/.fusesoc_path
     fusesoc library add firmware ${CORES_DIR}/firmware --sync-type=local &&
     fusesoc library add gpu_reduced ${CORES_DIR}/gpu --sync-type=local &&
     fusesoc library add address_bus ${CORES_DIR}/address_bus --sync-type=local &&
+    fusesoc library add controller ${CORES_DIR}/controller_interface --sync-type=local &&
     fusesoc library add e4tham_ffs https://github.com/E4tHam/find_first_set --sync-type=git &&
     exit 0
 } || {  # if commands failed, clean
