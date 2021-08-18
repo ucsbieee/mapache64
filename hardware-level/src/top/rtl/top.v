@@ -4,6 +4,7 @@
 
 
 `ifdef LINTER
+    `undef LINTER
     `include "../../address_bus/rtl/address_bus.v"
     `include "../../firmware/rtl/firmware.v"
     `include "../../gpu-reduced/rtl/gpu.v"
