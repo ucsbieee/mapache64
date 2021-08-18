@@ -1,7 +1,8 @@
 
 `ifdef LINTER
     `include "../../../rtl/top.v"
-    `include "modules/clk_100_TO_clk_PARAM.v"
+    `include "../../misc/clk_100_TO_clk_PARAM.v"
+    `include "../../misc/clk_100_TO_clk_12_5875.vh"
 `endif
 
 module nexys_a7 (
