@@ -6,11 +6,10 @@
 
 
 `ifdef LINTER
-    `undef LINTER
-    `include "video-timing.v"
-    `include "foreground.sv"
-    `include "background.sv"
-    `include "headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/video-timing.v"
+    `include "hardware-level/src/gpu/rtl/foreground.sv"
+    `include "hardware-level/src/gpu/rtl/background.sv"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
 `endif
 
 

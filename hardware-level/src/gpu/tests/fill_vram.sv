@@ -4,8 +4,8 @@
 
 
 `ifdef LINTER
-    `include "../rtl/headers/parameters.vh"
-    `include "../rtl/gpu.v"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/gpu.v"
 `endif
 
 module fill_vram_m (

@@ -4,11 +4,10 @@
 
 
 `ifdef LINTER
-    `undef LINTER
-    `include "../../address_bus/rtl/address_bus.v"
-    `include "../../firmware/rtl/firmware.v"
-    `include "../../gpu/rtl/gpu.v"
-    `include "../../controller_interface/rtl/controller_interface.sv"
+    `include "hardware-level/src/address_bus/rtl/address_bus.v"
+    `include "hardware-level/src/firmware/rtl/firmware.v"
+    `include "hardware-level/src/gpu/rtl/gpu.v"
+    `include "hardware-level/src/controller_interface/rtl/controller_interface.sv"
 `endif
 
 module top_m #(

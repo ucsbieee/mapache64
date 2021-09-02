@@ -1,10 +1,9 @@
 
 `ifdef LINTER
-    `undef LINTER
-    `include "../../../../controller_interface/rtl/controller.sv"
-    `include "../../../rtl/top.v"
-    `include "../../misc/clk_100_TO_clk_PARAM.v"
-    `include "../../misc/clk_100_TO_clk_12_5875.vh"
+    `include "hardware-level/src/controller_interface/rtl/controller.sv"
+    `include "hardware-level/src/top/rtl/top.v"
+    `include "hardware-level/src/top/synth/misc/clk_100_TO_clk_PARAM.v"
+    `include "hardware-level/src/top/synth/misc/clk_100_TO_clk_12_5875.vh"
 `endif
 
 module nexys_a7 (

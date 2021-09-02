@@ -4,10 +4,9 @@
 
 
 `ifdef LINTER
-    `undef LINTER
-    `include "../rtl/headers/parameters.vh"
-    `include "../rtl/gpu.v"
-    `include "../tests/fill_vram.sv"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/gpu.v"
+    `include "hardware-level/src/gpu/tests/fill_vram.sv"
 `endif
 
 
