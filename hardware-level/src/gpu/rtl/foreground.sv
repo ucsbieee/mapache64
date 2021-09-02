@@ -6,9 +6,8 @@
 
 
 `ifdef LINTER
-    `undef LINTER
-    `include "headers/parameters.vh"
-    `include "../fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/src/gpu/fusesoc/fusesoc_libraries/e4tham_ffs/rtl/ffs.v"
 `endif
 
 
@@ -42,8 +41,8 @@ module foreground_m #(
     reg [7:0]   OBM     [ 255:0];
 
     `define OBM_OBJECT(OBMA)                    { OBM[ {$unsigned(6'(OBMA)), 2'd0} ], OBM[ {$unsigned(6'(OBMA)), 2'd1} ], OBM[ {$unsigned(6'(OBMA)), 2'd2} ], OBM[ {$unsigned(6'(OBMA)), 2'd3} ] }
-    `define OBM_OBJECT_X(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd0} ]
-    `define OBM_OBJECT_Y(OBMA)                 OBM[ {$unsigned(6'(OBMA)), 2'd1} ]
+    `define OBM_OBJECT_X(OBMA)                  OBM[ {$unsigned(6'(OBMA)), 2'd0} ]
+    `define OBM_OBJECT_Y(OBMA)                  OBM[ {$unsigned(6'(OBMA)), 2'd1} ]
     `define OBM_OBJECT_HFLIP(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd2} ][6]
     `define OBM_OBJECT_VFLIP(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd2} ][5]
     `define OBM_OBJECT_PMFA(OBMA)               OBM[ {$unsigned(6'(OBMA)), 2'd2} ][4:0]

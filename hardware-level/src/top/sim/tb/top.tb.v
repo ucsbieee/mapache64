@@ -9,10 +9,9 @@
 `endif
 
 `ifdef LINTER
-    `undef LINTER
-    `include "../../rtl/top.v"
-    `include "../headers/timing.vh"
-    `include "../../../controller_interface/rtl/controller.sv"
+    `include "hardware-level/src/top/rtl/top.v"
+    `include "hardware-level/src/top/sim/headers/timing.vh"
+    `include "hardware-level/src/controller_interface/rtl/controller.sv"
 `endif
 
 `timescale `TIMESCALE

@@ -9,8 +9,7 @@
 `endif
 
 `ifdef LINTER
-    `undef LINTER
-    `include "../rtl/address_bus.v"
+    `include "hardware-level/src/address_bus/rtl/address_bus.v"
 `endif
 
 

@@ -6,8 +6,7 @@
 
 
 `ifdef LINTER
-    `undef LINTER
-    `include "headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
 `endif
 
 
