@@ -44,8 +44,8 @@ wire            controller_clk;
 wire            controller_latch;
 wire            controller_1_data_in_B;
 wire            controller_2_data_in_B;
-wire      [7:0] controller_1_data_out;
-wire      [7:0] controller_2_data_out;
+wire      [7:0] controller_1_buttons_out;
+wire      [7:0] controller_2_buttons_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
@@ -73,22 +73,22 @@ top_m top (
     controller_latch,
     controller_1_data_in_B,
     controller_2_data_in_B,
-    controller_1_data_out,
-    controller_2_data_out
+    controller_1_buttons_out,
+    controller_2_buttons_out
 );
 
 
-reg [7:0] controller_1_buttons, controller_2_buttons;
+reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
 controller_m #(1'b1) controller_1 (
-    ~controller_1_buttons,
+    ~controller_1_buttons_in,
     controller_clk,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller_m controller_2 (
-    ~controller_2_buttons,
+    ~controller_2_buttons_in,
     controller_clk,
     controller_latch,
     controller_2_data_in_B
@@ -102,8 +102,8 @@ $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
-controller_1_buttons = 8'b10001001;
-controller_2_buttons = 8'b00100110;
+controller_1_buttons_in = 8'b10001001;
+controller_2_buttons_in = 8'b00100110;
 
 write_enable_B = 0;
 rst = 1;

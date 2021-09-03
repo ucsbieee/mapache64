@@ -29,8 +29,8 @@ wire controller_2_data_B;
 wire controller_clk;
 wire controller_latch;
 
-wire [7:0] controller_1_data_out;
-wire [7:0] controller_2_data_out;
+wire [7:0] controller_1_buttons_out;
+wire [7:0] controller_2_buttons_out;
 
 
 controller_interface_m #(2) controller_interface (
@@ -42,22 +42,20 @@ controller_interface_m #(2) controller_interface (
 
     {controller_2_data_B,controller_1_data_B},
 
-    {controller_2_data_out,controller_1_data_out}
+    {controller_2_buttons_out,controller_1_buttons_out}
 );
 
-reg [7:0] controller_1_buttons, controller_2_buttons;
-wire [7:0] controller_1_buttons_B = ~controller_1_buttons;
-wire [7:0] controller_2_buttons_B = ~controller_2_buttons;
+reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
 controller_m controller_1 (
-    controller_1_buttons_B,
+    ~controller_1_buttons_in,
     controller_clk,
     controller_latch,
     controller_1_data_B
 );
 
 controller_m controller_2 (
-    controller_2_buttons_B,
+    ~controller_2_buttons_in,
     controller_clk,
     controller_latch,
     controller_2_data_B
@@ -69,8 +67,8 @@ $dumpfile( "dump.fst" );
 $dumpvars();
 //\\ =========================== \\//
 
-controller_1_buttons = 8'b11111110;
-controller_2_buttons = 8'b01111111;
+controller_1_buttons_in = 8'b11111110;
+controller_2_buttons_in = 8'b01111111;
 start = 0;
 #( `CPU_CLK_PERIOD );
 
