@@ -11,6 +11,7 @@ filesets:
       - ucsbieee:arcade:gpu
       - ucsbieee:arcade:firmware
       - ucsbieee:arcade:address_bus
+      - ucsbieee:arcade:controller_interface
 
   # synth
   vivado:
@@ -28,11 +29,13 @@ filesets:
   nexys_a7:
     files:
       - synth/boards/nexys_a7/modules/clk_100_TO_clk_12_5875_m.xci: {file_type: xci}
-      - synth/boards/nexys_a7/modules/clk_100_TO_clk_PARAM.v:       {file_type: verilogSource}
+      - synth/misc/clk_100_TO_clk_PARAM.v:                          {file_type: verilogSource}
       - synth/boards/nexys_a7/nexys_a7.xdc:                         {file_type: xdc}
       - synth/boards/nexys_a7/nexys_a7.v:                           {file_type: verilogSource}
   cmod_a7:
     files:
+      - synth/boards/cmod_a7/modules/clk_100_TO_clk_12_5875_m.xci:  {file_type: xci}
+      - synth/misc/clk_100_TO_clk_PARAM.v:                          {file_type: verilogSource}
       - synth/boards/cmod_a7/cmod_a7.xdc:                           {file_type: xdc}
       - synth/boards/cmod_a7/cmod_a7.v:                             {file_type: verilogSource}
   artix_7:

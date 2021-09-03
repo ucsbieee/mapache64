@@ -1,11 +1,11 @@
 
-`ifndef __UCSBIEEE__GPU_REDUCED__TESTS__FILL_VRAM_SV
-`define __UCSBIEEE__GPU_REDUCED__TESTS__FILL_VRAM_SV
+`ifndef __UCSBIEEE__GPU__TESTS__FILL_VRAM_SV
+`define __UCSBIEEE__GPU__TESTS__FILL_VRAM_SV
 
 
 `ifdef LINTER
-    `include "../rtl/headers/parameters.vh"
-    `include "../rtl/gpu.v"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/gpu.v"
 `endif
 
 module fill_vram_m (

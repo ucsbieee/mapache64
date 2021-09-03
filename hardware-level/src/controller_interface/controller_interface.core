@@ -1,0 +1,37 @@
+CAPI=2:
+name: ucsbieee:arcade:controller_interface:1.0.0
+description: NES Controller Interface
+
+filesets:
+  # default
+  rtl:
+    files:
+      - rtl/controller_interface.sv:  {file_type: systemVerilogSource}
+      - rtl/controller.sv:            {file_type: systemVerilogSource}
+
+  # simulation
+  sim:
+    files:
+      - sim/timing.vh:                {file_type: verilogSource}
+      - sim/top.tb.v:                 {file_type: verilogSource}
+    file_type: verilogSource
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+
+  sim: # fusesoc run --target sim ucsbieee:arcade:controller_interface
+    <<: *default
+    description: Simulate the design
+    default_tool: icarus
+    filesets_append:
+      - sim
+    toplevel: top_tb_m
+    tools:
+      icarus:
+        iverilog_options:
+          - -g2012 # Use SystemVerilog-2012
+          - -Wall
+          - -Wno-timescale
+          - -DSIM=0

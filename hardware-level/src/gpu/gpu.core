@@ -1,5 +1,5 @@
 CAPI=2:
-name: ucsbieee:arcade:gpu:0.3.0-gpu-reduced
+name: ucsbieee:arcade:gpu:0.3.0
 description: GPU draft, optimized
 
 filesets:

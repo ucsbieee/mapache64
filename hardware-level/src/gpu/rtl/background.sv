@@ -1,13 +1,12 @@
 
 /* background.v */
 
-`ifndef __UCSBIEEE__GPU_REDUCED__RTL__BACKGROUND_SV
-`define __UCSBIEEE__GPU_REDUCED__RTL__BACKGROUND_SV
+`ifndef __UCSBIEEE__GPU__RTL__BACKGROUND_SV
+`define __UCSBIEEE__GPU__RTL__BACKGROUND_SV
 
 
 `ifdef LINTER
-    `include "pattern-hflipper.v"
-    `include "headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
 `endif
 
 
