@@ -14,11 +14,11 @@ module controller_interface_m #(
 
     input             [NUM_CONTROLLERS-1:0] controller_data_B_LIST,
 
-    output reg    [(8*NUM_CONTROLLERS)-1:0] controller_data_out_LIST
+    output reg    [(8*NUM_CONTROLLERS)-1:0] controller_buttons_out_LIST
 );
 
-    `define CONTROLLER_DATA_B(CONTROLLER)   controller_data_B_LIST[(CONTROLLER)]
-    `define CONTROLLER_DATA_OUT(CONTROLLER) controller_data_out_LIST[(8*(CONTROLLER))+:8]
+    `define CONTROLLER_DATA_B(CONTROLLER)       controller_data_B_LIST[(CONTROLLER)]
+    `define CONTROLLER_BUTTONS_OUT(CONTROLLER)  controller_buttons_out_LIST[(8*(CONTROLLER))+:8]
 
     reg [1:0] state;
     `define STATE_WAIT          2'h0
@@ -27,6 +27,7 @@ module controller_interface_m #(
     `define STATE_READ          2'h3
     initial state = `STATE_WAIT;
 
+
     reg [3:0] num_bits_left;
     initial num_bits_left = 4'b0;
     wire has_bits_left = (num_bits_left != 4'b0);
@@ -34,6 +35,8 @@ module controller_interface_m #(
     wire controller_clk_enable = (4'h0 < num_bits_left && num_bits_left < 4'h8) || controller_latch;
     assign controller_clk = clk && controller_clk_enable;
 
+
+    // state machine, latch timing
     always_ff @ ( posedge clk ) begin
         if ( state == `STATE_WAIT ) begin
             if ( start_fetch ) begin
@@ -58,21 +61,24 @@ module controller_interface_m #(
         end
     end
 
+
+    // controller-specific updates
     generate for ( genvar controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
     reg [7:0] register;
     always_ff @ ( posedge clk ) begin
         if ( state == `STATE_WAIT ) begin
-            `CONTROLLER_DATA_OUT(controller_GEN-1) <= register;
+            `CONTROLLER_BUTTONS_OUT(controller_GEN-1) <= register;
         end
         else if ( has_bits_left ) begin
             register <= {register[6:0], ~`CONTROLLER_DATA_B(controller_GEN-1)};
         end
     end
     `ifdef SIM
-    wire        controller_data_B   = `CONTROLLER_DATA_B(controller_GEN-1);
-    wire  [7:0] controller_data_out = `CONTROLLER_DATA_OUT(controller_GEN-1);
+    wire        controller_data_B       = `CONTROLLER_DATA_B(controller_GEN-1);
+    wire  [7:0] controller_buttons_out  = `CONTROLLER_BUTTONS_OUT(controller_GEN-1);
     `endif
     end endgenerate
+
 
 endmodule
 

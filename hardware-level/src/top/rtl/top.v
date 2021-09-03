@@ -33,8 +33,8 @@ module top_m #(
     output wire         controller_latch,
     input               controller_1_data_in_B,
     input               controller_2_data_in_B,
-    output wire   [7:0] controller_1_data_out,
-    output wire   [7:0] controller_2_data_out
+    output wire   [7:0] controller_1_buttons_out,
+    output wire   [7:0] controller_2_buttons_out
 );
 
     // internal
@@ -72,10 +72,10 @@ module top_m #(
     wire [7:0] firmware_data_out, gpu_data_out;
 
     assign data_out =
-        SELECT_firmware         ? firmware_data_out     :
-        SELECT_in_vblank        ? gpu_data_out          :
-        SELECT_controller_1     ? controller_1_data_out :
-        SELECT_controller_2     ? controller_2_data_out :
+        SELECT_firmware         ? firmware_data_out         :
+        SELECT_in_vblank        ? gpu_data_out              :
+        SELECT_controller_1     ? controller_1_buttons_out  :
+        SELECT_controller_2     ? controller_2_buttons_out  :
         {8{1'bz}};
 
 
@@ -103,7 +103,7 @@ module top_m #(
 
         {controller_2_data_in_B,controller_1_data_in_B},
 
-        {controller_2_data_out,controller_1_data_out}
+        {controller_2_buttons_out,controller_1_buttons_out}
     );
 
 endmodule

@@ -84,7 +84,7 @@ module nexys_a7 (
     wire        hsync;
     wire        vsync;
 
-    wire [7:0] controller_1_data_out, controller_2_data_out;
+    wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     assign  JC_01   = fpga_data_enable ? data_out[0] : {1'bz};
     assign  JC_02   = fpga_data_enable ? data_out[1] : {1'bz};
@@ -111,9 +111,9 @@ module nexys_a7 (
 
     // switch 0 controls led output
     assign LED =
-        ( SW == 16'h0 ) ? cpu_address                       :
-        ( SW == 16'h1 ) ? {8'b0, data}                      :
-        ( SW == 16'h2 ) ? {buttons, controller_1_data_out}  :
+        ( SW == 16'h0 ) ? cpu_address                           :
+        ( SW == 16'h1 ) ? {8'b0, data}                          :
+        ( SW == 16'h2 ) ? {buttons, controller_1_buttons_out}   :
         16'h0;
 
 
@@ -143,8 +143,8 @@ module nexys_a7 (
         controller_latch,
         controller_1_data_in_B,
         controller_2_data_in_B,
-        controller_1_data_out,
-        controller_2_data_out
+        controller_1_buttons_out,
+        controller_2_buttons_out
     );
 
 
