@@ -61,7 +61,7 @@ module nexys_a7 (
     assign  data_in         = {JC_10,JC_09,JC_08,JC_07,JC_04,JC_03,JC_02,JC_01};
     assign  write_enable_B  = JD_03;
 
-    clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
+    clk_100_TO_clk_PARAM_m #(1) clk_100_TO_clk_PARAM (
         clk_PARAM,
         CLK100MHZ
     );
@@ -83,6 +83,8 @@ module nexys_a7 (
     wire  [1:0] b;
     wire        hsync;
     wire        vsync;
+
+    wire [7:0] controller_1_data_out, controller_2_data_out;
 
     assign  JC_01   = fpga_data_enable ? data_out[0] : {1'bz};
     assign  JC_02   = fpga_data_enable ? data_out[1] : {1'bz};
@@ -108,15 +110,19 @@ module nexys_a7 (
     assign  JD_04    = cpu_clk;
 
     // switch 0 controls led output
-    assign LED = SW[0] ? cpu_address : {8'b0, data};
+    assign LED =
+        ( SW == 16'h0 ) ? cpu_address                       :
+        ( SW == 16'h1 ) ? {8'b0, data}                      :
+        ( SW == 16'h2 ) ? {buttons, controller_1_data_out}  :
+        16'h0;
 
 
     // unused
-    wire controller_2_data_in_B = 1;
+    wire controller_2_data_in_B = 1'b1;
 
 
     // module
-    top_m #(16) top (
+    top_m #(2) top (
         clk_12_5875, cpu_clk, rst,
         cpu_address,
         data_in,
@@ -136,7 +142,9 @@ module nexys_a7 (
         controller_clk,
         controller_latch,
         controller_1_data_in_B,
-        controller_2_data_in_B
+        controller_2_data_in_B,
+        controller_1_data_out,
+        controller_2_data_out
     );
 
 

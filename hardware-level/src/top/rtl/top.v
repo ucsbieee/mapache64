@@ -32,7 +32,9 @@ module top_m #(
     output wire         controller_clk,
     output wire         controller_latch,
     input               controller_1_data_in_B,
-    input               controller_2_data_in_B
+    input               controller_2_data_in_B,
+    output wire   [7:0] controller_1_data_out,
+    output wire   [7:0] controller_2_data_out
 );
 
     // internal
@@ -67,7 +69,7 @@ module top_m #(
 
 
 
-    wire [7:0] firmware_data_out, gpu_data_out, controller_1_data_out, controller_2_data_out;
+    wire [7:0] firmware_data_out, gpu_data_out;
 
     assign data_out =
         SELECT_firmware         ? firmware_data_out     :
@@ -92,18 +94,16 @@ module top_m #(
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 
-    controller_interface_m controller_interface (
+    controller_interface_m #(2) controller_interface (
         cpu_clk,
         controller_start_fetch,
 
         controller_clk,
         controller_latch,
 
-        controller_1_data_in_B,
-        controller_2_data_in_B,
+        {controller_2_data_in_B,controller_1_data_in_B},
 
-        controller_1_data_out,
-        controller_2_data_out
+        {controller_2_data_out,controller_1_data_out}
     );
 
 endmodule
