@@ -42,8 +42,10 @@ wire            hsync, vsync;
 
 wire            controller_clk;
 wire            controller_latch;
-reg             controller_1_data_in_B;
-reg             controller_2_data_in_B;
+wire            controller_1_data_in_B;
+wire            controller_2_data_in_B;
+wire      [7:0] controller_1_data_out;
+wire      [7:0] controller_2_data_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
@@ -70,23 +72,23 @@ top_m top (
     controller_clk,
     controller_latch,
     controller_1_data_in_B,
-    controller_2_data_in_B
+    controller_2_data_in_B,
+    controller_1_data_out,
+    controller_2_data_out
 );
 
 
 reg [7:0] controller_1_buttons, controller_2_buttons;
-wire [7:0] controller_1_buttons_B = ~controller_1_buttons;
-wire [7:0] controller_2_buttons_B = ~controller_2_buttons;
 
-controller_m controller_1 (
-    controller_1_buttons_B,
+controller_m #(1'b1) controller_1 (
+    ~controller_1_buttons,
     controller_clk,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller_m controller_2 (
-    controller_2_buttons_B,
+    ~controller_2_buttons,
     controller_clk,
     controller_latch,
     controller_2_data_in_B
@@ -100,7 +102,7 @@ $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
-controller_1_buttons = 8'b10001000;
+controller_1_buttons = 8'b10001001;
 controller_2_buttons = 8'b00100110;
 
 write_enable_B = 0;
@@ -152,7 +154,7 @@ write_data = 8'bxx_010_101;
 rst = 0;
 write_enable_B = 1;
 
-@( vsync );
+// @( vsync );
 
 cpu_address = 16'h7003;
 #( 16 * `CPU_CLK_PERIOD );

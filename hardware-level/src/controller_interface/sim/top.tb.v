@@ -33,18 +33,16 @@ wire [7:0] controller_1_data_out;
 wire [7:0] controller_2_data_out;
 
 
-controller_interface_m controller_interface (
+controller_interface_m #(2) controller_interface (
     clk_1,
     start,
 
     controller_clk,
     controller_latch,
 
-    controller_1_data_B,
-    controller_2_data_B,
+    {controller_2_data_B,controller_1_data_B},
 
-    controller_1_data_out,
-    controller_2_data_out
+    {controller_2_data_out,controller_1_data_out}
 );
 
 reg [7:0] controller_1_buttons, controller_2_buttons;

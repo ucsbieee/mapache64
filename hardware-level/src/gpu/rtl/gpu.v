@@ -26,7 +26,7 @@ module gpu_m #(
 
     // VRAM interface
     input                     [7:0] data_in,
-    inout                     [7:0] data_out,
+    output                    [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable,
     input                           SELECT_vram,
@@ -78,7 +78,7 @@ module gpu_m #(
         writable
     );
 
-    assign controller_start_fetch = ( hcounter < 10'd50 ) && ( vcounter == 10'b0 );
+    assign controller_start_fetch = ( hcounter < 10'd10 ) && ( vcounter == 10'b0 );
 
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk, rst,
