@@ -9,8 +9,9 @@
 `endif
 
 `ifdef LINTER
-    `include "../../rtl/top.v"
-    `include "../headers/timing.vh"
+    `include "hardware-level/src/top/rtl/top.v"
+    `include "hardware-level/src/top/sim/headers/timing.vh"
+    `include "hardware-level/src/controller_interface/rtl/controller.sv"
 `endif
 
 `timescale `TIMESCALE
@@ -28,13 +29,23 @@ wire      [7:0] data, data_in, data_out;
 wire            fpga_data_enable;
 reg             write_enable_B;
 
-wire     [14:0] output_address;
 wire            SELECT_ram_B;
+wire            ram_OE_B;
 wire            SELECT_rom_B;
-wire            SELECT_controller;
+wire            SELECT_controller_1;
+wire            SELECT_controller_2;
+
+wire            vblank_irq_B;
 
 wire      [1:0] r, g, b;
-wire            hsync, vsync, vblank_irq_B;
+wire            hsync, vsync;
+
+wire            controller_clk;
+wire            controller_latch;
+wire            controller_1_data_in_B;
+wire            controller_2_data_in_B;
+wire      [7:0] controller_1_buttons_out;
+wire      [7:0] controller_2_buttons_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
@@ -42,22 +53,47 @@ assign data = write_enable_B ? data_out : data_in;
 
 
 top_m top (
-    clk_12_5875, rst,
+    clk_12_5875, clk_1, rst,
     cpu_address,
     data_in,
     data_out,
     fpga_data_enable,
     write_enable_B,
 
-    output_address,
     SELECT_ram_B,
+    ram_OE_B,
     SELECT_rom_B,
-    SELECT_controller,
+
     vblank_irq_B,
 
     r, g, b,
-    hsync, vsync
+    hsync, vsync,
+
+    controller_clk,
+    controller_latch,
+    controller_1_data_in_B,
+    controller_2_data_in_B,
+    controller_1_buttons_out,
+    controller_2_buttons_out
 );
+
+
+reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
+
+controller_m #(1'b1) controller_1 (
+    ~controller_1_buttons_in,
+    controller_clk,
+    controller_latch,
+    controller_1_data_in_B
+);
+
+controller_m controller_2 (
+    ~controller_2_buttons_in,
+    controller_clk,
+    controller_latch,
+    controller_2_data_in_B
+);
+
 
 /* Test */
 initial begin
@@ -65,6 +101,9 @@ $dumpfile( "dump.fst" );
 $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
+
+controller_1_buttons_in = 8'b10001001;
+controller_2_buttons_in = 8'b00100110;
 
 write_enable_B = 0;
 rst = 1;
@@ -114,10 +153,12 @@ write_data = 8'bxx_010_101;
 
 rst = 0;
 write_enable_B = 1;
-#( `CPU_CLK_PERIOD );
-#( `CPU_CLK_PERIOD );
-#( `CPU_CLK_PERIOD );
-#( `CPU_CLK_PERIOD );
+
+// @( vsync );
+
+cpu_address = 16'h7003;
+#( 16 * `CPU_CLK_PERIOD );
+
 
 
 //\\ =========================== \\//

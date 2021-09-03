@@ -1,8 +1,8 @@
 
 /* video-timing.v */
 
-`ifndef __UCSBIEEE__GPU_REDUCED__RTL__VIDEO_TIMING_V
-`define __UCSBIEEE__GPU_REDUCED__RTL__VIDEO_TIMING_V
+`ifndef __UCSBIEEE__GPU__RTL__VIDEO_TIMING_V
+`define __UCSBIEEE__GPU__RTL__VIDEO_TIMING_V
 
 
 module video_timing_m (

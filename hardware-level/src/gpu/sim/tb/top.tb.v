@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
-`define __UCSBIEEE__GPU_REDUCED__SIM__TB__TOP_TB_V
+`ifndef __UCSBIEEE__GPU__SIM__TB__TOP_TB_V
+`define __UCSBIEEE__GPU__SIM__TB__TOP_TB_V
 
 
 `ifndef SIM
@@ -9,10 +9,10 @@
 `endif
 
 `ifdef LINTER
-    `include "../../rtl/gpu.v"
-    `include "../../rtl/headers/parameters.vh"
-    `include "../headers/timing.vh"
-    `include "../tests/fill_vram.v"
+    `include "hardware-level/src/gpu/rtl/gpu.v"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/src/gpu/sim/headers/timing.vh"
+    `include "hardware-level/src/gpu/tests/fill_vram.sv"
 `endif
 
 `timescale `TIMESCALE

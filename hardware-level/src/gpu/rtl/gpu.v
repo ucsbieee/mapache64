@@ -1,20 +1,20 @@
 
 /* gpu.v */
 
-`ifndef __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
-`define __UCSBIEEE__GPU_REDUCED__RTL__GPU_V
+`ifndef __UCSBIEEE__GPU__RTL__GPU_V
+`define __UCSBIEEE__GPU__RTL__GPU_V
 
 
 `ifdef LINTER
-    `include "video-timing.v"
-    `include "foreground.sv"
-    `include "background.sv"
-    `include "headers/parameters.vh"
+    `include "hardware-level/src/gpu/rtl/video-timing.v"
+    `include "hardware-level/src/gpu/rtl/foreground.sv"
+    `include "hardware-level/src/gpu/rtl/background.sv"
+    `include "hardware-level/src/gpu/rtl/headers/parameters.vh"
 `endif
 
 
 module gpu_m #(
-        parameter FOREGROUND_NUM_OBJECTS = 4
+        parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
     input                           clk, // 12.5875 MHz
     input                           rst,
@@ -22,10 +22,11 @@ module gpu_m #(
     // video output
     output wire               [1:0] r, g, b,
     output wire                     hsync, vsync,
+    output wire                     controller_start_fetch,
 
     // VRAM interface
     input                     [7:0] data_in,
-    inout                     [7:0] data_out,
+    output                    [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable,
     input                           SELECT_vram,
@@ -52,7 +53,6 @@ module gpu_m #(
     end
 
 
-    // GPU
     wire [8:0] current_x, current_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
@@ -77,6 +77,8 @@ module gpu_m #(
         visible,
         writable
     );
+
+    assign controller_start_fetch = ( hcounter < 10'd10 ) && ( vcounter == 10'b0 );
 
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk, rst,

@@ -9,7 +9,7 @@
 `endif
 
 `ifdef LINTER
-    `include "../rtl/address_bus.v"
+    `include "hardware-level/src/address_bus/rtl/address_bus.v"
 `endif
 
 
@@ -17,27 +17,28 @@ module top_tb_m ();
 
 reg [15:0] cpu_address;
 
-wire [14:0] output_address;
-
 wire SELECT_ram;
 wire SELECT_vram;
 wire SELECT_firmware;
 wire SELECT_rom;
 
-wire SELECT_controller;
 wire SELECT_in_vblank;
 wire SELECT_clr_vblank_irq;
+wire SELECT_controller_1;
+wire SELECT_controller_2;
 
-address_bus_m address_bus(
+address_bus_m address_bus (
     cpu_address,
-    output_address,
+
     SELECT_ram,
     SELECT_vram,
     SELECT_firmware,
     SELECT_rom,
+
     SELECT_in_vblank,
     SELECT_clr_vblank_irq,
-    SELECT_controller
+    SELECT_controller_1,
+    SELECT_controller_2
 );
 
 
