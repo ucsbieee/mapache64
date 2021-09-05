@@ -6,7 +6,7 @@
 module controller_interface_m #(
     parameter NUM_CONTROLLERS = 2
 ) (
-    input                                   clk,
+    input                                   clk, rst,
     input                                   start_fetch,    // synchronous, must be held for less than 10 clk cycles
 
     output wire                             controller_clk,
@@ -35,21 +35,33 @@ module controller_interface_m #(
     wire controller_clk_enable = (4'h0 < num_bits_left && num_bits_left < 4'h8) || controller_latch;
     assign controller_clk = clk && controller_clk_enable;
 
+    reg latch_timer;
+    initial latch_timer = 0;
 
     // state machine, latch timing
     always_ff @ ( posedge clk ) begin
-        if ( state == `STATE_WAIT ) begin
+        if ( rst ) begin
+            state <= `STATE_WAIT;
+            num_bits_left <= 4'b0;
+            latch_timer <= 0;
+        end
+        else if ( state == `STATE_WAIT ) begin
             if ( start_fetch ) begin
                 controller_latch <= 1'b1;
                 state <= `STATE_LATCH;
+                latch_timer <= ~0;
             end
         end
         else if ( state == `STATE_LATCH ) begin
-            controller_latch <= 1'b0;
-            state <= `STATE_LATCH_DONE;
+            if ( latch_timer == 0 ) begin
+                state <= `STATE_LATCH_DONE;
+                controller_latch <= 1'b0;
+            end else begin
+                latch_timer <= latch_timer - 1;
+            end
         end
         else if ( state == `STATE_LATCH_DONE ) begin
-            num_bits_left <= 4'h8;
+            num_bits_left <= 4'd8;
             state <= `STATE_READ;
         end
         else if ( state == `STATE_READ ) begin
