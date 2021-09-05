@@ -9,7 +9,7 @@
     `include "hardware-level/rtl/gpu/rtl/video-timing.v"
     `include "hardware-level/rtl/gpu/rtl/foreground.sv"
     `include "hardware-level/rtl/gpu/rtl/background.sv"
-    `include "hardware-level/rtl/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
 `endif
 
 

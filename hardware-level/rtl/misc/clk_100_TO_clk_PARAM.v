@@ -1,4 +1,5 @@
 
+// https://www.desmos.com/calculator/gkyjx8cpny
 module clk_100_TO_clk_PARAM_m #(
     parameter FREQ_MHz = 1.0
 ) (

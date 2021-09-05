@@ -1,6 +1,6 @@
 
-`ifndef __UCSBIEEE__TOP__SIM__HEADERS__TIMING_VH
-`define __UCSBIEEE__TOP__SIM__HEADERS__TIMING_VH
+`ifndef __UCSBIEEE__TIMING_V
+`define __UCSBIEEE__TIMING_V
 
 
 `define TIMESCALE   1s/1fs

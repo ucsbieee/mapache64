@@ -70,6 +70,7 @@ module top_m #(
 
 
     wire [7:0] firmware_data_out, gpu_data_out;
+    // wire [7:0] controller_2_buttons_out, controller_1_buttons_out;
 
     assign data_out =
         SELECT_firmware         ? firmware_data_out         :
@@ -95,7 +96,7 @@ module top_m #(
     );
 
     controller_interface_m #(2) controller_interface (
-        cpu_clk,
+        cpu_clk, rst,
         controller_start_fetch,
 
         controller_clk,

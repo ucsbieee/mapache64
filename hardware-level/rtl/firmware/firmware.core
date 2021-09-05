@@ -12,8 +12,7 @@ filesets:
   # simulation
   sim:
     files:
-      - sim/top.tb.v
-    file_type: verilogSource
+      - sim/top.tb.v:     {file_type: verilogSource}
 
 targets:
   default: &default

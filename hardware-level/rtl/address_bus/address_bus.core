@@ -7,13 +7,11 @@ filesets:
   rtl:
     files:
       - rtl/address_bus.v:  {file_type: verilogSource}
-    file_type: verilogSource
 
   # simulation
   sim:
     files:
-      - sim/top.tb.v
-    file_type: verilogSource
+      - sim/top.tb.v:       {file_type: verilogSource}
 
 targets:
   default: &default

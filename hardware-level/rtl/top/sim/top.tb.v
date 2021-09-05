@@ -10,7 +10,7 @@
 
 `ifdef LINTER
     `include "hardware-level/rtl/top/rtl/top.v"
-    `include "hardware-level/rtl/top/sim/headers/timing.vh"
+    `include "hardware-level/rtl/misc/timing.v"
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
 `endif
 

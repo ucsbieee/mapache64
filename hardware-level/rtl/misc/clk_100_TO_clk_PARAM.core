@@ -1,0 +1,6 @@
+CAPI=2:
+name: ucsbieee:arcade:clk_100_TO_clk_PARAM:1.0.0
+description: Header to Convert 100 MHz clk to parameter frequency
+
+filesets : {f : {files: [clk_100_TO_clk_PARAM.v : {file_type : verilogSource}]}}
+targets: {default: {filesets : [f]}}

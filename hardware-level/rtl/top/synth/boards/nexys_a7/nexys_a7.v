@@ -2,8 +2,8 @@
 `ifdef LINTER
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
     `include "hardware-level/rtl/top/rtl/top.v"
-    `include "hardware-level/rtl/top/synth/misc/clk_100_TO_clk_PARAM.v"
-    `include "hardware-level/rtl/top/synth/misc/clk_100_TO_clk_12_5875.vh"
+    `include "hardware-level/rtl/misc/clk_100_TO_clk_PARAM.v"
+    `include "hardware-level/rtl/misc/clk_100_TO_clk_12_5875.vh"
 `endif
 
 module nexys_a7 (

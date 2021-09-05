@@ -17,4 +17,4 @@ echo ${CORE_DIR}/fusesoc > ${CORE_DIR}/fusesoc/.fusesoc_path
     exit 1
 }
 
-${CORE_DIR}/scripts/get_mem.sh
+# ${CORE_DIR}/scripts/get_mem.sh
