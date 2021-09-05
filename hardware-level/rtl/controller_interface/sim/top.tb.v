@@ -23,6 +23,7 @@ always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
 
 
 reg start;
+reg rst = 0;
 
 wire controller_1_data_B;
 wire controller_2_data_B;
@@ -34,7 +35,7 @@ wire [7:0] controller_2_buttons_out;
 
 
 controller_interface_m #(2) controller_interface (
-    clk_1,
+    clk_1, rst,
     start,
 
     controller_clk,
