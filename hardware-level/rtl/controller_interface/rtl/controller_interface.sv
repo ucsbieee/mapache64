@@ -44,32 +44,35 @@ module controller_interface_m #(
             state <= `STATE_WAIT;
             num_bits_left <= 4'b0;
             latch_timer <= 0;
-        end
-        else if ( state == `STATE_WAIT ) begin
-            if ( start_fetch ) begin
-                controller_latch <= 1'b1;
-                state <= `STATE_LATCH;
-                latch_timer <= ~0;
-            end
-        end
-        else if ( state == `STATE_LATCH ) begin
-            if ( latch_timer == 0 ) begin
-                state <= `STATE_LATCH_DONE;
-                controller_latch <= 1'b0;
-            end else begin
-                latch_timer <= latch_timer - 1;
-            end
-        end
-        else if ( state == `STATE_LATCH_DONE ) begin
-            num_bits_left <= 4'd8;
-            state <= `STATE_READ;
-        end
-        else if ( state == `STATE_READ ) begin
-            if ( has_bits_left ) begin
-                num_bits_left <= num_bits_left-4'b1;
-            end else begin
-                state <= `STATE_WAIT;
-            end
+        end else begin
+            case ( state )
+                `STATE_WAIT: begin
+                    if ( start_fetch ) begin
+                        controller_latch <= 1'b1;
+                        state <= `STATE_LATCH;
+                        latch_timer <= ~0;
+                    end
+                end
+                `STATE_LATCH: begin
+                    if ( latch_timer == 0 ) begin
+                        state <= `STATE_LATCH_DONE;
+                        controller_latch <= 1'b0;
+                    end else begin
+                        latch_timer <= latch_timer - 1;
+                    end
+                end
+                `STATE_LATCH_DONE: begin
+                    num_bits_left <= 4'd8;
+                    state <= `STATE_READ;
+                end
+                `STATE_READ: begin
+                    if ( has_bits_left ) begin
+                        num_bits_left <= num_bits_left-4'b1;
+                    end else begin
+                        state <= `STATE_WAIT;
+                    end
+                end
+            endcase
         end
     end
 
