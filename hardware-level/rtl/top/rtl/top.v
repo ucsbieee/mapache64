@@ -39,7 +39,7 @@ module top_m #(
 );
 
     // internal
-    wire SELECT_vram, SELECT_firmware, SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
+    wire SELECT_vram, SELECT_firmware, SELECT_vectors, SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
 
     // inputs
     wire write_enable = ~write_enable_B;
@@ -62,6 +62,7 @@ module top_m #(
         SELECT_vram,
         SELECT_firmware,
         SELECT_rom,
+        SELECT_vectors,
         SELECT_in_vblank,
         SELECT_clr_vblank_irq,
         SELECT_controller_1,
@@ -83,7 +84,7 @@ module top_m #(
 
 
     firmware_m firmware (
-        cpu_address[13:0], firmware_data_out, SELECT_firmware
+        cpu_address[13:0], firmware_data_out, SELECT_firmware, SELECT_vectors
     );
 
 
