@@ -11,7 +11,7 @@
 `ifdef LINTER
     `include "hardware-level/rtl/controller_interface/rtl/controller_interface.sv"
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
-    `include "hardware-level/rtl/controller_interface/sim/timing.vh"
+    `include "hardware-level/rtl/misc/timing.v"
 `endif
 
 `timescale `TIMESCALE

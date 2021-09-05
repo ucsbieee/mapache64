@@ -4,7 +4,7 @@
 
 
 `ifdef LINTER
-    `include "hardware-level/rtl/gpu/rtl/headers/parameters.vh"
+    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
     `include "hardware-level/rtl/gpu/rtl/gpu.v"
 `endif
 

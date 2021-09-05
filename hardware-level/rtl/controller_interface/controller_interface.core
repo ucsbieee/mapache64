@@ -6,18 +6,31 @@ filesets:
   # default
   rtl:
     files:
-      - rtl/controller_interface.sv:  {file_type: systemVerilogSource}
-      - rtl/controller.sv:            {file_type: systemVerilogSource}
+      - rtl/controller_interface.sv:      {file_type: systemVerilogSource}
+      - rtl/controller.sv:                {file_type: systemVerilogSource}
 
   # simulation
   sim:
     files:
-      - sim/timing.vh:                {file_type: verilogSource}
-      - sim/top.tb.v:                 {file_type: verilogSource}
-    file_type: verilogSource
+      - sim/top.tb.v:                     {file_type: verilogSource}
+    depend:
+      - ucsbieee:arcade:timing
+
+  nexys_a7:
+    files:
+      - synth/nexys_a7/nexys_a7.xdc:      {file_type: xdc}
+      - synth/nexys_a7/nexys_a7.v:        {file_type: verilogSource}
+      - synth/vivado/a7_config.xdc:       {file_type: xdc}
+      - synth/vivado/project_config.tcl:  {file_type: tclSource}
+    depend:
+      - ucsbieee:arcade:clk_100_TO_clk_PARAM
+
 
 targets:
   default: &default
+    filesets:
+      - rtl
+  synth: &synth
     filesets:
       - rtl
 
@@ -35,3 +48,14 @@ targets:
           - -Wall
           - -Wno-timescale
           - -DSIM=0
+
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:controller_interface
+    <<: *synth
+    description: Synthesize on Nexys A7-100T
+    toplevel: nexys_a7
+    filesets_append:
+      - nexys_a7
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7a100tcsg324-1

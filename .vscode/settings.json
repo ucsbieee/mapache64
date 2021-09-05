@@ -4,7 +4,9 @@
         "editor.tabSize": 8
     },
     "files.associations": {
-        "*.asm": "asm-collection"
+        "*.asm": "asm-collection",
+        "*.xci": "xml",
+        "*.core": "yaml"
     },
 
     // verilog
