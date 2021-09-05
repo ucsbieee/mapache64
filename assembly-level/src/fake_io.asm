@@ -6,23 +6,23 @@
         .byte 0
 
         .org CONTROLLER_1
-;              select
-;              |start
-;              ||right
-;              |||left
-;              ||||down
-;              |||||up
-;              ||||||b
-;              |||||||a
-        .byte %00010000
+;              a
+;              |b
+;              ||select
+;              |||start
+;              ||||up
+;              |||||down
+;              ||||||left
+;              |||||||right
+        .byte %11111111
 
         .org CONTROLLER_2
-;              select
-;              |start
-;              ||right
-;              |||left
-;              ||||down
-;              |||||up
-;              ||||||b
-;              |||||||a
+;              a
+;              |b
+;              ||select
+;              |||start
+;              ||||up
+;              |||||down
+;              ||||||left
+;              |||||||right
         .byte %00000000

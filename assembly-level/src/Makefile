@@ -52,7 +52,7 @@ dump: arcade
 	./dump.sh dump
 
 run: arcade
-	./dump run
+	./dump.sh run
 
 clean:
 	rm -rf ${DUMP_PATH}

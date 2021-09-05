@@ -169,32 +169,32 @@ getInput:
         lda start_value
         eor #1
         sta INT8_G1     ; !start_value
-        c1START
+        get_bit CONTROLLER_1, START_BUTTON
         and INT8_G1
         sta start_pedge
 
         ; start_value
-        c1START
+        get_bit CONTROLLER_1, START_BUTTON
         sta start_value
 
         ; A_pedge
         lda A_value
         eor #1
         sta INT8_G1
-        c1A
+        get_bit CONTROLLER_1, A_BUTTON
         and INT8_G1
         sta A_pedge
 
         ; A_value
-        c1A
+        get_bit CONTROLLER_1, A_BUTTON
         sta A_value
 
         ; left_value
-        c1LEFT
+        get_bit CONTROLLER_1, LEFT_BUTTON
         sta left_value
 
         ; right_value
-        c1RIGHT
+        get_bit CONTROLLER_1, RIGHT_BUTTON
         sta right_value
 
         rts
