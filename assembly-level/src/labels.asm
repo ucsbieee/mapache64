@@ -27,6 +27,15 @@ _CLR_VBLANK_IRQ = $7001 ; 1 byte
 CONTROLLER_1    = $7002 ; 1 byte
 CONTROLLER_2    = $7003 ; 1 byte
 
+RIGHT_BUTTON    = 0
+LEFT_BUTTON     = 1
+DOWN_BUTTON     = 2
+UP_BUTTON       = 3
+START_BUTTON    = 4
+SELECT_BUTTON   = 5
+B_BUTTON        = 6
+A_BUTTON        = 7
+
 ; ===== VRAM Constants ===== ;
 
 BLACK_C         = %000
@@ -65,3 +74,4 @@ VFLIP           = %00100000
 reset           = $9000
 do_logic        = $a000
 fill_vram       = $b000
+
