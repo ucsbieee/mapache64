@@ -21,6 +21,7 @@ wire SELECT_ram;
 wire SELECT_vram;
 wire SELECT_firmware;
 wire SELECT_rom;
+wire SELECT_vectors;
 
 wire SELECT_in_vblank;
 wire SELECT_clr_vblank_irq;
@@ -34,6 +35,7 @@ address_bus_m address_bus (
     SELECT_vram,
     SELECT_firmware,
     SELECT_rom,
+    SELECT_vectors,
 
     SELECT_in_vblank,
     SELECT_clr_vblank_irq,
@@ -65,6 +67,13 @@ cpu_address = 16'h7001; #1
 
 cpu_address = 16'h7002; #1
 cpu_address = 16'h7003; #1
+
+cpu_address = 16'h8000; #1
+cpu_address = 16'h9000; #1
+
+cpu_address = 16'hfffa; #1
+cpu_address = 16'hffff; #1
+
 
 
 //\\ =========================== \\//

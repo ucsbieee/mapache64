@@ -152,8 +152,9 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 .after_vram_initialized:
 
         jsr person_draw
-.exit:
-        stp
+
+        stp     ; DEBUG
+
         rts
 
 

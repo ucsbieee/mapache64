@@ -10,10 +10,10 @@ make dump
 
 echo "Assembler complete."
 
-mkdir -p ${CORE_DIR}/fusesoc/rom
-xxd -p -c 1 ${ASSEMBLY_SRC_DIR}/dump/firmware.bin ${CORE_DIR}/fusesoc/rom/firmware.mem
-cp ${ASSEMBLY_SRC_DIR}/dump/firmware.bin ${CORE_DIR}/fusesoc/rom/firmware.bin
-xxd -p -c 1 ${ASSEMBLY_SRC_DIR}/dump/vectors.bin ${CORE_DIR}/fusesoc/rom/vectors.mem
-cp ${ASSEMBLY_SRC_DIR}/dump/vectors.bin ${CORE_DIR}/fusesoc/rom/vectors.bin
+mkdir -p ${CORE_DIR}/rom
+xxd -p -c 1 ${ASSEMBLY_SRC_DIR}/dump/firmware.bin ${CORE_DIR}/rom/firmware.mem
+cp ${ASSEMBLY_SRC_DIR}/dump/firmware.bin ${CORE_DIR}/rom/firmware.bin
+xxd -p -c 1 ${ASSEMBLY_SRC_DIR}/dump/vectors.bin ${CORE_DIR}/rom/vectors.mem
+cp ${ASSEMBLY_SRC_DIR}/dump/vectors.bin ${CORE_DIR}/rom/vectors.bin
 
 echo "Rom files copied to \"${CORE_DIR}/fusesoc/rom\"."
