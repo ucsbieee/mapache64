@@ -163,6 +163,21 @@ write_enable_B = 1;
 cpu_address = 16'h7003;
 #( 16 * `CPU_CLK_PERIOD );
 
+cpu_address = 16'h4000;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'h6fff;
+#( `CPU_CLK_PERIOD );
+
+cpu_address = 16'h8000;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'h9000;
+#( `CPU_CLK_PERIOD );
+
+cpu_address = 16'hfffa;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'hffff;
+#( `CPU_CLK_PERIOD );
+
 
 
 //\\ =========================== \\//
