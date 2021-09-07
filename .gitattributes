@@ -1,4 +1,26 @@
 
-# All bash scripts use LF line ending
-*.sh        eol=lf
-**/*.sh     eol=lf
+# EOL
+*       text=auto
+
+*.bin   binary
+
+*.png   binary
+*.jpg   binary
+*.ico   binary
+
+*.pdf   binary
+
+*.chm   binary
+*.chw   binary
+*.exe   binary
+*.dll   binary
+
+assembly-level/tools/assembler/vasm6502/*   binary
+
+*.sh    text eol=lf
+
+
+# Language Corrections
+*.vh    linguist-language=verilog
+*.svh   linguist-language=systemVerilog
+
