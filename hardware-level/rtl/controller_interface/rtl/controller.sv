@@ -9,6 +9,7 @@ module controller_m #(
 ) (
     input [7:0] buttons_B,
     input       clk,
+    input       clk_in_enable,
     input       latch,
     output wire data_B
 );
@@ -17,10 +18,10 @@ module controller_m #(
 
     generate if ( SYNC_LATCH ) begin
 
-        always_ff @ ( posedge clk ) begin
+        always_ff @ ( posedge clk ) if ( clk_in_enable ) begin
             if ( latch )
                 register <= buttons_B;
-            if ( !latch )
+            else
                 register <= {register[6:0], 1'b0};
         end
 
@@ -33,7 +34,7 @@ module controller_m #(
                 register = buttons_B;
         end
 
-        always_ff @ ( posedge clk ) begin
+        always_ff @ ( posedge clk ) if ( clk_in_enable ) begin
             if ( !latch )
                 register = {register[6:0], 1'b0};
         end

@@ -40,7 +40,7 @@ create_clock -add -name sys_clk_pin -period 83.33 -waveform {0 41.66} [get_ports
 
 ## GPIO Pins
 ## Pins 15 and 16 should remain commented if using them as analog inputs
-# set_property -dict { PACKAGE_PIN M3    IOSTANDARD LVCMOS33 } [get_ports { pio01 }]; #IO_L8N_T1_AD14N_35 Sch=pio[01]
+set_property -dict { PACKAGE_PIN M3    IOSTANDARD LVCMOS33 } [get_ports { pio01 }]; #IO_L8N_T1_AD14N_35 Sch=pio[01]
 set_property -dict { PACKAGE_PIN L3    IOSTANDARD LVCMOS33 } [get_ports { pio02 }]; #IO_L8P_T1_AD14P_35 Sch=pio[02]
 set_property -dict { PACKAGE_PIN A16   IOSTANDARD LVCMOS33 } [get_ports { pio03 }]; #IO_L12P_T1_MRCC_16 Sch=pio[03]
 set_property -dict { PACKAGE_PIN K3    IOSTANDARD LVCMOS33 } [get_ports { pio04 }]; #IO_L7N_T1_AD6N_35 Sch=pio[04]

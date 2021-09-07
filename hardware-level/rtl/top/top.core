@@ -6,7 +6,7 @@ filesets:
   # default
   rtl:
     files:
-      - rtl/top.v:                                          {file_type: verilogSource}
+      - rtl/top.v:                            {file_type: verilogSource}
     depend:
       - ucsbieee:arcade:gpu
       - ucsbieee:arcade:firmware
@@ -16,35 +16,35 @@ filesets:
   # synth
   vivado:
     files:
-      - synth/vivado/project_config.tcl:                    {file_type: tclSource}
+      - synth/vivado/project_config.tcl:      {file_type: tclSource}
 
   # simulation
   sim:
     files:
-      - sim/top.tb.v:                                      {file_type: verilogSource}
+      - sim/top.tb.v:                         {file_type: verilogSource}
     depend:
       - ucsbieee:arcade:timing
 
   # hardware
   nexys_a7:
     files:
-      - synth/boards/nexys_a7/clk_100_TO_clk_12_5875_m.xci: {file_type: xci}
-      - synth/boards/nexys_a7/nexys_a7.xdc:                 {file_type: xdc}
-      - synth/boards/nexys_a7/nexys_a7.v:                   {file_type: verilogSource}
+      - synth/boards/nexys_a7/clk_mmcm_m.xci: {file_type: xci}
+      - synth/boards/nexys_a7/nexys_a7.xdc:   {file_type: xdc}
+      - synth/boards/nexys_a7/nexys_a7.v:     {file_type: verilogSource}
     depend:
-      - ucsbieee:arcade:clk_100_TO_clk_PARAM
+      - ucsbieee:arcade:clk_mask
 
   cmod_a7:
     files:
-      - synth/boards/cmod_a7/clk_100_TO_clk_12_5875_m.xci:  {file_type: xci}
-      - synth/boards/cmod_a7/cmod_a7.xdc:                   {file_type: xdc}
-      - synth/boards/cmod_a7/cmod_a7.v:                     {file_type: verilogSource}
+      - synth/boards/cmod_a7/clk_mmcm_m.xci:  {file_type: xci}
+      - synth/boards/cmod_a7/cmod_a7.xdc:     {file_type: xdc}
+      - synth/boards/cmod_a7/cmod_a7.v:       {file_type: verilogSource}
     depend:
-      - ucsbieee:arcade:clk_100_TO_clk_PARAM
+      - ucsbieee:arcade:clk_mask
 
   artix_7:
     files:
-      - synth/vivado/a7_config.xdc:                         {file_type: xdc}
+      - synth/vivado/a7_config.xdc:           {file_type: xdc}
 
 targets:
   default: &default
