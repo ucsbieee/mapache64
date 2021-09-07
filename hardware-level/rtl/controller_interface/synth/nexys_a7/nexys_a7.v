@@ -1,7 +1,8 @@
 
 `ifdef LINTER
     `include "hardware-level/rtl/controller_interface/rtl/controller_interface.sv"
-    `include "hardware-level/rtl/misc/clk_100_TO_clk_PARAM.v"
+    `include "hardware-level/rtl/misc/clk_mask.v"
+    `include "hardware-level/rtl/top/synth/boards/nexys_a7/clk_mmcm.vh"
 `endif
 
 module nexys_a7 (
@@ -14,19 +15,35 @@ module nexys_a7 (
     output wire  [15:0] LED
 );
 
-    wire clk_PARAM;
+    wire rst = ~CPU_RESETN;
+    wire clk_5, clk_12_5875;
+    wire controller_clk_in_enable;
 
-    clk_100_TO_clk_PARAM_m #(0.425) clk_100_TO_clk_PARAM ( // reset must be 235 for some reason...
-        clk_PARAM,
+    clk_mmcm_m clk_src (
+        clk_12_5875,
+        clk_5,
+        rst,
         CLK100MHZ
     );
 
-    reg [5:0] timer;
+    clk_mask_m #(5) clk_mask (
+        clk_5, rst,
+        controller_clk_in_enable
+    );
+
+
+    reg [7:0] timer;
     initial timer = 0;
-    always @ ( negedge clk_PARAM ) timer <= timer + 1;
+    always @ ( negedge clk_5 ) begin
+        if ( rst )
+            timer <= 0;
+        else
+            timer <= timer + 1;
+    end
 
     wire controller_start_fetch = ( timer < 4 );
-    wire controller_clk;
+    wire controller_clk_enable;
+    wire controller_clk = ( clk_5 && controller_clk_enable );
     wire controller_latch;
     wire controller_data_B;
     wire [3:0] num_bits_left;
@@ -39,10 +56,10 @@ module nexys_a7 (
     assign LED = {controller_data_B,3'b0,num_bits_left,controller_buttons_out};
 
     controller_interface_m #(1) controller_interface (
-        clk_PARAM, ~CPU_RESETN,
+        clk_5, controller_clk_in_enable, ~CPU_RESETN,
         controller_start_fetch,
 
-        controller_clk,
+        controller_clk_enable,
         controller_latch,
 
         controller_data_B,

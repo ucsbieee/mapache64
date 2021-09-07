@@ -13,7 +13,8 @@
 module top_m #(
     parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
-    input               clk_12_5875, cpu_clk, rst,
+    input               clk_12_5875, slow_clk, slow_clk_enable,
+    input               rst,
     input        [15:0] cpu_address,
     input         [7:0] data_in,
     output wire   [7:0] data_out,
@@ -29,7 +30,7 @@ module top_m #(
     output wire   [1:0] r, g, b,
     output wire         hsync, vsync,
 
-    output wire         controller_clk,
+    output wire         controller_clk_enable,
     output wire         controller_latch,
     input               controller_1_data_in_B,
     input               controller_2_data_in_B,
@@ -96,10 +97,10 @@ module top_m #(
     );
 
     controller_interface_m #(2) controller_interface (
-        cpu_clk, rst,
+        slow_clk, slow_clk_enable, rst,
         controller_start_fetch,
 
-        controller_clk,
+        controller_clk_enable,
         controller_latch,
 
         {controller_2_data_in_B,controller_1_data_in_B},

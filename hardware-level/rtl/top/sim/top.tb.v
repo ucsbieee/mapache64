@@ -22,6 +22,8 @@ reg clk_12_5875 = 1;
 always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;
 reg clk_1 = 1;
 always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
+wire clk_enable = 1;
+
 
 reg             rst;
 reg      [15:0] cpu_address;
@@ -40,7 +42,7 @@ wire            vblank_irq_B;
 wire      [1:0] r, g, b;
 wire            hsync, vsync;
 
-wire            controller_clk;
+wire            controller_clk_enable;
 wire            controller_latch;
 wire            controller_1_data_in_B;
 wire            controller_2_data_in_B;
@@ -53,7 +55,7 @@ assign data = write_enable_B ? data_out : data_in;
 
 
 top_m top (
-    clk_12_5875, clk_1, rst,
+    clk_12_5875, clk_1, clk_enable, rst,
     cpu_address,
     data_in,
     data_out,
@@ -69,7 +71,7 @@ top_m top (
     r, g, b,
     hsync, vsync,
 
-    controller_clk,
+    controller_clk_enable,
     controller_latch,
     controller_1_data_in_B,
     controller_2_data_in_B,
@@ -82,14 +84,16 @@ reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
 controller_m #(1'b1) controller_1 (
     ~controller_1_buttons_in,
-    controller_clk,
+    clk_1,
+    controller_clk_enable,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller_m controller_2 (
     ~controller_2_buttons_in,
-    controller_clk,
+    clk_1,
+    controller_clk_enable,
     controller_latch,
     controller_2_data_in_B
 );

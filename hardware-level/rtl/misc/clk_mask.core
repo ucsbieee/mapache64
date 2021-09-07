@@ -1,0 +1,6 @@
+CAPI=2:
+name: ucsbieee:arcade:clk_mask:1.0.0
+description: Create clock mask
+
+filesets : {f : {files: [clk_mask.v : {file_type : verilogSource}]}}
+targets: {default: {filesets : [f]}}
