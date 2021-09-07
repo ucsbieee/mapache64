@@ -2,8 +2,8 @@
 `ifdef LINTER
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
     `include "hardware-level/rtl/top/rtl/top.v"
-    `include "hardware-level/rtl/misc/clk_100_TO_clk_PARAM.v"
-    `include "hardware-level/rtl/misc/clk_100_TO_clk_12_5875.vh"
+    `include "hardware-level/rtl/misc/clk_mask.v"
+    `include "hardware-level/rtl/top/synth/boards/nexys_a7/clk_mmcm.vh"
 `endif
 
 module nexys_a7 (
@@ -31,7 +31,7 @@ module nexys_a7 (
     // internal
     wire fpga_data_enable;
 
-    wire controller_clk;
+    wire controller_clk_enable;
     wire controller_latch;
     wire controller_1_data_in_B;
 
@@ -44,15 +44,17 @@ module nexys_a7 (
 
     // input
     wire        clk_12_5875;
-    wire        clk_PARAM;
+    wire        clk_5;
+    wire        cpu_clk_enable;
 
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
 
-
-    clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
+    clk_mmcm_m clk_src (
         clk_12_5875,
+        clk_5,
+        rst,
         CLK100MHZ
     );
 
@@ -61,9 +63,10 @@ module nexys_a7 (
     assign  data_in         = {JC_10,JC_09,JC_08,JC_07,JC_04,JC_03,JC_02,JC_01};
     assign  write_enable_B  = JD_03;
 
-    clk_100_TO_clk_PARAM_m #(1) clk_100_TO_clk_PARAM (
-        clk_PARAM,
-        CLK100MHZ
+
+    clk_mask_m #(5) clk_mask (
+        clk_5, rst,
+        cpu_clk_enable
     );
 
     wire [7:0] buttons;
@@ -71,8 +74,6 @@ module nexys_a7 (
 
 
     // output
-    wire        cpu_clk;
-
     wire        SELECT_ram_B;
     wire        ram_OE_B;
     wire        SELECT_rom_B;
@@ -107,7 +108,7 @@ module nexys_a7 (
     assign  VGA_VS  = vsync;
 
     assign  JD_01    = ~rst;
-    assign  JD_04    = cpu_clk;
+    assign  JD_04    = clk_5 && cpu_clk_enable;
 
     // switch 0 controls led output
     assign LED =
@@ -123,7 +124,7 @@ module nexys_a7 (
 
     // module
     top_m #(2) top (
-        clk_12_5875, cpu_clk, rst,
+        clk_12_5875, clk_5, cpu_clk_enable, rst,
         cpu_address,
         data_in,
         data_out,
@@ -139,7 +140,7 @@ module nexys_a7 (
         r, g, b,
         hsync, vsync,
 
-        controller_clk,
+        controller_clk_enable,
         controller_latch,
         controller_1_data_in_B,
         controller_2_data_in_B,
@@ -150,12 +151,11 @@ module nexys_a7 (
 
     controller_m #(1'b1) controller (
         ~buttons,
-        controller_clk,
+        clk_5,
+        controller_clk_enable,
         controller_latch,
         controller_1_data_in_B
     );
-
-    assign cpu_clk = clk_PARAM;
 
 
 endmodule

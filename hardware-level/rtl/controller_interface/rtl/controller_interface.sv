@@ -6,10 +6,11 @@
 module controller_interface_m #(
     parameter NUM_CONTROLLERS = 2
 ) (
-    input                                   clk, rst,
+    input                                   clk_in, clk_in_enable,
+    input                                   rst,
     input                                   start_fetch,    // synchronous, must be held for less than 10 clk cycles
 
-    output wire                             controller_clk,
+    output wire                             controller_clk_enable,
     output reg                              controller_latch,
 
     input             [NUM_CONTROLLERS-1:0] controller_data_B_LIST,
@@ -32,15 +33,15 @@ module controller_interface_m #(
     initial num_bits_left = 4'b0;
     wire has_bits_left = (num_bits_left != 4'b0);
 
-    wire controller_clk_enable = (4'h0 < num_bits_left && num_bits_left < 4'h8) || controller_latch;
-    assign controller_clk = clk && controller_clk_enable;
+    assign controller_clk_enable = (has_bits_left || controller_latch) && clk_in_enable;
 
     reg latch_timer;
     initial latch_timer = 0;
 
     // state machine, latch timing
-    always_ff @ ( posedge clk ) begin
+    always_ff @ ( negedge clk_in ) if ( clk_in_enable ) begin
         if ( rst ) begin
+            controller_latch <= 1'b0;
             state <= `STATE_WAIT;
             num_bits_left <= 4'b0;
             latch_timer <= 0;
@@ -80,8 +81,11 @@ module controller_interface_m #(
     // controller-specific updates
     generate for ( genvar controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
     reg [7:0] register;
-    always_ff @ ( posedge clk ) begin
-        if ( state == `STATE_WAIT ) begin
+    always_ff @ ( posedge clk_in ) if ( clk_in_enable ) begin
+        if ( rst ) begin
+            register <= 8'b0;
+        end
+        else if ( state == `STATE_WAIT ) begin
             `CONTROLLER_BUTTONS_OUT(controller_GEN-1) <= register;
         end
         else if ( has_bits_left ) begin

@@ -22,8 +22,9 @@ filesets:
       - synth/nexys_a7/nexys_a7.v:        {file_type: verilogSource}
       - synth/vivado/a7_config.xdc:       {file_type: xdc}
       - synth/vivado/project_config.tcl:  {file_type: tclSource}
+      - synth/nexys_a7/clk_mmcm_m.xci:    {file_type: xci}
     depend:
-      - ucsbieee:arcade:clk_100_TO_clk_PARAM
+      - ucsbieee:arcade:clk_mask
 
 
 targets:
