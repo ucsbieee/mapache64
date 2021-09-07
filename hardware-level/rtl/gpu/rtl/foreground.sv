@@ -14,7 +14,8 @@
 module foreground_m #(
     parameter NUM_OBJECTS = 64
 ) (
-    input                           clk, // 12.5875 MHz
+    input                           clk_12_5875,
+    input                           cpu_clk, cpu_clk_enable,
     input                           rst,
 
     // video timing input
@@ -52,7 +53,7 @@ module foreground_m #(
     wire in_pmf = ( address >= 12'h000 && address < 12'h200 );
     wire in_obm = ( address >= 12'h800 && address < 12'h900 );
 
-    always_ff @ ( posedge clk ) begin : write_to_vram
+    always_ff @ ( negedge cpu_clk ) if ( cpu_clk_enable ) begin : write_to_vram
         if ( write_enable && writable ) begin
             if ( in_pmf )
                 PMF[ address - 12'h000 ] <= data_in;
