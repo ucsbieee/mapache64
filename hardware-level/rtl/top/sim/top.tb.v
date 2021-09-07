@@ -51,7 +51,7 @@ wire      [7:0] controller_2_buttons_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
-assign data = write_enable_B ? data_out : data_in;
+assign data = fpga_data_enable ? data_out : data_in;
 
 
 top_m top (
@@ -162,6 +162,21 @@ write_enable_B = 1;
 
 cpu_address = 16'h7003;
 #( 16 * `CPU_CLK_PERIOD );
+
+cpu_address = 16'h4000;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'h6fff;
+#( `CPU_CLK_PERIOD );
+
+cpu_address = 16'h8000;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'h9000;
+#( `CPU_CLK_PERIOD );
+
+cpu_address = 16'hfffa;
+#( `CPU_CLK_PERIOD );
+cpu_address = 16'hffff;
+#( `CPU_CLK_PERIOD );
 
 
 
