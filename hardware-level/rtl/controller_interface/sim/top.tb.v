@@ -20,25 +20,25 @@ module top_tb_m ();
 
 reg clk_1 = 1;
 always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
-
+wire clk_enable = 1;
 
 reg start;
 reg rst = 0;
 
 wire controller_1_data_B;
 wire controller_2_data_B;
-wire controller_clk;
+wire controller_clk_enable;
+wire controller_clk = ( clk_1 && controller_clk_enable );
 wire controller_latch;
 
 wire [7:0] controller_1_buttons_out;
 wire [7:0] controller_2_buttons_out;
 
-
 controller_interface_m #(2) controller_interface (
-    clk_1, rst,
+    clk_1, clk_enable, rst,
     start,
 
-    controller_clk,
+    controller_clk_enable,
     controller_latch,
 
     {controller_2_data_B,controller_1_data_B},
@@ -51,6 +51,7 @@ reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 controller_m controller_1 (
     ~controller_1_buttons_in,
     controller_clk,
+    controller_clk_enable,
     controller_latch,
     controller_1_data_B
 );
@@ -58,6 +59,7 @@ controller_m controller_1 (
 controller_m controller_2 (
     ~controller_2_buttons_in,
     controller_clk,
+    controller_clk_enable,
     controller_latch,
     controller_2_data_B
 );

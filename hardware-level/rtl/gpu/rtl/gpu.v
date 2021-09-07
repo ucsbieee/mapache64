@@ -41,14 +41,17 @@ module gpu_m #(
     assign data_out = SELECT_in_vblank ? {7'b0,writable} : {8{1'bz}};
 
     reg writable_prev;
+    initial writable_prev = 0;
 
     always @ ( posedge clk ) begin
+
         if ( write_enable && SELECT_clr_vblank_irq )
             vblank_irq <= 0;
         else if ( rst || (writable_prev != writable) )
             vblank_irq <= 1;
         else
             vblank_irq <= vblank_irq;
+
         writable_prev <= writable;
     end
 
