@@ -6,7 +6,7 @@
 
 
 module video_timing_m (
-    input               clk, // 12.5875 MHz
+    input               clk_12_5875,
     input               rst,
 
     output wire         hsync, vsync,
@@ -16,6 +16,11 @@ module video_timing_m (
 
     output wire         writable
 );
+
+    initial begin
+        hcounter = 10'b0;
+        vcounter = 10'b0;
+    end
 
     wire hvisible, vvisible;
 
@@ -41,7 +46,7 @@ module video_timing_m (
     assign writable = ~vvisible;
 
 
-    always @ ( posedge clk ) begin
+    always @ ( posedge clk_12_5875 ) begin
         if ( rst ) begin
             hcounter <= 10'b0;
             vcounter <= 10'b0;
