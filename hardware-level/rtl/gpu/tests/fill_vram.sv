@@ -9,7 +9,7 @@
 `endif
 
 module fill_vram_m (
-    input                               clk,
+    input                               clk_12_5875,
     input                               start,
 
     output reg                    [7:0] data,
@@ -21,7 +21,7 @@ module fill_vram_m (
 
     assign write_enable = in_progress;
 
-    always_ff @ ( posedge clk ) begin : increment_address
+    always_ff @ ( posedge clk_12_5875 ) begin : increment_address
         if ( start ) begin
             address = 12'b0;
             in_progress = 12'b1;

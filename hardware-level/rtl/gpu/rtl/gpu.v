@@ -16,7 +16,8 @@
 module gpu_m #(
         parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
-    input                           clk, // 12.5875 MHz
+    input                           clk_12_5875,
+    input                           cpu_clk, cpu_clk_enable,
     input                           rst,
 
     // video output
@@ -43,7 +44,7 @@ module gpu_m #(
     reg writable_prev;
     initial writable_prev = 0;
 
-    always @ ( posedge clk ) begin
+    always @ ( posedge clk_12_5875 ) begin
 
         if ( write_enable && SELECT_clr_vblank_irq )
             vblank_irq <= 0;
@@ -74,7 +75,7 @@ module gpu_m #(
     assign current_y = vcounter[9:1];
 
     video_timing_m video_timing (
-        clk, rst,
+        clk_12_5875, rst,
         hsync, vsync,
         hcounter, vcounter,
         visible,
@@ -84,7 +85,7 @@ module gpu_m #(
     assign controller_start_fetch = ( hcounter < 10'd10 ) && ( vcounter == 10'b0 );
 
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
-        clk, rst,
+        clk_12_5875, cpu_clk, cpu_clk_enable, rst,
         current_x[7:0], current_y[7:0],
         writable,
         foreground_r, foreground_g, foreground_b,
@@ -93,7 +94,7 @@ module gpu_m #(
     );
 
     background_m background (
-        clk, rst,
+        clk_12_5875, cpu_clk,  cpu_clk_enable, rst,
         current_x[7:0], current_y[7:0],
         writable,
         background_r, background_g, background_b,

@@ -11,7 +11,8 @@
 
 
 module background_m (
-    input                           clk, // 12.5875 MHz
+    input                           clk_12_5875,
+    input                           cpu_clk, cpu_clk_enable,
     input                           rst,
 
     // video timing input
@@ -55,7 +56,7 @@ module background_m (
     wire in_pmb = ( address >= 12'h200 && address < 12'h400 );
     wire in_ntbl = ( address >= 12'h400 && address < 12'h800 );
 
-    always_ff @ ( posedge clk ) begin : write_to_vram
+    always_ff @ ( negedge cpu_clk ) if ( cpu_clk_enable ) begin : write_to_vram
         if ( write_enable && writable ) begin
             if ( in_pmb )
                 PMB[ address - 12'h200 ] <= data_in;
