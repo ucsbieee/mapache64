@@ -51,7 +51,7 @@ wire      [7:0] controller_2_buttons_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
-assign data = write_enable_B ? data_out : data_in;
+assign data = fpga_data_enable ? data_out : data_in;
 
 
 top_m top (
