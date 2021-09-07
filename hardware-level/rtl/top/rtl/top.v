@@ -39,7 +39,7 @@ module top_m #(
 );
 
     // internal
-    wire SELECT_vram, SELECT_firmware, SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
+    wire SELECT_vram, SELECT_firmware, SELECT_vectors, SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
 
     // inputs
     wire write_enable = ~write_enable_B;
@@ -53,7 +53,7 @@ module top_m #(
     assign vblank_irq_B = ~vblank_irq;
 
     assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
-    assign fpga_data_enable = !write_enable && ( SELECT_firmware || SELECT_vram || SELECT_in_vblank || SELECT_clr_vblank_irq );
+    assign fpga_data_enable = !write_enable && ( SELECT_firmware || SELECT_vram || SELECT_vectors || SELECT_in_vblank || SELECT_clr_vblank_irq );
 
 
     address_bus_m address_bus (
@@ -62,6 +62,8 @@ module top_m #(
         SELECT_vram,
         SELECT_firmware,
         SELECT_rom,
+        SELECT_vectors,
+
         SELECT_in_vblank,
         SELECT_clr_vblank_irq,
         SELECT_controller_1,
@@ -75,6 +77,7 @@ module top_m #(
 
     assign data_out =
         SELECT_firmware         ? firmware_data_out         :
+        SELECT_vectors          ? firmware_data_out         :
         SELECT_in_vblank        ? gpu_data_out              :
         SELECT_controller_1     ? controller_1_buttons_out  :
         SELECT_controller_2     ? controller_2_buttons_out  :
@@ -83,7 +86,7 @@ module top_m #(
 
 
     firmware_m firmware (
-        cpu_address[13:0], firmware_data_out, SELECT_firmware
+        cpu_address[13:0], firmware_data_out, SELECT_firmware, SELECT_vectors
     );
 
 

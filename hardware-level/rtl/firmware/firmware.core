@@ -8,6 +8,7 @@ filesets:
     files:
       - rtl/firmware.v:   {file_type: verilogSource}
       - rom/firmware.mem: {file_type: user, copyto: firmware.mem}
+      - rom/vectors.mem:  {file_type: user, copyto: vectors.mem}
 
   # simulation
   sim:

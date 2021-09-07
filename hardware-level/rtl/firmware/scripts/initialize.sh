@@ -16,5 +16,3 @@ echo ${CORE_DIR}/fusesoc > ${CORE_DIR}/fusesoc/.fusesoc_path
     ${CORE_DIR}/scripts/clean.sh
     exit 1
 }
-
-# ${CORE_DIR}/scripts/get_mem.sh
