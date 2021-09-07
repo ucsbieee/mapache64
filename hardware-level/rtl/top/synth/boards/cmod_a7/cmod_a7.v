@@ -1,8 +1,8 @@
 
 `ifdef LINTER
     `include "hardware-level/rtl/top/rtl/top.v"
-    `include "hardware-level/rtl/misc/clk_100_TO_clk_PARAM.v"
-    `include "hardware-level/rtl/misc/clk_100_TO_clk_12_5875.vh"
+    `include "hardware-level/rtl/top/synth/boards/cmod_a7/clk_mmcm.vh"
+    `include "hardware-level/rtl/misc/clk_mask.v"
 `endif
 
 module cmod_a7 (
@@ -19,18 +19,20 @@ module cmod_a7 (
                 pio26,  pio27,  pio28,  pio29,  pio30,
         pio31,
     output wire
+        pio01,
                 pio32,  pio33,  pio34,  pio35,  pio36,
                 pio38,  pio39,  pio40,  pio41,  pio42,
         pio43,  pio44,  pio45,  pio46,          pio48
 );
 
 
-
     // internal
+    wire clk_12_5875;
+    wire clk_5;
+    wire cpu_clk_enable;
     wire fpga_data_enable;
-    wire controller_clk;
-    wire controller_latch;
 
+    wire controller_clk_enable;
 
 
     // inout
@@ -39,34 +41,20 @@ module cmod_a7 (
 
 
     // input
-    wire        clk_12_5875;
-    wire        clk_PARAM;
-
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
 
-    wire controller_1_data_in_B;
-    wire controller_2_data_in_B;
-
-        // modified Cmod A7 to have a 100 MHz Oscillator
-    clk_100_TO_clk_12_5875_m clk_100_TO_clk_12_5875 (
-        clk_12_5875,
-        sysclk
-    );
+    wire        controller_1_data_in_B;
+    wire        controller_2_data_in_B;
 
     assign  rst             = pio02;
     assign  cpu_address     = {pio21,pio20,pio19,pio18,pio17,pio14,pio13,pio12,pio11,pio10,pio09,pio08,pio07,pio06,pio05,pio04};
     assign  data_in         = {pio31,pio30,pio29,pio28,pio27,pio26,pio23,pio22};
     assign  write_enable_B  = pio03;
 
-    clk_100_TO_clk_PARAM_m #(0.05) clk_100_TO_clk_PARAM (
-        clk_PARAM,
-        sysclk
-    );
-
-    assign controller_1_data_in_B = pio37;
-    assign controller_2_data_in_B = pio47;
+    assign  controller_1_data_in_B  = pio37;
+    assign  controller_2_data_in_B  = pio47;
 
 
 
@@ -83,6 +71,14 @@ module cmod_a7 (
     wire  [1:0] b;
     wire        hsync;
     wire        vsync;
+
+    wire        controller_latch;
+    wire        controller_clk;
+
+    assign controller_clk = cpu_clk && controller_clk_enable;
+    assign cpu_clk = clk_5 && cpu_clk_enable;
+
+    assign pio01 = fpga_data_enable;
 
     assign pio31 = fpga_data_enable ? data_out[7] : {1'bz};
     assign pio30 = fpga_data_enable ? data_out[6] : {1'bz};
@@ -104,17 +100,20 @@ module cmod_a7 (
     assign pio45            = hsync;
     assign pio46            = vsync;
 
-    assign pio32 = controller_clk;
-    assign pio33 = controller_latch;
+    assign pio32            = controller_clk;
+    assign pio33            = controller_latch;
 
-    assign pio48 = cpu_clk;
+    assign pio48            = cpu_clk;
 
 
+
+    // unused
+    wire  [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
 
     // module
-    top_m #(12) top (
-        clk_12_5875, cpu_clk, rst,
+    top_m #(2) top (
+        clk_12_5875, clk_5, cpu_clk_enable, rst,
         cpu_address,
         data_in,
         data_out,
@@ -130,13 +129,25 @@ module cmod_a7 (
         r, g, b,
         hsync, vsync,
 
-        controller_clk,
+        controller_clk_enable,
         controller_latch,
         controller_1_data_in_B,
-        controller_2_data_in_B
+        controller_2_data_in_B,
+        controller_1_buttons_out,
+        controller_2_buttons_out
     );
 
-    assign cpu_clk = clk_PARAM;
+    clk_mmcm_m clk_src (
+        clk_12_5875,
+        clk_5,
+        rst,
+        sysclk
+    );
+
+    clk_mask_m #(5) clk_mask (
+        clk_5, rst,
+        cpu_clk_enable
+    );
 
 
 

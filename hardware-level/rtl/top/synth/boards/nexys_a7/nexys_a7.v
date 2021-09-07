@@ -29,6 +29,9 @@ module nexys_a7 (
 
 
     // internal
+    wire clk_12_5875;
+    wire clk_5;
+    wire cpu_clk_enable;
     wire fpga_data_enable;
 
     wire controller_clk_enable;
@@ -43,31 +46,14 @@ module nexys_a7 (
 
 
     // input
-    wire        clk_12_5875;
-    wire        clk_5;
-    wire        cpu_clk_enable;
-
     wire        rst;
     wire [15:0] cpu_address;
     wire        write_enable_B;
-
-    clk_mmcm_m clk_src (
-        clk_12_5875,
-        clk_5,
-        rst,
-        CLK100MHZ
-    );
 
     assign  rst             = ~CPU_RESETN;
     assign  cpu_address     = {JB_10,JB_09,JB_08,JB_07,JB_04,JB_03,JB_02,JB_01,JA_10,JA_09,JA_08,JA_07,JA_04,JA_03,JA_02,JA_01};
     assign  data_in         = {JC_10,JC_09,JC_08,JC_07,JC_04,JC_03,JC_02,JC_01};
     assign  write_enable_B  = JD_03;
-
-
-    clk_mask_m #(5) clk_mask (
-        clk_5, rst,
-        cpu_clk_enable
-    );
 
     wire [7:0] buttons;
     assign buttons = {BTNC, 1'b0, 1'b0, 1'b0, BTNU, BTND, BTNL, BTNR};
@@ -85,7 +71,7 @@ module nexys_a7 (
     wire        hsync;
     wire        vsync;
 
-    wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
+    wire  [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     assign  JC_01   = fpga_data_enable ? data_out[0] : {1'bz};
     assign  JC_02   = fpga_data_enable ? data_out[1] : {1'bz};
@@ -148,6 +134,17 @@ module nexys_a7 (
         controller_2_buttons_out
     );
 
+    clk_mmcm_m clk_src (
+        clk_12_5875,
+        clk_5,
+        rst,
+        CLK100MHZ
+    );
+
+    clk_mask_m #(5) clk_mask (
+        clk_5, rst,
+        cpu_clk_enable
+    );
 
     controller_m #(1'b1) controller (
         ~buttons,
