@@ -54,7 +54,15 @@ module top_m #(
     assign vblank_irq_B = ~vblank_irq;
 
     assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
-    assign fpga_data_enable = !write_enable && ( SELECT_firmware || SELECT_vram || SELECT_vectors || SELECT_in_vblank || SELECT_clr_vblank_irq );
+    assign fpga_data_enable = !write_enable && (
+        SELECT_firmware         ||
+        SELECT_vram             ||
+        SELECT_vectors          ||
+        SELECT_in_vblank        ||
+        SELECT_clr_vblank_irq   ||
+        SELECT_controller_1     ||
+        SELECT_controller_2
+    );
 
 
     address_bus_m address_bus (

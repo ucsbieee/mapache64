@@ -158,10 +158,13 @@ write_data = 8'bxx_010_101;
 rst = 0;
 write_enable_B = 1;
 
+#( 16 * `CPU_CLK_PERIOD );
 // @( vsync );
 
+cpu_address = 16'h7002;
+#( `CPU_CLK_PERIOD );
 cpu_address = 16'h7003;
-#( 16 * `CPU_CLK_PERIOD );
+#( `CPU_CLK_PERIOD );
 
 cpu_address = 16'h4000;
 #( `CPU_CLK_PERIOD );
