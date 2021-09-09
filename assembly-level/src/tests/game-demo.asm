@@ -107,6 +107,12 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
         .org do_logic
 ;==========================;
 
+;         lda #9
+;         cmp FRAME
+;         bne .continue
+;         stp
+; .continue
+
         ; update start_pedge, A_pedge, left_value, right_value
         jsr getInput
 
@@ -126,9 +132,9 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
         ; if left was pressed, go left
         lda left_value
         beq .dont_go_left
-        cp16 person_xv, person_xv
+        cp16 person_xv, Q9_6_I1
         ldlab16 horizonal_speed, Q9_6_I2
-        jsr addQ9_6
+        jsr subQ9_6
         cp16 Q9_6_O, person_xv
 .dont_go_left:
 
@@ -137,7 +143,7 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
         beq .dont_go_right
         cp16 person_xv, Q9_6_I1
         ldlab16 horizonal_speed, Q9_6_I2
-        jsr subQ9_6
+        jsr addQ9_6
         cp16 Q9_6_O, person_xv
 .dont_go_right:
 
@@ -161,8 +167,6 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 
         jsr person_draw
 
-        stp     ; DEBUG
-
         rts
 
 
@@ -176,21 +180,26 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 getInput:
         ; start_pedge
         lda start_value
+        sne
         eor #1
         sta INT8_G1     ; !start_value
         get_bit CONTROLLER_1, START_BUTTON
+        sne
         and INT8_G1
         sta start_pedge
 
         ; start_value
         get_bit CONTROLLER_1, START_BUTTON
+        sne
         sta start_value
 
         ; A_pedge
         lda A_value
+        sne
         eor #1
         sta INT8_G1
         get_bit CONTROLLER_1, A_BUTTON
+        sne
         and INT8_G1
         sta A_pedge
 
@@ -238,6 +247,10 @@ person_jump:
 
 person_advance:
         ; TO DO
+        cp16 person_xp, Q9_6_I1
+        cp16 person_xv, Q9_6_I2
+        jsr addQ9_6
+        cp16 Q9_6_O, person_xp
         rts
 
 

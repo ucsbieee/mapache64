@@ -14,7 +14,7 @@
 ;              |||||down
 ;              ||||||left
 ;              |||||||right
-        .byte %11111111
+        .byte %0000001
 
         .org CONTROLLER_2
 ;              a
