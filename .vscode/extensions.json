@@ -11,6 +11,7 @@
 		// assembly
 		"maziac.asm-code-lens",
 		"ms-vscode.hexeditor",
+		"kroccamen.wla-dx-vscode",
 
 		// verilog
 		"mshr-h.veriloghdl",

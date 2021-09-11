@@ -1,12 +1,7 @@
 {
-    // Assembly Formatting
+    // assembly
     "[asm-collection]": {
         "editor.tabSize": 8
-    },
-    "files.associations": {
-        "*.asm": "asm-collection",
-        "*.xci": "xml",
-        "*.core": "yaml"
     },
 
     // verilog
@@ -19,5 +14,15 @@
     "files.insertFinalNewline": true,
 
     // Live Server
-    "liveServer.settings.root": "docs/"
+    "liveServer.settings.root": "docs/",
+
+    // General
+    "files.associations": {
+        // assembly
+        "*.asm": "wla-dx-asm",
+
+        // fusesoc
+        "*.xci": "xml",
+        "*.core": "yaml"
+    },
 }
