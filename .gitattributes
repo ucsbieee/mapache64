@@ -21,6 +21,6 @@ assembly-level/tools/assembler/vasm6502/*   binary
 
 
 # Language Corrections
-*.vh    linguist-language=verilog
-*.svh   linguist-language=systemVerilog
-
+*.vh    linguist-language=Verilog
+*.core  linguist-language=YAML
+*.xci   linguist-language=XML
