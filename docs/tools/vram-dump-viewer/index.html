@@ -12,21 +12,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/_styles/site.css">
-    <link rel="stylesheet" href="/_styles/example.css">
     <link rel="stylesheet" href="/_styles/page.css">
 
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/firmware.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/machine.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/tools/vram-dump-viewer.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/player.js" defer></script>
+
+    <script defer src="/_scripts/nav.js"></script>
+
 </head>
 <body>
-    <h1>VRAM</h1>
-    <div id="Game"></div>
-    <input id="FileInput" type="file" name="files">
-    <p>
-        Upload a VRAM dump
-    </p>
+    <div id="__NAV__"></div>
 
+    <header>
+        <a id="Back" class="clickable" href="../" target="_self"><img src="/_media/back.svg" alt="back"></a>
+        <h1>VRAM Dump Viewer</h1>
+    </header>
+    <div id="__MAIN__">
+
+        <p>
+            Upload a VRAM dump file.
+        </p>
+        <input id="FileInput" type="file" name="files">
+        <div id="Game"></div>
+
+    </div>
 </body>
 </html>
