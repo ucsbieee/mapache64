@@ -3,11 +3,22 @@
 
 # GPU
 
-Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/rtl/gpu>
+Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/rtl/>
 
 ## About
 
-This is a draft of the GPU described in [GPU](https://arcade.ucsbieee.org/guides/gpu/).
+This is the RTL for the arcade machine. It consists of the following modules:
+
+* Address Bus
+  * Sets chip enable nets according to the current address value.
+* Controller Interface
+  * Reads the controller values. (SIPO)
+* Firmware ROM
+  * The firmware from the assebmly level is stored in RAM.
+  * The 65c02 vectors are also stored here.
+* GPU
+  * Implementation of this description: [GPU](https://arcade.ucsbieee.org/guides/gpu/).
+  * Foreground module and background module.
 
 ## Required tools
 
@@ -22,19 +33,19 @@ This is a draft of the GPU described in [GPU](https://arcade.ucsbieee.org/guides
 To simulate in Icarus Verilog:
 
 ```bash
-./scripts/sim.sh
+./top/scripts/sim.sh
 ```
 
 To synthesize for Nexys A7-100T:
 
 ```bash
-./scripts/nexys_a7.sh
+./top/scripts/nexys_a7.sh
 ```
 
 To synthesize for CMOD A7-35T:
 
 ```bash
-./scripts/cmod_a7.sh
+./top/scripts/cmod_a7.sh
 ```
 
 Libraries Used:
