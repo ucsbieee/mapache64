@@ -1,0 +1,52 @@
+<style style="display: none;">
+
+#__NAV__ > * {
+    display: block;
+    border-radius: .1rem;
+    width: 8ch;
+    text-align: center;
+
+    margin: .1rem .3rem;
+
+    border: 1px solid rgba(0, 0, 0, 0.192);
+    padding: .2em;
+    backdrop-filter:
+        blur(6px)
+        brightness(115%)
+        contrast(115%);
+}
+#__NAV__ > *:hover {
+    transform: scale(1.1);
+}
+#__NAV__ > *, #__NAV__ > *:hover {
+    transition: transform .2s;
+}
+#__NAV__ a {
+    text-shadow:
+        0 0 1em #79bfd8,
+        0 0 1em #79d8b0,
+        0 0 1em #79d8b0;
+}
+#__NAV__ {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    position: fixed;
+    z-index: 1;
+    top: 0.5rem;
+    width: 100vw;
+
+    background-color: #79bfd850;
+    padding: 0;
+    box-shadow: 0 0 0.5em 0.5em #79bfd850;
+}
+
+</style>
+
+<a href="/guides/">Guides</a>
+<a href="/tools/">Tools</a>
+<a href="/games/">Games</a>
+<a href="/examples/">Examples</a>

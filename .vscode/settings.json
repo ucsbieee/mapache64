@@ -18,6 +18,9 @@
 
     // General
     "files.associations": {
+        // website
+        "*.phtml": "html",
+
         // assembly
         "*.asm": "wla-dx-asm",
 

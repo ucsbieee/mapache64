@@ -12,21 +12,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/_styles/site.css">
-    <link rel="stylesheet" href="/_styles/example.css">
     <link rel="stylesheet" href="/_styles/page.css">
 
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/firmware.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/machine.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/tests/game-demo.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/player.js" defer></script>
+
+    <script defer src="/_scripts/nav.js"></script>
+
 </head>
 <body>
-    <h1>Game Demo</h1>
-    <div id="Game"></div>
+    <div id="__NAV__"></div>
+    <header>
+        <a id="Back" class="clickable" href="../" target="_self"><img src="/_media/back.svg" alt="back"></a>
+        <h1>Game Demo</h1>
+    </header>
+    <div id="__MAIN__">
 
-    <h1>Description</h1>
-    <p>
-        Press ENTER to reset. Use Z, LEFT, and RIGHT to move.
-    </p>
+        <h1>Description</h1>
+        <p>
+            Press ENTER to reset. Use Z, LEFT, and RIGHT to move.
+        </p>
+
+        <div id="Game"></div>
+
+    </div>
 </body>
 </html>
