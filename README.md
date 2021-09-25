@@ -11,8 +11,6 @@ Website: <https://arcade.ucsbieee.org/>
 
 UCSB IEEE is working on a large project where we build an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and FPGA(s).
 
-This project will be carried out across 2 quarters. In spring'21, we will design the hardware and write the software. In fall'21, we will build the hardware and debug as needed.
-
 ### Motivation
 
 The UCSB ECE curriculum gives lots of opportunities to practice using microcontrollers (ECE 5, ECE 153ab, ECE 189abc). However, there are no classes that give practice in building systems from a microprocessor. Therefore, this club project is meant to fill that gap in experience.
@@ -23,7 +21,7 @@ Also, having an arcade machine in the lab would look awesome. ;)
 
 Just follow [this guide](https://arcade.ucsbieee.org/guides/github/). Anyone can help out by doing an item off the [issue list](https://github.com/ucsbieee/arcade/issues). Each item has a difficulty and skill-set description, so anyone from any skill level can find some item they can complete.
 
-There will be optional weekly meetings/lectures for anyone who wants to help/learn more.
+There will be weekly meetings/lectures for anyone who wants to help/learn more.
 
 ## Contact
 
@@ -43,23 +41,13 @@ Let Ethan know if you want to be in a leadership role on this project!
 ## Overview
 
 <!-- README/tables/areas.tgn -->
-Right now, we are working on software. There are three different levels of software that need to be written: high level, assembly level, and hardware level. Click the area that sounds most interesting!
+There are three different levels of software that need to be written: high level, assembly level, and hardware level.
 
 |                Area               |              Relevant Skills              | Description                                                               |
 |:---------------------------------:|:-----------------------------------------:|---------------------------------------------------------------------------|
 |     [High Level](#high-level)     |            cs8,16<br>JavaScript           | We will design the games in JavaScript as a reference.                    |
 | [Assembly Level](#assembly-level) | cs64,154<br>ece154a<br>6502&nbsp;Assembly | We will write the firmware in assembly and convert the games to assembly. |
 | [Hardware Level](#hardware-level) |      cs154<br>ece152a,154a<br>Verilog     | The GPU and address bus needs to be designed in Verilog.                  |
-
----
-
-## High Level
-
-Nothing yet. Check back soon!
-
-<!-- ### Software Guides/References Used -->
-
-<!-- ### Software Libraries Used -->
 
 ---
 
@@ -84,11 +72,8 @@ Nothing yet. Check back soon!
 ### Datasheets
 
 * [W65C02S Microprocessor](https://westerndesigncenter.com/wdc/documentation/w65c02s.pdf)
-* [W65C22S VIA](https://westerndesigncenter.com/wdc/documentation/w65c22s.pdf)
 * [AT28C256 32kB EEPROM](http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf)
 * [AS6C62256 32kB SRAM](https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf)
-* [74LVC4245A Transceiver](https://assets.nexperia.com/documents/data-sheet/74LVC4245A.pdf)
-* [iCE40 LP/HX FPGA](https://www.mouser.com/datasheet/2/225/FPGA_DS_02029_3_6_iCE40_LP_HX_Family_Data_Sheet-1022803.pdf)
 * [Dell 1908FP Monitor](https://downloads.dell.com/manuals/all-products/esuprt_electronics/esuprt_display/dell-1908fp_user%27s%20guide_en-us.pdf)
 * [VESA, 640 x 480 @ 60 Hz Video Timing](http://www.tinyvga.com/vga-timing/640x480@60Hz)
 

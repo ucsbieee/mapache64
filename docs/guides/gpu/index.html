@@ -44,9 +44,6 @@
             <li class="clickable"><a href="#Object-Memory">
                 Object Memory
             </a></li>
-            <li class="clickable"><a href="#Object-Scanline-Memory">
-                Object Scanline Memory
-            </a></li>
             <li class="clickable"><a href="#Video-Timing">
                 Video Timing
             </a></li>
@@ -151,14 +148,6 @@
         <img class="center" src="/_media/GPU/VRAM/ObjectMemory.svg" alt="Object Memory Diagram">
 
 
-        <h1 id="Object-Scanline-Memory">Object Scanline Memory</h1>
-        <p>
-            The Object Scanline Memory (OBSM), which exists in the FPGA, is used to draw each scanline. Once the GPU has finished drawing a row, the GPU iterates through the Object Memory to find at most 8 objects that should be drawn on the next scanline. If they are to be drawn, they will be added to the Object Scanline Memory.
-        </p>
-        <textarea class="code" mode="verilog" src="/_code/verilog/OBSM.sv"></textarea>
-        <p><em>
-            Note: the GPU can only draw 8 objects per scanline. Therefore, if 11 objects appear on a single row of pixels, 3 of the sprites will have that row missing.
-        </em></p>
 
 
 
@@ -171,10 +160,6 @@
             The GPU updates each pixel row by row. After drawing a row, it waits for a horizonal blanking period. After finishing the entire frame, it waits for a vertical blanking period.
         </p>
         <p>
-            In the horizonal blanking period, the GPU iterates through the Object Memory to find any objects that should be drawn on the next scanline. If they are to be drawn, they will be added to the Object Scanline Memory.
-        </p>
-        <br>
-        <p>
             If you want more information about video timings, watch this:
         </p>
         <div class="clickable external-link center"><a href="https://youtu.be/l7rce6IQDWs" target="_blank" rel="noopener noreferrer">
@@ -183,17 +168,8 @@
 
         <h2>Interrupts</h2>
         <p>
-            The CPU and GPU must communicate so they can agree on when the other can touch the VRAM. This is the order that will be taken on every frame:
+            The CPU and GPU must communicate so they can agree on when the other can touch the VRAM. <strong>The rule is that the CPU can only touch the VRAM while inside the <code>fill_vram</code> subroutine.</strong> Then, we make sure that interrupts are enabled when <code>fill_vram</code> is active, so that <code>fill_vram</code> pauses if the GPU suddenly needs the VRAM.
         </p>
-        <ol>
-            <li>disable interrupts</li>
-            <li>frame counter increments and <code>do_logic</code> is run</li>
-            <li>re-enable interrupts</li>
-            <li>wait until vertical blanking area</li>
-            <li>run <code>fill_vram</code></li>
-            <li>if vertical blanking area ends, stall CPU until vertical blanking area is re-entered</li>
-            <li>once fill_ram finishes, repeat</li>
-        </ol>
         <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/firmware/interrupts.asm" target="_blank" rel="noopener noreferrer">
             interrupts.asm
         </a></div>
