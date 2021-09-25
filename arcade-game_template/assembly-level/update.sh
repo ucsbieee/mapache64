@@ -6,11 +6,14 @@ firmware/header.asm
 firmware/interrupts.asm
 firmware/subroutines/add.asm
 firmware/subroutines/divide.asm
+firmware/subroutines/misc_Q9_6.asm
 firmware/subroutines/multiply.asm
+firmware/subroutines/string.asm
 firmware/subroutines/subtract.asm
 firmware/subroutines/transfer_mem.asm
 fake_io.asm
 labels.asm
+zero_page.asm
 macros.asm
 options.asm
 rom.asm
