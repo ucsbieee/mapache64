@@ -69,3 +69,23 @@ Q9_6_to_SINT16:
 
         pla
         rts
+
+
+; The minimum of Q9_6_I1 and Q9_6_I2 is copied to Q9_6_O
+Q9_6_min:
+        pha
+
+        ; TO DO
+
+        pla
+        rts
+
+
+; The maximum of Q9_6_I1 and Q9_6_I2 is copied to Q9_6_O
+Q9_6_max:
+        pha
+
+        ; TO DO
+
+        pla
+        rts
