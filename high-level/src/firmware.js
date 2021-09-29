@@ -33,7 +33,7 @@ class Q9_6 {
 
 
 
-/* ======== Methods ======== */
+/* ======== Math ======== */
 
 /**
  * @param {Q9_6} a
@@ -71,7 +71,7 @@ function Q9_6_mul( a, b ) {
  * @param {Q9_6} a
  * @return {Q9_6} negative_value
  */
- function Q9_6_neg( a ) {
+function Q9_6_neg( a ) {
     return new Q9_6( -a.toNumber() );
 }
 
@@ -79,7 +79,7 @@ function Q9_6_mul( a, b ) {
  * @param {Q9_6} a
  * @return {Q9_6} absolute_value
  */
- function Q9_6_abs( a ) {
+function Q9_6_abs( a ) {
     return new Q9_6( Math.abs(a.toNumber()) );
 }
 
@@ -102,7 +102,7 @@ function Q9_6_div( a, b ) {
  * @param {Q9_6} b
  * @return {Q9_6} min
  */
- function Q9_6_min( a, b ) {
+function Q9_6_min( a, b ) {
     return new Q9_6(Math.min( a.toNumber(), b.toNumber() ));
 }
 
@@ -111,7 +111,7 @@ function Q9_6_div( a, b ) {
  * @param {Q9_6} b
  * @return {Q9_6} max
  */
- function Q9_6_max( a, b ) {
+function Q9_6_max( a, b ) {
     return new Q9_6(Math.max( a.toNumber(), b.toNumber() ));
 }
 
@@ -129,7 +129,7 @@ function Q9_6_lt( a, b ) {
  * @param {Q9_6} b
  * @return {boolean} comparison
  */
- function Q9_6_lte( a, b ) {
+function Q9_6_lte( a, b ) {
     return a.toNumber() <= b.toNumber();
 }
 
@@ -138,7 +138,7 @@ function Q9_6_lt( a, b ) {
  * @param {Q9_6} b
  * @return {boolean} comparison
  */
- function Q9_6_gt( a, b ) {
+function Q9_6_gt( a, b ) {
     return a.toNumber() > b.toNumber();
 }
 
@@ -147,7 +147,7 @@ function Q9_6_lt( a, b ) {
  * @param {Q9_6} b
  * @return {boolean} comparison
  */
- function Q9_6_gte( a, b ) {
+function Q9_6_gte( a, b ) {
     return a.toNumber() >= b.toNumber();
 }
 
@@ -165,6 +165,30 @@ function Q9_6_eq( a, b ) {
  * @param {Q9_6} b
  * @return {boolean} comparison
  */
- function Q9_6_ne( a, b ) {
+function Q9_6_ne( a, b ) {
     return a.toNumber() != b.toNumber();
+}
+
+
+
+
+/* ======== Objects ======== */
+
+/**
+ * @param {Q9_6} object1_xp
+ * @param {Q9_6} object1_yp
+ * @param {Q9_6} object1_xv
+ * @param {Q9_6} object1_yv
+ * @param {Q9_6} object2_xp
+ * @param {Q9_6} object2_yp
+ * @param {Q9_6} object2_xv
+ * @param {Q9_6} object2_yv
+ * @return {boolean} will collide
+ * Returns whether
+ */
+function will_collide(
+    object1_xp, object1_yp, object1_xv, object1_yv,
+    object2_xp, object2_yp, object2_xv, object2_yv
+) {
+    return false;
 }

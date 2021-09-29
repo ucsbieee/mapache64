@@ -222,7 +222,6 @@ getInput:
 
 
 person_initialize:
-        lda #128
         ldlab16 person_xp_initial, person_xp
         ldlab16 person_yp_initial, person_yp
         ldlab16 $0000, person_xv
