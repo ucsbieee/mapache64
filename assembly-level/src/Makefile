@@ -46,7 +46,7 @@ prep:
 
 arcade:
 	mkdir -p ${DUMP_PATH}
-	${VASM} ${VASM_FLAGS} -o ${DUMP_PATH}/${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
+	${VASM} ${VASM_FLAGS} -L ${DUMP_PATH}/listing.lst -o ${DUMP_PATH}/${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
 
 dump: arcade
 	./dump.sh dump
