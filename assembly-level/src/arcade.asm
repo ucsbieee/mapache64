@@ -42,7 +42,7 @@
         .include "firmware/subroutines/subtract.asm"
         .include "firmware/subroutines/multiply.asm"
         .include "firmware/subroutines/divide.asm"
-        .include "firmware/subroutines/misc_Q9_6.asm"
+        .include "firmware/subroutines/Q9_6.asm"
         .include "firmware/subroutines/transfer_mem.asm"
         .include "firmware/subroutines/string.asm"
 
