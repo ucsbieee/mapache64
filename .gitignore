@@ -10,8 +10,7 @@ assembly-level/src/options.asm
 assembly-level/src/rom.asm
 
 # vasm output
-assembly-level/*.bin
-assembly-level/**/*.bin
+assembly-level/src/dump/*
 
 # py65 output
 assembly-level/dump/
