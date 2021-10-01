@@ -98,6 +98,35 @@ seq     .macro
         eor #1
         .endm
 
+; Compare mem1 with mem2
+cmpU16  .macro mem1, mem2
+        lda mem1+1
+        cmp mem2+1
+        bne .exit
+        lda mem1
+        cmp mem2
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpS16  .macro mem1, mem2
+        ; TO DO
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpU8   .macro mem1, mem2
+        lda mem1
+        cmp mem2
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpS8   .macro mem1, mem2
+        ; TO DO
+.exit
+        .endm
+
 
 
 ; ====================== ;
@@ -187,6 +216,36 @@ seq     .macro
         sne
         eor #1
         .endm
+
+; Compare mem1 with mem2
+cmpU16  .macro \mem1, \mem2
+        lda \mem1+1
+        cmp \mem2+1
+        bne .exit
+        lda \mem1
+        cmp \mem2
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpS16  .macro mem1, mem2
+        ; TO DO
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpU8   .macro mem1, mem2
+        lda \mem1
+        cmp \mem2
+.exit
+        .endm
+
+; Compare mem1 with mem2
+cmpS8   .macro mem1, mem2
+        ; TO DO
+.exit
+        .endm
+
 
 
 ; ====================== ;
