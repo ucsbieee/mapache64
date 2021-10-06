@@ -17,7 +17,6 @@ module background_m (
 
     // video timing input
     input                     [7:0] current_x, current_y,
-    input                           writable,
 
     // video output
     output wire               [1:0] r, g, b,
@@ -57,7 +56,7 @@ module background_m (
     wire in_ntbl = ( address >= 12'h400 && address < 12'h800 );
 
     always_ff @ ( negedge cpu_clk ) if ( cpu_clk_enable ) begin : write_to_vram
-        if ( write_enable && writable ) begin
+        if ( write_enable ) begin
             if ( in_pmb )
                 PMB[ address - 12'h200 ] <= data_in;
             if ( in_ntbl )
