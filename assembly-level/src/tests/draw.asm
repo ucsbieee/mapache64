@@ -13,25 +13,6 @@
 ; ====================== ;
 
 
-; === Misc. === ;
-
-vram_initialized        = $80
-
-ground                  = %0011100000000000     ; 224
-gravity                 = %0000000000010100     ; 0.3125
-weakgravity             = %0000000000000100     ; 0.0625
-
-
-; === Input === ;
-
-start_pedge             = $81
-start_value             = $82
-A_pedge                 = $83
-A_value                 = $84
-left_value              = $85
-right_value             = $86
-
-
 ; === Person === ;
 
 person_xp               = $87
@@ -43,12 +24,6 @@ person_yv               = $8d
 person_xp_initial       = %0010000000000000     ; 128
 person_yp_initial       = %0010000000000000     ; 128
 
-jump_strength           = %0000000101000000     ; 5
-walljump_strength       = %0000001010000000     ; 10
-
-horizonal_speed         = %0000000001110000     ; 1.75
-gnd_horizonal_deccel    = %0000000001100000     ; 1.5
-air_horizonal_deccel    = %0000000000001001     ; 1.4065
 
 
 ; === VRAM Labels === ;
@@ -87,15 +62,6 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 ;==========================;
         .org reset
 ;==========================;
-
-        stz start_pedge
-        stz start_value
-        stz A_pedge
-        stz A_value
-        stz left_value
-        stz right_value
-
-        stz vram_initialized
         jsr person_initialize
         rts
 
@@ -106,7 +72,6 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 ;==========================;
         .org do_logic
 ;==========================;
-
         rts
 
 
@@ -116,14 +81,10 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 ;==========================;
         .org fill_vram
 ;==========================;
-
-        lda vram_initialized
-        bne .after_vram_initialized
         jsr vram_initialize
-.after_vram_initialized:
-
         jsr person_draw
 
+STOP:
         stp     ; Stop
 
         rts
@@ -142,7 +103,6 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
 
 
 person_initialize:
-        lda #128
         ldlab16 person_xp_initial, person_xp
         ldlab16 person_yp_initial, person_yp
         ldlab16 $0000, person_xv
@@ -165,10 +125,6 @@ vram_initialize:
         jsr pmb_initialize
         jsr ntbl_initialize
         jsr obm_initialize
-
-        ; set vram_initialized to true
-        lda #1
-        sta vram_initialized
         rts
 
 
