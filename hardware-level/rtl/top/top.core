@@ -24,6 +24,7 @@ filesets:
       - sim/top.tb.v:                         {file_type: verilogSource}
     depend:
       - ucsbieee:arcade:timing
+      - ucsbieee:arcade:clk_mask
 
   # hardware
   nexys_a7:

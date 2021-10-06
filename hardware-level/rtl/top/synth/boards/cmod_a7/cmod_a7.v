@@ -32,7 +32,7 @@ module cmod_a7 (
     wire cpu_clk_enable;
     wire fpga_data_enable;
 
-    wire controller_clk_enable;
+    wire controller_clk_in_enable, controller_clk_out_enable;
 
 
     // inout
@@ -129,7 +129,8 @@ module cmod_a7 (
         r, g, b,
         hsync, vsync,
 
-        controller_clk_enable,
+        controller_clk_in_enable,
+        controller_clk_out_enable,
         controller_latch,
         controller_1_data_in_B,
         controller_2_data_in_B,

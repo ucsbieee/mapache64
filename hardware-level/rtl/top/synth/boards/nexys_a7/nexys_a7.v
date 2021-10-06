@@ -34,7 +34,7 @@ module nexys_a7 (
     wire cpu_clk_enable;
     wire fpga_data_enable;
 
-    wire controller_clk_enable;
+    wire controller_clk_in_enable, controller_clk_out_enable;
     wire controller_latch;
     wire controller_1_data_in_B;
 
@@ -71,7 +71,8 @@ module nexys_a7 (
     wire        hsync;
     wire        vsync;
 
-    wire  [7:0] controller_1_buttons_out, controller_2_buttons_out;
+    wire  [7:0] controller_1_buttons_out;
+    wire  [7:0] controller_2_buttons_out;
 
     assign  JC_01   = fpga_data_enable ? data_out[0] : {1'bz};
     assign  JC_02   = fpga_data_enable ? data_out[1] : {1'bz};
@@ -126,7 +127,8 @@ module nexys_a7 (
         r, g, b,
         hsync, vsync,
 
-        controller_clk_enable,
+        controller_clk_in_enable,
+        controller_clk_out_enable,
         controller_latch,
         controller_1_data_in_B,
         controller_2_data_in_B,
@@ -146,10 +148,15 @@ module nexys_a7 (
         cpu_clk_enable
     );
 
+    clk_mask_m #(10) controller_clk_mask (
+        clk_5, rst,
+        controller_clk_in_enable
+    );
+
     controller_m #(1'b1) controller (
         ~buttons,
         clk_5,
-        controller_clk_enable,
+        controller_clk_out_enable,
         controller_latch,
         controller_1_data_in_B
     );
