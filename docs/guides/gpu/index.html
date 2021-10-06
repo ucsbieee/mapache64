@@ -172,7 +172,7 @@
 
         <h2>Interrupts</h2>
         <p>
-            The CPU and GPU must communicate so they can agree on when the other can touch the VRAM. <strong>The rule is that the CPU can only touch the VRAM while inside the <code>fill_vram</code> subroutine.</strong> Then, we make sure that interrupts are enabled when <code>fill_vram</code> is active, so that <code>fill_vram</code> pauses if the GPU suddenly needs the VRAM.
+            <strong>The CPU must only touch the VRAM while inside the <code>fill_vram</code> subroutine.</strong> This ensures that the CPU and the GPU are not trying to access the VRAM at the same time. Every time the GPU needs to use the VRAM, it sends an interrupt to the CPU. If the CPU is in <code>fill_vram</code>, it will pause. Once the GPU no longer needs the VRAM, it will send another interrupt to the CPU so that the CPU knows when to continue. Observe this code:
         </p>
         <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/firmware/interrupts.asm" target="_blank" rel="noopener noreferrer">
             interrupts.asm
