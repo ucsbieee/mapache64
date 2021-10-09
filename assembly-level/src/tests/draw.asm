@@ -4,7 +4,7 @@
 ; ====================== ;
 
         .byte "Draw Demo\n"
-        .byte "Should see a magestic yellow blob floating in the sky above a grass field.\n"
+        .byte "You should see a magestic yellow blob floating in the sky above a grass field.\n"
         .byte 0
 
 
