@@ -1,7 +1,10 @@
 {
     // assembly
-    "[asm-collection]": {
+    "[wla-dx-asm]": {
         "editor.tabSize": 8
+    },
+    "workbench.editorAssociations": {
+        "*.bin": "hexEditor.hexedit",
     },
 
     // verilog
@@ -27,5 +30,5 @@
         // fusesoc
         "*.xci": "xml",
         "*.core": "yaml"
-    },
+    }
 }
