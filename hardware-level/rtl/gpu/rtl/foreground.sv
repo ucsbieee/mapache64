@@ -20,7 +20,6 @@ module foreground_m #(
 
     // video timing input
     input                     [7:0] current_x, current_y,
-    input                           writable,
 
     // video output
     output wire               [1:0] r, g, b,
@@ -54,7 +53,7 @@ module foreground_m #(
     wire in_obm = ( address >= 12'h800 && address < 12'h900 );
 
     always_ff @ ( negedge cpu_clk ) if ( cpu_clk_enable ) begin : write_to_vram
-        if ( write_enable && writable ) begin
+        if ( write_enable ) begin
             if ( in_pmf )
                 PMF[ address - 12'h000 ] <= data_in;
             if ( in_obm )

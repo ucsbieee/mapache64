@@ -12,6 +12,7 @@
     `include "hardware-level/rtl/top/rtl/top.v"
     `include "hardware-level/rtl/misc/timing.v"
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
+    `include "hardware-level/rtl/misc/clk_mask.v"
 `endif
 
 `timescale `TIMESCALE
@@ -20,11 +21,10 @@ module top_tb_m ();
 
 reg clk_12_5875 = 1;
 always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;
-reg clk_1 = 1;
-always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
-wire clk_enable = 1;
+reg clk_5 = 1;
+always #( `CPU_CLK_PERIOD / 10 ) clk_5 = ~clk_5;
 
-
+wire            cpu_clk_enable;
 reg             rst;
 reg      [15:0] cpu_address;
 wire      [7:0] data, data_in, data_out;
@@ -42,7 +42,8 @@ wire            vblank_irq_B;
 wire      [1:0] r, g, b;
 wire            hsync, vsync;
 
-wire            controller_clk_enable;
+wire            controller_clk_in_enable;
+wire            controller_clk_out_enable;
 wire            controller_latch;
 wire            controller_1_data_in_B;
 wire            controller_2_data_in_B;
@@ -53,9 +54,18 @@ reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
 
+clk_mask_m #(5) cpu_clk_mask (
+    clk_5, rst,
+    cpu_clk_enable
+);
+
+clk_mask_m #(100) controller_clk_mask (
+    clk_5, rst,
+    controller_clk_in_enable
+);
 
 top_m top (
-    clk_12_5875, clk_1, clk_enable, rst,
+    clk_12_5875, clk_5, cpu_clk_enable, rst,
     cpu_address,
     data_in,
     data_out,
@@ -71,7 +81,8 @@ top_m top (
     r, g, b,
     hsync, vsync,
 
-    controller_clk_enable,
+    controller_clk_in_enable,
+    controller_clk_out_enable,
     controller_latch,
     controller_1_data_in_B,
     controller_2_data_in_B,
@@ -84,16 +95,16 @@ reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
 controller_m #(1'b1) controller_1 (
     ~controller_1_buttons_in,
-    clk_1,
-    controller_clk_enable,
+    clk_5,
+    controller_clk_out_enable,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller_m controller_2 (
     ~controller_2_buttons_in,
-    clk_1,
-    controller_clk_enable,
+    clk_5,
+    controller_clk_out_enable,
     controller_latch,
     controller_2_data_in_B
 );
@@ -109,10 +120,13 @@ $timeformat( -3, 6, "ms", 0);
 controller_1_buttons_in = 8'b10001001;
 controller_2_buttons_in = 8'b00100110;
 
-write_enable_B = 0;
 rst = 1;
-#( `CPU_CLK_PERIOD );
+#( 2*`CPU_CLK_PERIOD );
+rst = 0;
 
+@( negedge vsync );
+
+write_enable_B = 0;
 cpu_address = 16'h3700;
 write_data = 8'b10011001;
 #( `CPU_CLK_PERIOD );
@@ -155,7 +169,6 @@ write_data = 8'bxx_010_101;
 #( `CPU_CLK_PERIOD );
 
 
-rst = 0;
 write_enable_B = 1;
 
 #( 16 * `CPU_CLK_PERIOD );
@@ -181,6 +194,7 @@ cpu_address = 16'hfffa;
 cpu_address = 16'hffff;
 #( `CPU_CLK_PERIOD );
 
+@( negedge vsync );
 
 
 //\\ =========================== \\//
