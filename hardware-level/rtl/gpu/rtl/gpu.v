@@ -50,8 +50,6 @@ module gpu_m #(
             vblank_irq <= 0;
         else if ( rst || (writable_prev != writable) )
             vblank_irq <= 1;
-        else
-            vblank_irq <= vblank_irq;
 
         writable_prev <= writable;
     end
@@ -82,23 +80,23 @@ module gpu_m #(
         writable
     );
 
-    assign controller_start_fetch = ( hcounter < 10'd10 ) && ( vcounter == 10'b0 );
+    assign controller_start_fetch = ( hcounter < 10'h20 ) && ( vcounter == 10'b0 );
+
+    wire vram_write_enable = writable & SELECT_vram & write_enable;
 
     foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
         clk_12_5875, cpu_clk, cpu_clk_enable, rst,
         current_x[7:0], current_y[7:0],
-        writable,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
-        data_in, address, (write_enable&SELECT_vram)
+        data_in, address, vram_write_enable
     );
 
     background_m background (
         clk_12_5875, cpu_clk,  cpu_clk_enable, rst,
         current_x[7:0], current_y[7:0],
-        writable,
         background_r, background_g, background_b,
-        data_in, address, (write_enable&SELECT_vram)
+        data_in, address, vram_write_enable
     );
 
 endmodule

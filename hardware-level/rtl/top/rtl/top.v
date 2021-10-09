@@ -31,7 +31,8 @@ module top_m #(
     output wire   [1:0] r, g, b,
     output wire         hsync, vsync,
 
-    output wire         controller_clk_enable,
+    input               controller_clk_in_enable,
+    output wire         controller_clk_out_enable,
     output wire         controller_latch,
     input               controller_1_data_in_B,
     input               controller_2_data_in_B,
@@ -53,7 +54,7 @@ module top_m #(
     assign SELECT_rom_B = ~SELECT_rom;
     assign vblank_irq_B = ~vblank_irq;
 
-    assign ram_OE_B = ~( write_enable_B && !SELECT_ram_B );
+    assign ram_OE_B = ~( !write_enable && SELECT_ram );
     assign fpga_data_enable = !write_enable && (
         SELECT_firmware         ||
         SELECT_vram             ||
@@ -109,10 +110,10 @@ module top_m #(
     );
 
     controller_interface_m #(2) controller_interface (
-        cpu_clk, cpu_clk_enable, rst,
+        cpu_clk, controller_clk_in_enable, rst,
         controller_start_fetch,
 
-        controller_clk_enable,
+        controller_clk_out_enable,
         controller_latch,
 
         {controller_2_data_in_B,controller_1_data_in_B},
