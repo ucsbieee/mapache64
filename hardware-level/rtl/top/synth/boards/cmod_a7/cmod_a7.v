@@ -6,25 +6,36 @@
 `endif
 
 module cmod_a7 (
-    input
-        sysclk,
-                pio02,  pio03,  pio04,  pio05,  pio06,
-        pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
-        pio13,  pio14,                  pio17,  pio18,
-        pio19,  pio20,  pio21,
-                pio37,
-                                        pio47,
-    inout
-                                pio22,  pio23,
-                pio26,  pio27,  pio28,  pio29,  pio30,
-        pio31,
-    output wire
-        pio01,
-                pio32,  pio33,  pio34,  pio35,  pio36,
-                pio38,  pio39,  pio40,  pio41,  pio42,
-        pio43,  pio44,  pio45,  pio46,          pio48
-);
+    input               sysclk,
+    input         [1:0] btn,
+    output wire   [1:0] led,
+    output wire   [2:0] led_rgbB,
 
+    inout
+                pio14,                  pio17,  pio18,
+        pio19,  pio20,  pio21,  pio22,  pio23,
+    input
+                pio02,  pio03,
+                                        pio29,  pio30,
+        pio31,  pio32,  pio33,  pio34,  pio35,  pio36,
+        pio37,  pio38,  pio39,  pio40,  pio41,  pio42,
+        pio43,  pio44,  pio45,
+    output wire
+        pio01,                  pio04,  pio05,  pio06,
+        pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
+        pio13,
+                pio26,  pio27,  pio28,
+                                pio46,  pio47,  pio48
+
+    //     pio01,  pio02,  pio03,  pio04,  pio05,  pio06,
+    //     pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
+    //     pio13,  pio14,                  pio17,  pio18,
+    //     pio19,  pio20,  pio21,  pio22,  pio23,
+    //             pio26,  pio27,  pio28,  pio29,  pio30,
+    //     pio31,  pio32,  pio33,  pio34,  pio35,  pio36,
+    //     pio37,  pio38,  pio39,  pio40,  pio41,  pio42,
+    //     pio43,  pio44,  pio45,  pio46,  pio47,  pio48,
+);
 
     // internal
     wire clk_12_5875;
@@ -48,19 +59,16 @@ module cmod_a7 (
     wire        controller_1_data_in_B;
     wire        controller_2_data_in_B;
 
-    assign  rst             = pio02;
-    assign  cpu_address     = {pio21,pio20,pio19,pio18,pio17,pio14,pio13,pio12,pio11,pio10,pio09,pio08,pio07,pio06,pio05,pio04};
-    assign  data_in         = {pio31,pio30,pio29,pio28,pio27,pio26,pio23,pio22};
-    assign  write_enable_B  = pio03;
+    assign  rst             = btn[0];
+    assign  cpu_address     = {pio30,pio31,pio32,pio33,pio34,pio35,pio36,pio37,pio38,pio39,pio40,pio41,pio42,pio43,pio44,pio45};
+    assign  data_in         = {pio14,pio17,pio18,pio19,pio20,pio21,pio22,pio23};
+    assign  write_enable_B  = pio29;
 
-    assign  controller_1_data_in_B  = pio37;
-    assign  controller_2_data_in_B  = pio47;
-
+    assign  controller_1_data_in_B  = pio03;
+    assign  controller_2_data_in_B  = pio02;
 
 
     // output
-    wire        cpu_clk;
-
     wire        SELECT_ram_B;
     wire        ram_OE_B;
     wire        SELECT_rom_B;
@@ -75,41 +83,40 @@ module cmod_a7 (
     wire        controller_latch;
     wire        controller_clk;
 
-    assign controller_clk = cpu_clk && controller_clk_enable;
-    assign cpu_clk = clk_5 && cpu_clk_enable;
+    assign pio23 = fpga_data_enable ? data_out[0] : {1'bz};
+    assign pio22 = fpga_data_enable ? data_out[1] : {1'bz};
+    assign pio21 = fpga_data_enable ? data_out[2] : {1'bz};
+    assign pio20 = fpga_data_enable ? data_out[3] : {1'bz};
+    assign pio19 = fpga_data_enable ? data_out[4] : {1'bz};
+    assign pio18 = fpga_data_enable ? data_out[5] : {1'bz};
+    assign pio17 = fpga_data_enable ? data_out[6] : {1'bz};
+    assign pio14 = fpga_data_enable ? data_out[7] : {1'bz};
+
+    assign pio46 = ram_OE_B;
+    assign pio47 = SELECT_ram_B;
+    assign pio48 = SELECT_rom_B;
+    assign pio28 = vblank_irq_B;
+
+    assign pio12 = r[1];
+    assign pio13 = r[0];
+    assign pio10 = g[1];
+    assign pio11 = g[0];
+    assign pio08 = b[1];
+    assign pio09 = b[0];
+    assign pio07 = hsync;
+    assign pio06 = vsync;
+
+    assign pio26 = ~rst;
+    assign pio27 = clk_5 && cpu_clk_enable;
+
+    assign pio04 = controller_latch;
+    assign pio05 = clk_5 && controller_clk_out_enable;
 
     assign pio01 = fpga_data_enable;
 
-    assign pio31 = fpga_data_enable ? data_out[7] : {1'bz};
-    assign pio30 = fpga_data_enable ? data_out[6] : {1'bz};
-    assign pio29 = fpga_data_enable ? data_out[5] : {1'bz};
-    assign pio28 = fpga_data_enable ? data_out[4] : {1'bz};
-    assign pio27 = fpga_data_enable ? data_out[3] : {1'bz};
-    assign pio26 = fpga_data_enable ? data_out[2] : {1'bz};
-    assign pio23 = fpga_data_enable ? data_out[1] : {1'bz};
-    assign pio22 = fpga_data_enable ? data_out[0] : {1'bz};
-
-    assign pio34            = SELECT_ram_B;
-    assign pio35            = ram_OE_B;
-    assign pio36            = SELECT_rom_B;
-    assign pio38            = vblank_irq_B;
-
-    assign {pio39,pio40}    = r;
-    assign {pio41,pio42}    = g;
-    assign {pio43,pio44}    = b;
-    assign pio45            = hsync;
-    assign pio46            = vsync;
-
-    assign pio32            = controller_clk;
-    assign pio33            = controller_latch;
-
-    assign pio48            = cpu_clk;
-
-
 
     // unused
-    wire  [7:0] controller_1_buttons_out, controller_2_buttons_out;
-
+    wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     // module
     top_m #(2) top (
@@ -145,11 +152,18 @@ module cmod_a7 (
         sysclk
     );
 
-    clk_mask_m #(5) clk_mask (
+    clk_mask_m #(5) cpu_clk_mask (
         clk_5, rst,
         cpu_clk_enable
     );
 
+    clk_mask_m #(10) controller_clk_mask (
+        clk_5, rst,
+        controller_clk_in_enable
+    );
+
+
+    assign led[0] = ( cpu_address == 16'hb006 );
 
 
 endmodule

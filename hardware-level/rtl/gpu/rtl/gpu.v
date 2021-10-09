@@ -80,7 +80,7 @@ module gpu_m #(
         writable
     );
 
-    assign controller_start_fetch = ( hcounter < 10'd10 ) && ( vcounter == 10'b0 );
+    assign controller_start_fetch = ( hcounter < 10'h20 ) && ( vcounter == 10'b0 );
 
     wire vram_write_enable = writable & SELECT_vram & write_enable;
 
