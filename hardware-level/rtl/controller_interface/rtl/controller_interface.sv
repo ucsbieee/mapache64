@@ -6,20 +6,20 @@
 module controller_interface_m #(
     parameter NUM_CONTROLLERS = 2
 ) (
-    input                                   clk_in, clk_in_enable,
+    input                                   clk_in,
     input                                   rst,
     input                                   start_fetch,    // synchronous, must be held for less than 10 clk cycles
 
-    output wire                             controller_clk_enable,
-    output reg                              controller_latch,
+    output wire                             clk_out_enable,
+    output reg                              latch,
 
-    input             [NUM_CONTROLLERS-1:0] controller_data_B_LIST,
+    input             [NUM_CONTROLLERS-1:0] data_B_LIST,
 
-    output reg    [(8*NUM_CONTROLLERS)-1:0] controller_buttons_out_LIST
+    output reg    [(8*NUM_CONTROLLERS)-1:0] buttons_out_LIST
 );
 
-    `define CONTROLLER_DATA_B(CONTROLLER)       controller_data_B_LIST[(CONTROLLER)]
-    `define CONTROLLER_BUTTONS_OUT(CONTROLLER)  controller_buttons_out_LIST[(8*(CONTROLLER))+:8]
+    `define CONTROLLER_DATA_B(CONTROLLER)       data_B_LIST[(CONTROLLER)]
+    `define CONTROLLER_BUTTONS_OUT(CONTROLLER)  buttons_out_LIST[(8*(CONTROLLER))+:8]
 
     reg [1:0] state;
     `define STATE_WAIT          2'h0
@@ -33,15 +33,15 @@ module controller_interface_m #(
     initial num_bits_left = 4'b0;
     wire has_bits_left = (num_bits_left != 4'b0);
 
-    assign controller_clk_enable = (has_bits_left || controller_latch) && clk_in_enable;
+    assign clk_out_enable = (has_bits_left || latch);
 
     reg latch_timer;
     initial latch_timer = 0;
 
     // state machine, latch timing
-    always_ff @ ( negedge clk_in ) if ( clk_in_enable ) begin
+    always_ff @ ( negedge clk_in ) begin
         if ( rst ) begin
-            controller_latch <= 1'b0;
+            latch <= 1'b0;
             state <= `STATE_WAIT;
             num_bits_left <= 4'b0;
             latch_timer <= 0;
@@ -49,7 +49,7 @@ module controller_interface_m #(
             case ( state )
                 `STATE_WAIT: begin
                     if ( start_fetch ) begin
-                        controller_latch <= 1'b1;
+                        latch <= 1'b1;
                         state <= `STATE_LATCH;
                         latch_timer <= ~0;
                     end
@@ -57,7 +57,7 @@ module controller_interface_m #(
                 `STATE_LATCH: begin
                     if ( latch_timer == 0 ) begin
                         state <= `STATE_LATCH_DONE;
-                        controller_latch <= 1'b0;
+                        latch <= 1'b0;
                     end else begin
                         latch_timer <= latch_timer - 1;
                     end
@@ -81,7 +81,7 @@ module controller_interface_m #(
     // controller-specific updates
     generate for ( genvar controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
     reg [7:0] register;
-    always_ff @ ( posedge clk_in ) if ( clk_in_enable ) begin
+    always_ff @ ( posedge clk_in ) begin
         if ( rst ) begin
             register <= 8'b0;
         end

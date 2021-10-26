@@ -13,8 +13,8 @@
 module top_m #(
     parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
-    input               clk_12_5875,
-    input               cpu_clk, cpu_clk_enable,
+    input               gpu_clk,
+    input               cpu_clk,
     input               rst,
     input        [15:0] cpu_address,
     input         [7:0] data_in,
@@ -31,7 +31,7 @@ module top_m #(
     output wire   [1:0] r, g, b,
     output wire         hsync, vsync,
 
-    input               controller_clk_in_enable,
+    input               controller_clk_in,
     output wire         controller_clk_out_enable,
     output wire         controller_latch,
     input               controller_1_data_in_B,
@@ -103,14 +103,14 @@ module top_m #(
 
     wire [11:0] gpu_address = ( cpu_address - 16'h3700 );
     gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
-        clk_12_5875, cpu_clk, cpu_clk_enable, rst,
+        gpu_clk, cpu_clk, rst,
         r,g,b, hsync, vsync, controller_start_fetch,
         data_in, gpu_data_out, gpu_address, write_enable, SELECT_vram,
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 
     controller_interface_m #(2) controller_interface (
-        cpu_clk, controller_clk_in_enable, rst,
+        controller_clk_in, rst,
         controller_start_fetch,
 
         controller_clk_out_enable,
