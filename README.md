@@ -17,6 +17,15 @@ The UCSB ECE curriculum gives lots of opportunities to practice using microcontr
 
 Also, having an arcade machine in the lab would look awesome. ;)
 
+## Current State
+
+The hardware prototype has been finished on breadboards. It works with both the [Nexys A7-100T](https://digilent.com/reference/programmable-logic/nexys-a7/start) and [Cmod A7-35T](https://digilent.com/reference/programmable-logic/cmod-a7/start) Artix-7 development boards All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is working on the software.
+
+For the software, we are currently trying to configue a custom [cc65](https://cc65.github.io/) linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates.
+
+![Picture](docs/_media/physical/picture.jpg)
+![Nexys_A7](docs/_media/physical/nexys_a7.jpg)
+
 ## How to Contribute
 
 Just follow [this guide](https://arcade.ucsbieee.org/guides/github/). Anyone can help out by doing an item off the [issue list](https://github.com/ucsbieee/arcade/issues). Each item has a difficulty and skill-set description, so anyone from any skill level can find some item they can complete.
@@ -74,6 +83,8 @@ There are three different levels of software that need to be written: high level
 * [W65C02S Microprocessor](https://westerndesigncenter.com/wdc/documentation/w65c02s.pdf)
 * [AT28C256 32kB EEPROM](http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf)
 * [AS6C62256 32kB SRAM](https://www.alliancememory.com/wp-content/uploads/pdf/AS6C62256.pdf)
+* [Cmod A7](https://digilent.com/reference/programmable-logic/cmod-a7/reference-manual)
+* [Nexys A7](https://digilent.com/reference/programmable-logic/nexys-a7/reference-manual)
 * [Dell 1908FP Monitor](https://downloads.dell.com/manuals/all-products/esuprt_electronics/esuprt_display/dell-1908fp_user%27s%20guide_en-us.pdf)
 * [VESA, 640 x 480 @ 60 Hz Video Timing](http://www.tinyvga.com/vga-timing/640x480@60Hz)
 

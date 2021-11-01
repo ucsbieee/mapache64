@@ -1,7 +1,7 @@
 
 <!-- hardware-level/rtl/gpu-reduced/README.md -->
 
-# GPU
+# Hardware RTL
 
 Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/rtl/>
 

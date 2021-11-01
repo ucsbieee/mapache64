@@ -32,6 +32,17 @@
         <p>
             UCSB IEEE is working on a large project where we build an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and FPGA(s).
         </p>
+
+        <h1>Current State</h1>
+        <p>
+            The hardware prototype has been finished on breadboards. It works with both the <a href="https://digilent.com/reference/programmable-logic/nexys-a7/start" target="_blank" rel="noopener noreferrer">Nexys A7-100T</a> and <a href="https://digilent.com/reference/programmable-logic/cmod-a7/start" target="_blank" rel="noopener noreferrer">Cmod A7-35T</a> Artix-7 development boards All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is working on the software.
+        </p>
+        <p>
+            For the software, we are currently trying to configue a custom <a href="https://cc65.github.io/" target="_blank" rel="noopener noreferrer">cc65</a> linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates.
+        </p>
+        <img src="/_media/physical/picture.jpg" alt="picture">
+        <img src="/_media/physical/nexys_a7.jpg" alt="nexys_a7">
+
         <h1>How to Contribute</h1>
         <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade" target="_blank" rel="noopener noreferrer">
             GitHub Repository
