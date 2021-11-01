@@ -19,9 +19,9 @@ Also, having an arcade machine in the lab would look awesome. ;)
 
 ## Current State
 
-The hardware prototype has been finished on breadboards. It works with both the [Nexys A7-100T](https://digilent.com/reference/programmable-logic/nexys-a7/start) and [Cmod A7-35T](https://digilent.com/reference/programmable-logic/cmod-a7/start) Artix-7 development boards All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is working on the software.
+The hardware prototype has been finished on breadboards. It works with both the [Nexys A7-100T](https://digilent.com/reference/programmable-logic/nexys-a7/start) and [Cmod A7-35T](https://digilent.com/reference/programmable-logic/cmod-a7/start) [Artix-7](https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html) development boards. All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is writing the software.
 
-For the software, we are currently trying to configue a custom [cc65](https://cc65.github.io/) linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates.
+For the software, we are currently trying to configure a custom [cc65](https://cc65.github.io/) linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates!
 
 ![Picture](docs/_media/physical/picture.jpg)
 ![Nexys_A7](docs/_media/physical/nexys_a7.jpg)
