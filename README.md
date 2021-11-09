@@ -24,7 +24,13 @@ The hardware prototype has been finished on breadboards. It works with both the 
 For the software, we are currently trying to configure a custom [cc65](https://cc65.github.io/) linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates!
 
 ![Picture](docs/_media/physical/picture.jpg)
+The arcade machine plugged into a monitor
+
+![CMOD](docs/_media/physical/cmod.jpg)
+The breadboard circuit with a Cmod A7
+
 ![Nexys_A7](docs/_media/physical/nexys_a7.jpg)
+The breadboard circuit with a Nexys A7
 
 ## How to Contribute
 
