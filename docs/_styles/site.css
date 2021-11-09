@@ -101,6 +101,9 @@ a.blue {
 .center:not( img ) {
     width: fit-content;
 }
+.center-text {
+    text-align: center;
+}
 
 .center-within {
     text-align: center;
