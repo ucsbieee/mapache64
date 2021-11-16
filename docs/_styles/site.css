@@ -105,13 +105,27 @@ a.blue {
     text-align: center;
 }
 
+/* from https://stackoverflow.com/a/54924505 */
 .center-within {
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
+    padding-bottom: 60%;
+    padding-top: 25px;
+    height: 0;
 }
+
+.center-within iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
 
 
 
