@@ -42,14 +42,14 @@ class Person {
             ( Math.floor(ground-this.yp.toNumber()) < 5 )
             || this.xp.toNumber() == 0
             || this.xp.toNumber() == GameWidth-p.width
-            ) {
+        ) {
 
-            this.yv.update(jump_strength);
+            this.yv.update(-jump_strength);
 
             // left walljump
-            if ( this.xp.toNumber() == 0 ) this.xv = Q9_6_sub( this.xv, new Q9_6(walljump_strength) );
+            if ( this.xp.toNumber() == 0 ) this.xv = Q9_6_add( this.xv, new Q9_6(walljump_strength) );
             // right walljump
-            if ( this.xp.toNumber() == GameWidth-p.width ) this.xv = Q9_6_add( this.xv, new Q9_6(walljump_strength) );
+            if ( this.xp.toNumber() == GameWidth-p.width ) this.xv = Q9_6_sub( this.xv, new Q9_6(walljump_strength) );
         }
 
     }
@@ -61,8 +61,8 @@ class Person {
         this.yv.update( clamp( -15, this.yv.toNumber(), 15 ) );
 
         // update position
-        this.xp = Q9_6_sub( this.xp, this.xv );
-        this.yp = Q9_6_sub( this.yp, this.yv );
+        this.xp = Q9_6_add( this.xp, this.xv );
+        this.yp = Q9_6_add( this.yp, this.yv );
 
         // ground collision
         if ( this.yp.toNumber() >= ground.toNumber() ) {
@@ -92,12 +92,12 @@ class Person {
         let horizonal_deccel =
             ( this.yp.toNumber() >= ground.toNumber() )*gnd_horizonal_deccel
             + ( this.yp.toNumber() < ground.toNumber() )*air_horizonal_deccel;
-        // if moving left
+        // if moving right
         if ( this.xv.toNumber() > 0 ) {
             this.xv.update(Math.max(
                 0, Q9_6_sub( this.xv, new Q9_6(horizonal_deccel) ).toNumber()
             ));
-        } // if moving right
+        } // if moving left
         else if ( this.xv.toNumber() < 0 ) {
             this.xv.update(Math.min(
                 0, Q9_6_add( this.xv, new Q9_6(horizonal_deccel) ).toNumber()
@@ -105,15 +105,15 @@ class Person {
         }
 
         // gravity (fall slower if against a wall)
-        if ( onwall && this.yv < 0 ) {
-            this.yv = Q9_6_sub( this.yv, weakgravity );
+        if ( onwall && this.yv > 0 ) {
+            this.yv = Q9_6_add( this.yv, weakgravity );
         } else {
-            this.yv = Q9_6_sub( this.yv, gravity );
+            this.yv = Q9_6_add( this.yv, gravity );
         }
     }
     draw() {
         // if falling, use look up sprite
-        if ( this.yv.toNumber() <= 0 )
+        if ( this.yv.toNumber() > 0 )
             OBM_setAddr( this.object, 0 );
         else
             OBM_setAddr( this.object, 1 );
@@ -152,9 +152,9 @@ function do_logic() {
 
     // move in a direction if a direction is held
     if ( CONTROLLER1_LEFT() )
-        p.xv = Q9_6_add( p.xv, new Q9_6(horizonal_speed) );
-    if ( CONTROLLER1_RIGHT() )
         p.xv = Q9_6_sub( p.xv, new Q9_6(horizonal_speed) );
+    if ( CONTROLLER1_RIGHT() )
+        p.xv = Q9_6_add( p.xv, new Q9_6(horizonal_speed) );
 
     // move person
     p.advance();
