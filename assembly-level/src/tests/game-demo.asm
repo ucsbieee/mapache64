@@ -46,9 +46,9 @@ person_yp_initial       = %0010000000000000     ; 128
 jump_strength           = %0000000101000000     ; 5
 walljump_strength       = %0000001010000000     ; 10
 
-horizonal_speed         = %0000000001110000     ; 1.75
-gnd_horizonal_deccel    = %0000000001100000     ; 1.5
-air_horizonal_deccel    = %0000000000001001     ; 1.4065
+horizontal_speed         = %0000000001110000     ; 1.75
+gnd_horizontal_deccel    = %0000000001100000     ; 1.5
+air_horizontal_deccel    = %0000000000001001     ; 1.4065
 
 
 ; === VRAM Labels === ;
@@ -133,7 +133,7 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
         lda left_value
         beq .dont_go_left
         cp16 person_xv, Q9_6_I1
-        ldlab16 horizonal_speed, Q9_6_I2
+        ldlab16 horizontal_speed, Q9_6_I2
         jsr subQ9_6
         cp16 Q9_6_O, person_xv
 .dont_go_left:
@@ -142,7 +142,7 @@ WHITE_T                 = _PMB1 + WHITE_PMBA * 16
         lda right_value
         beq .dont_go_right
         cp16 person_xv, Q9_6_I1
-        ldlab16 horizonal_speed, Q9_6_I2
+        ldlab16 horizontal_speed, Q9_6_I2
         jsr addQ9_6
         cp16 Q9_6_O, person_xv
 .dont_go_right:
