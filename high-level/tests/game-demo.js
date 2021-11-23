@@ -16,9 +16,9 @@ const gravity = new Q9_6(.3125);
 const weakgravity = new Q9_6(.07);
 const jump_strength = 5;
 const walljump_strength = 10;
-const gnd_horizonal_deccel = 1.5;
-const air_horizonal_deccel = .15;
-const horizonal_speed = 1.75;
+const gnd_horizontal_deccel = 1.5;
+const air_horizontal_deccel = .15;
+const horizontal_speed = 1.75;
 
 var initalized = false;
 
@@ -88,19 +88,19 @@ class Person {
             this.yv = Q9_6_mul( this.yv, new Q9_6(-.5) );
         }
 
-        // horizonal deccel
-        let horizonal_deccel =
-            ( this.yp.toNumber() >= ground.toNumber() )*gnd_horizonal_deccel
-            + ( this.yp.toNumber() < ground.toNumber() )*air_horizonal_deccel;
+        // horizontal deccel
+        let horizontal_deccel =
+            ( this.yp.toNumber() >= ground.toNumber() )*gnd_horizontal_deccel
+            + ( this.yp.toNumber() < ground.toNumber() )*air_horizontal_deccel;
         // if moving right
         if ( this.xv.toNumber() > 0 ) {
             this.xv.update(Math.max(
-                0, Q9_6_sub( this.xv, new Q9_6(horizonal_deccel) ).toNumber()
+                0, Q9_6_sub( this.xv, new Q9_6(horizontal_deccel) ).toNumber()
             ));
         } // if moving left
         else if ( this.xv.toNumber() < 0 ) {
             this.xv.update(Math.min(
-                0, Q9_6_add( this.xv, new Q9_6(horizonal_deccel) ).toNumber()
+                0, Q9_6_add( this.xv, new Q9_6(horizontal_deccel) ).toNumber()
             ));
         }
 
@@ -152,14 +152,13 @@ function do_logic() {
 
     // move in a direction if a direction is held
     if ( CONTROLLER1_LEFT() )
-        p.xv = Q9_6_sub( p.xv, new Q9_6(horizonal_speed) );
+        p.xv = Q9_6_sub( p.xv, new Q9_6(horizontal_speed) );
     if ( CONTROLLER1_RIGHT() )
-        p.xv = Q9_6_add( p.xv, new Q9_6(horizonal_speed) );
+        p.xv = Q9_6_add( p.xv, new Q9_6(horizontal_speed) );
 
     // move person
     p.advance();
 
-    // load person to VRAM
 }
 
 function fill_vram() {
