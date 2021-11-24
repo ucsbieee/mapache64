@@ -21,8 +21,8 @@ module top_tb_m ();
 
 reg clk_12_5875 = 1;
 always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;
-reg clk_5 = 1;
-always #( `CPU_CLK_PERIOD / 10 ) clk_5 = ~clk_5;
+reg clk_1 = 1;
+always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
 
 wire            cpu_clk_enable;
 reg             rst;
@@ -54,18 +54,15 @@ reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
 
-clk_mask_m #(5) cpu_clk_mask (
-    clk_5, rst,
-    cpu_clk_enable
-);
+assign cpu_clk_enable = 1;
 
 clk_mask_m #(100) controller_clk_mask (
-    clk_5, rst,
+    clk_1, rst,
     controller_clk_in_enable
 );
 
 top_m top (
-    clk_12_5875, clk_5, cpu_clk_enable, rst,
+    clk_12_5875, clk_1, cpu_clk_enable, rst,
     cpu_address,
     data_in,
     data_out,
@@ -117,84 +114,38 @@ $dumpvars();
 $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
-controller_1_buttons_in = 8'b10001001;
-controller_2_buttons_in = 8'b00100110;
-
 rst = 1;
 #( 2*`CPU_CLK_PERIOD );
 rst = 0;
 
-@( negedge vsync );
+@(negedge vsync);
 
+@(posedge clk_1);
 write_enable_B = 0;
-cpu_address = 16'h3700;
-write_data = 8'b10011001;
-#( `CPU_CLK_PERIOD );
-
-cpu_address = 16'h3701;
-write_data = 8'b01000111;
-#( `CPU_CLK_PERIOD );
-
+@(posedge clk_1);
+for ( reg [7:0] i = 0; i < 16; i=i+1 ) begin
+    cpu_address = {8'h37,i};
+    write_data = i;
+    @(posedge clk_1);
+end
+// x
 cpu_address = 16'h3f00;
-write_data = 8'h00;
-#( `CPU_CLK_PERIOD );
+write_data = 8'b0;
+// y
+@(posedge clk_1);
 cpu_address = 16'h3f01;
-write_data = 8'h00;
-#( `CPU_CLK_PERIOD );
+write_data = 8'b0;
+// pmfa
+@(posedge clk_1);
 cpu_address = 16'h3f02;
-write_data = 8'bx00_00000;
-#( `CPU_CLK_PERIOD );
+write_data = 8'b0;
+// color
+@(posedge clk_1);
 cpu_address = 16'h3f03;
-write_data = 8'bxxxxx_100;
-#( `CPU_CLK_PERIOD );
+write_data = 8'b111;
 
-
-cpu_address = 16'h3900;
-write_data = 8'b11001100;
-#( `CPU_CLK_PERIOD );
-cpu_address = 16'h3901;
-write_data = 8'b01010101;
-#( `CPU_CLK_PERIOD );
-
-// cpu_address = 16'h3b00;
-// write_data = 8'b000_00000;
-// #( `CPU_CLK_PERIOD );
-cpu_address = 16'h3b01;
-write_data = 8'b100_00000;
-#( `CPU_CLK_PERIOD );
-
-
-cpu_address = 16'h3ec0;
-write_data = 8'bxx_010_101;
-#( `CPU_CLK_PERIOD );
-
-
-write_enable_B = 1;
-
-#( 16 * `CPU_CLK_PERIOD );
-// @( vsync );
-
-cpu_address = 16'h7002;
-#( `CPU_CLK_PERIOD );
-cpu_address = 16'h7003;
-#( `CPU_CLK_PERIOD );
-
-cpu_address = 16'h4000;
-#( `CPU_CLK_PERIOD );
-cpu_address = 16'h6fff;
-#( `CPU_CLK_PERIOD );
-
-cpu_address = 16'h8000;
-#( `CPU_CLK_PERIOD );
-cpu_address = 16'h9000;
-#( `CPU_CLK_PERIOD );
-
-cpu_address = 16'hfffa;
-#( `CPU_CLK_PERIOD );
-cpu_address = 16'hffff;
-#( `CPU_CLK_PERIOD );
-
-@( negedge vsync );
+@(negedge vsync);
+@(negedge vsync);
 
 
 //\\ =========================== \\//

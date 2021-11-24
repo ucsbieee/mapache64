@@ -84,9 +84,13 @@ module gpu_m #(
 
     wire vram_write_enable = writable & SELECT_vram & write_enable;
 
-    foreground_m #(FOREGROUND_NUM_OBJECTS) foreground (
+    foreground_m #(
+        .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS),
+        .LINE_REPEAT(2),
+        .NUM_ROWS(523)
+    ) foreground (
         clk_12_5875, cpu_clk, cpu_clk_enable, rst,
-        current_x[7:0], current_y[7:0],
+        current_x, current_y, hsync,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
         data_in, address, vram_write_enable
