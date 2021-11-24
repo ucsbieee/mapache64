@@ -119,7 +119,7 @@ module cmod_a7 (
     wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     // module
-    top_m #(2) top (
+    top_m top (
         clk_12_5875, clk_5, cpu_clk_enable, rst,
         cpu_address,
         data_in,

@@ -12,14 +12,17 @@
 
 
 module foreground_m #(
-    parameter NUM_OBJECTS = 64
+    parameter NUM_OBJECTS   = 64,
+    parameter LINE_REPEAT   = 2,
+    parameter NUM_ROWS      = 523
 ) (
     input                           clk_12_5875,
     input                           cpu_clk, cpu_clk_enable,
     input                           rst,
 
     // video timing input
-    input                     [7:0] current_x, current_y,
+    input                     [8:0] current_x, current_y,
+    input                           hsync,
 
     // video output
     output wire               [1:0] r, g, b,
@@ -30,6 +33,8 @@ module foreground_m #(
     input    [`VRAM_ADDR_WIDTH-1:0] address,
     input                           write_enable
 );
+
+    localparam MAX_Y = $rtoi($ceil((1.0 * NUM_ROWS)/LINE_REPEAT));
 
     // Pattern Memory Foreground    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
     reg [7:0]   PMF     [ 511:0];
@@ -49,6 +54,9 @@ module foreground_m #(
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
+
+
+    // writing to vram
     wire in_pmf = ( address >= 12'h000 && address < 12'h200 );
     wire in_obm = ( address >= 12'h800 && address < 12'h900 );
 
@@ -61,70 +69,190 @@ module foreground_m #(
         end
     end
 
-    wire [5:0] obma = 6'b0;
 
-    wire [1:0] r_collection [NUM_OBJECTS-1:0];
-    wire [1:0] b_collection [NUM_OBJECTS-1:0];
-    wire [1:0] g_collection [NUM_OBJECTS-1:0];
-    wire [NUM_OBJECTS-1:0] valid_collection;
 
-    generate for ( genvar obma_GEN = 0; obma_GEN < NUM_OBJECTS; obma_GEN = obma_GEN+1 ) begin : object
 
-        // object position on screen
-        wire [7:0] object_x = `OBM_OBJECT_X(obma_GEN);
-        wire [7:0] object_y = `OBM_OBJECT_Y(obma_GEN);
-        `ifdef SIM initial `OBM_OBJECT_Y(obma_GEN) = 8'hff; `endif
-
-        // pixel location within object
-        wire [2:0] in_object_y = current_y[2:0] - object_y[2:0];
-        wire [2:0] in_object_x = current_x[2:0] - object_x[2:0];
-
-        // object color, sprite, and flip modifiers
-        wire [2:0] color = `OBM_OBJECT_COLOR(obma_GEN);
-        wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma_GEN);
-        wire hflip = `OBM_OBJECT_HFLIP(obma_GEN);
-        wire vflip = `OBM_OBJECT_VFLIP(obma_GEN);
-
-        // get vertical position in sprite
-        wire [2:0] in_pattern_y = vflip ? (3'd7-in_object_y) : in_object_y;
-        wire [2:0] in_pattern_x = hflip ? (3'd7-in_object_x) : in_object_x;
-
-        // get object scanline line
-        wire [15:0] line = `PMF_LINE( pmfa, in_pattern_y );
-
-        // if the video timing counter is at the location of the object
-        wire counter_at_object = ( object_x <= current_x && {1'b0, current_x} < {1'b0, object_x} + 9'd8 ) && ( object_y <= current_y && current_y < object_y + 8'd8 );
-        // value of pixel not including color
-        wire [1:0] current_pixel = line[ {3'h7-in_pattern_x, 1'b0} +: 2 ] & {2{counter_at_object}};
-        // whether the current pixel is transparent
-        wire transparent = ( current_pixel == 2'b0 );
-
-        // colors of current pixel
-        wire [1:0] object_r = current_pixel & {2{color[2]}};
-        wire [1:0] object_g = current_pixel & {2{color[1]}};
-        wire [1:0] object_b = current_pixel & {2{color[0]}};
-        wire current_pixel_valid = counter_at_object && !transparent;
-
-        // send to collection arrays
-        assign r_collection[obma_GEN]       = object_r;
-        assign b_collection[obma_GEN]       = object_b;
-        assign g_collection[obma_GEN]       = object_g;
-        assign valid_collection[obma_GEN]   = current_pixel_valid;
-
+    // dump object values
+    `ifdef SIM
+    generate for ( genvar i = 0; i < NUM_OBJECTS; i++ ) begin : object
+        initial `OBM_OBJECT_Y(i) = 8'hff;
+        wire [7:0] object_x = `OBM_OBJECT_X(i);
+        wire [7:0] object_y = `OBM_OBJECT_Y(i);
+        wire [2:0] color = `OBM_OBJECT_COLOR(i);
+        wire [4:0] pmfa = `OBM_OBJECT_PMFA(i);
+        wire hflip = `OBM_OBJECT_HFLIP(i);
+        wire vflip = `OBM_OBJECT_VFLIP(i);
     end endgenerate
+    `endif
 
-    // run Find First Set on valid bits
-    wire [$clog2((NUM_OBJECTS>=2)?NUM_OBJECTS:2)-1:0] top_object;
-    // https://github.com/E4tHam/find_first_set/blob/main/rtl/ffs.v
-    ffs_m #(NUM_OBJECTS) ffs (
-        valid_collection,
-        valid,
-        top_object
-    );
 
-    assign r = r_collection[top_object];
-    assign g = g_collection[top_object];
-    assign b = b_collection[top_object];
+
+
+
+    // scanline memory
+    // two scanline arrays that alternate every other row
+    reg scanline_select;
+    initial scanline_select = 0;
+
+    reg [6:0]   SCANLINE_0  [256+8-1:0];
+    reg [6:0]   SCANLINE_1  [256+8-1:0];
+
+    `ifdef SIM
+    generate for ( genvar i = 0; i < 256; i=i+1 ) begin : scanline_x
+        wire [6:0] this_obma = scanline_select ? SCANLINE_1[i] : SCANLINE_0[i];
+        wire [6:0] next_obma = scanline_select ? SCANLINE_0[i] : SCANLINE_1[i];
+    end endgenerate
+    `endif
+
+
+
+
+    // index of the object that is currently being loaded to the scanline array
+    wire [6:0] parsing_object = ( current_x < NUM_OBJECTS ) ? ( (NUM_OBJECTS-1) - current_x ) : {7{1'bx}};
+
+    // selected scanline is for the next line
+    reg this_is_next;
+    initial this_is_next = 0;
+
+    // on the next clock cycle, swap next scanline with current scanline
+    wire transfer_next_to_this;
+
+
+
+
+    // procedural block for writing to scanline memory
+    always_ff @ ( posedge clk_12_5875 ) begin
+
+        // if we need to swap the scanline arrays
+        if (transfer_next_to_this) begin
+            // make next scanline this scanline
+            scanline_select <= ~scanline_select;
+            // wait until hsync before transferring again
+            this_is_next <= 1;
+            // reset next scanline
+            for ( integer i = 0; i < 256; i=i+1 ) begin
+                if (scanline_select)
+                    SCANLINE_1[i] <= 7'h40;
+                else
+                    SCANLINE_0[i] <= 7'h40;
+            end
+
+        end
+        // for current_x=[0 ... NUM_OBJECTS-1], parsing_object = current_x
+        else if ( current_x < NUM_OBJECTS ) begin
+            // selected scanline is currently being drawn
+            this_is_next <= 0;
+            if (
+                // if just before top scanline and the object is at the top
+                (`OBM_OBJECT_Y(parsing_object) == 0 && current_y == MAX_Y)
+                || ( // or if Y overlaps the parsing object
+                    ({1'b0,`OBM_OBJECT_Y(parsing_object)} <= (current_y+9'd1)) &&
+                    (({1'b0,`OBM_OBJECT_Y(parsing_object)}+9'd6) >= current_y)
+                )
+            ) begin
+                // update next scanline
+                if (scanline_select) begin
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd0 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd1 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd2 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd3 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd4 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd5 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd6 ] <= parsing_object;
+                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd7 ] <= parsing_object;
+                end else begin
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd0 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd1 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd2 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd3 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd4 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd5 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd6 ] <= parsing_object;
+                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd7 ] <= parsing_object;
+                end
+            end
+
+        end
+    end
+
+
+
+
+    // calculate transfer_next_to_this
+    generate
+        if (LINE_REPEAT == 1) begin
+            initial $error("LINE_REPEAT of 1 not supported.");
+            // assign transfer_next_to_this = (!this_is_next) && (~hsync);
+        end else begin
+            // make a counter with period LINE_REPEAT
+            // when counter == 0, transfer_next_to_this <= 1
+            reg [$clog2(LINE_REPEAT)-1:0] repeat_counter;
+            reg incremented_repeat_counter = 0;
+            initial begin
+                repeat_counter = 0;
+                incremented_repeat_counter = LINE_REPEAT-1;
+            end
+            always_ff @ ( posedge clk_12_5875 ) begin
+                // increment counter
+                if (~hsync) begin
+                    incremented_repeat_counter <= 0;
+                end
+                else if ((!incremented_repeat_counter) && (hsync)) begin
+                    if (current_y == MAX_Y-1) begin
+                        repeat_counter <= 0;
+                    end else if ((repeat_counter == 0) || (current_y == MAX_Y)) begin
+                        repeat_counter <= LINE_REPEAT-1;
+                    end else begin
+                        repeat_counter <= repeat_counter-1;
+                    end
+                    incremented_repeat_counter <= 1;
+                end
+            end
+            assign transfer_next_to_this = (!this_is_next) && (~hsync) && (repeat_counter == 0);
+        end
+    endgenerate
+
+
+
+
+    // given calculated scanline, find the current pixel value
+
+    wire [6:0] obma = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
+
+    // object position on screen
+    wire [7:0] object_x = `OBM_OBJECT_X(obma);
+    wire [7:0] object_y = `OBM_OBJECT_Y(obma);
+
+    // pixel location within object
+    wire [2:0] in_object_y = current_y[2:0] - object_y[2:0];
+    wire [2:0] in_object_x = current_x[2:0] - object_x[2:0];
+
+    // object color, sprite, and flip modifiers
+    wire [2:0] color = `OBM_OBJECT_COLOR(obma);
+    wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma);
+    wire hflip = `OBM_OBJECT_HFLIP(obma);
+    wire vflip = `OBM_OBJECT_VFLIP(obma);
+
+    // get vertical position in sprite
+    wire [2:0] in_pattern_y = vflip ? (3'd7-in_object_y) : in_object_y;
+    wire [2:0] in_pattern_x = hflip ? (3'd7-in_object_x) : in_object_x;
+
+    // get object scanline line
+    wire [15:0] line = `PMF_LINE( pmfa, in_pattern_y );
+
+    // if the video timing counter is at the location of the object
+    wire [1:0] current_pixel = line[ {3'h7-in_pattern_x, 1'b0} +: 2 ];
+    // whether the current pixel is transparent
+    wire transparent = ( current_pixel == 2'b0 );
+
+    // colors of current pixel
+    assign r = current_pixel & {2{color[2]}};
+    assign g = current_pixel & {2{color[1]}};
+    assign b = current_pixel & {2{color[0]}};
+
+    assign valid = (obma != 7'h40) && !transparent;
+
+
 
 
     //======================================\\
