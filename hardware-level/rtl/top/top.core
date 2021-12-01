@@ -40,6 +40,7 @@ filesets:
       - synth/boards/cmod_a7/clk_mmcm_m.xci:  {file_type: xci}
       - synth/boards/cmod_a7/cmod_a7.xdc:     {file_type: xdc}
       - synth/boards/cmod_a7/cmod_a7.v:       {file_type: verilogSource}
+      - synth/boards/cmod_a7/flash.xdc:       {file_type: xdc}
     depend:
       - ucsbieee:arcade:clk_mask
 
