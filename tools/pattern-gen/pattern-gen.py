@@ -1,4 +1,4 @@
-#!python
+#!python3
 
 import getopt, sys, enum
 from PIL import Image

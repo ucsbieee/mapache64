@@ -15,7 +15,7 @@
 *.exe   binary
 *.dll   binary
 
-assembly-level/tools/assembler/vasm6502/*   binary
+assembly-level/old/tools/assembler/vasm6502/*   binary
 
 *.sh    text eol=lf
 
