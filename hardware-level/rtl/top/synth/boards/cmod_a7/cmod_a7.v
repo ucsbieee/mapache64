@@ -152,7 +152,7 @@ module cmod_a7 (
         sysclk
     );
 
-    clk_mask_m #(5) cpu_clk_mask (
+    clk_mask_m #(3) cpu_clk_mask (
         clk_5, rst,
         cpu_clk_enable
     );
