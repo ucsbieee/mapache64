@@ -16,8 +16,8 @@ module foreground_m #(
     parameter LINE_REPEAT   = 2,
     parameter NUM_ROWS      = 523
 ) (
-    input                           clk_12_5875,
-    input                           cpu_clk, cpu_clk_enable,
+    input                           gpu_clk,
+    input                           cpu_clk,
     input                           rst,
 
     // video timing input
@@ -60,7 +60,7 @@ module foreground_m #(
     wire in_pmf = ( address >= 12'h000 && address < 12'h200 );
     wire in_obm = ( address >= 12'h800 && address < 12'h900 );
 
-    always_ff @ ( negedge cpu_clk ) if ( cpu_clk_enable ) begin : write_to_vram
+    always_ff @ ( negedge cpu_clk ) begin : write_to_vram
         if ( write_enable ) begin
             if ( in_pmf )
                 PMF[ address - 12'h000 ] <= data_in;
@@ -121,7 +121,7 @@ module foreground_m #(
 
 
     // procedural block for writing to scanline memory
-    always_ff @ ( posedge clk_12_5875 ) begin
+    always_ff @ ( posedge gpu_clk ) begin
 
         // if we need to swap the scanline arrays
         if (transfer_next_to_this) begin
@@ -192,7 +192,7 @@ module foreground_m #(
                 repeat_counter = 0;
                 incremented_repeat_counter = LINE_REPEAT-1;
             end
-            always_ff @ ( posedge clk_12_5875 ) begin
+            always_ff @ ( posedge gpu_clk ) begin
                 // increment counter
                 if (~hsync) begin
                     incremented_repeat_counter <= 0;

@@ -2,7 +2,7 @@
 `ifdef LINTER
     `include "hardware-level/rtl/top/rtl/top.v"
     `include "hardware-level/rtl/top/synth/boards/cmod_a7/clk_mmcm.vh"
-    `include "hardware-level/rtl/misc/clk_mask.v"
+    `include "hardware-level/rtl/misc/clk_divider.v"
 `endif
 
 module cmod_a7 (
@@ -39,11 +39,12 @@ module cmod_a7 (
 
     // internal
     wire clk_12_5875;
-    wire clk_5;
-    wire cpu_clk_enable;
+    wire clk_8;
+    wire cpu_clk;
+    wire gpu_clk;
     wire fpga_data_enable;
 
-    wire controller_clk_in_enable, controller_clk_out_enable;
+    wire controller_clk_in, controller_clk_out_enable;
 
 
     // inout
@@ -81,7 +82,6 @@ module cmod_a7 (
     wire        vsync;
 
     wire        controller_latch;
-    wire        controller_clk;
 
     assign pio23 = fpga_data_enable ? data_out[0] : {1'bz};
     assign pio22 = fpga_data_enable ? data_out[1] : {1'bz};
@@ -107,10 +107,10 @@ module cmod_a7 (
     assign pio06 = vsync;
 
     assign pio26 = ~rst;
-    assign pio27 = clk_5 && cpu_clk_enable;
+    assign pio27 = cpu_clk;
 
     assign pio04 = controller_latch;
-    assign pio05 = clk_5 && controller_clk_out_enable;
+    assign pio05 = controller_clk_out_enable & controller_clk_in;
 
     assign pio01 = fpga_data_enable;
 
@@ -120,7 +120,7 @@ module cmod_a7 (
 
     // module
     top_m top (
-        clk_12_5875, clk_5, cpu_clk_enable, rst,
+        clk_12_5875, cpu_clk, rst,
         cpu_address,
         data_in,
         data_out,
@@ -136,7 +136,7 @@ module cmod_a7 (
         r, g, b,
         hsync, vsync,
 
-        controller_clk_in_enable,
+        controller_clk_in,
         controller_clk_out_enable,
         controller_latch,
         controller_1_data_in_B,
@@ -147,20 +147,22 @@ module cmod_a7 (
 
     clk_mmcm_m clk_src (
         clk_12_5875,
-        clk_5,
+        clk_8,
         rst,
         sysclk
     );
 
-    clk_mask_m #(3) cpu_clk_mask (
-        clk_5, rst,
-        cpu_clk_enable
+    clk_divider_m #(8,2) cpu_clk_divider (
+        clk_8, rst,
+        cpu_clk
     );
 
-    clk_mask_m #(10) controller_clk_mask (
-        clk_5, rst,
-        controller_clk_in_enable
+    clk_divider_m #(8,0.5) controller_clk_divider (
+        clk_8, rst,
+        controller_clk_in
     );
+
+    assign gpu_clk = clk_12_5875;
 
 
     assign led[0] = ( cpu_address == 16'hb006 );
