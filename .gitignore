@@ -5,15 +5,11 @@
 tools/pattern-gen/*.out
 tools/pattern-gen/**/*.out
 
-# assembly options
-assembly-level/src/options.asm
-assembly-level/src/rom.asm
-
 # vasm output
-assembly-level/src/dump/*
+assembly-level/old/src/dump/*
 
 # py65 output
-assembly-level/dump/
+assembly-level/**/dump/
 
 # python
 __pycache__/
