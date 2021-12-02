@@ -121,7 +121,7 @@ module foreground_m #(
 
 
     // procedural block for writing to scanline memory
-    always_ff @ ( posedge clk_12_5875 ) begin
+    always_ff @ ( posedge gpu_clk ) begin
 
         // if we need to swap the scanline arrays
         if (transfer_next_to_this) begin
@@ -192,7 +192,7 @@ module foreground_m #(
                 repeat_counter = 0;
                 incremented_repeat_counter = LINE_REPEAT-1;
             end
-            always_ff @ ( posedge clk_12_5875 ) begin
+            always_ff @ ( posedge gpu_clk ) begin
                 // increment counter
                 if (~hsync) begin
                     incremented_repeat_counter <= 0;
