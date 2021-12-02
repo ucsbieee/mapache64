@@ -152,7 +152,7 @@ module cmod_a7 (
         sysclk
     );
 
-    clk_divider_m #(8,2) cpu_clk_divider (
+    clk_divider_m #(8,4) cpu_clk_divider (
         clk_8, rst,
         cpu_clk
     );
