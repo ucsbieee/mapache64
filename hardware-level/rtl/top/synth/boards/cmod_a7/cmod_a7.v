@@ -110,7 +110,7 @@ module cmod_a7 (
     assign pio27 = cpu_clk;
 
     assign pio04 = controller_latch;
-    assign pio05 = controller_clk_out_enable;
+    assign pio05 = controller_clk_out_enable & controller_clk_in;
 
     assign pio01 = fpga_data_enable;
 
