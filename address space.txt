@@ -10,6 +10,7 @@ VRAM        4000-4fff
   PMB         4200-43ff
   NTBL        4400-47ff
   OBM         4800-48ff
+  TXBL        4900-4cff
 
 
 

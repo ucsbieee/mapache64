@@ -42,7 +42,7 @@ module top_m #(
 );
 
     // internal
-    wire SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm;
+    wire SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl;
     wire SELECT_firmware, SELECT_vectors;
     wire SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
 

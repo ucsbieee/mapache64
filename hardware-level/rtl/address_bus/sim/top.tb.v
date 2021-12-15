@@ -24,6 +24,7 @@ wire SELECT_pmf;
 wire SELECT_pmb;
 wire SELECT_ntbl;
 wire SELECT_obm;
+wire SELECT_txbl;
 
 wire SELECT_firmware;
 wire SELECT_rom;
@@ -44,6 +45,7 @@ address_bus_m address_bus (
     SELECT_pmb,
     SELECT_ntbl,
     SELECT_obm,
+    SELECT_txbl,
 
     SELECT_firmware,
     SELECT_rom,

@@ -15,6 +15,7 @@ module address_bus_m (
     output wire SELECT_pmb,
     output wire SELECT_ntbl,
     output wire SELECT_obm,
+    output wire SELECT_txbl,
 
     output wire SELECT_firmware,
     output wire SELECT_rom,
@@ -36,6 +37,7 @@ module address_bus_m (
     assign SELECT_pmb       = `__INCBOUND(16'h4200,cpu_address,16'h43ff);
     assign SELECT_ntbl      = `__INCBOUND(16'h4400,cpu_address,16'h47ff);
     assign SELECT_obm       = `__INCBOUND(16'h4800,cpu_address,16'h48ff);
+    assign SELECT_txbl      = `__INCBOUND(16'h4900,cpu_address,16'h4cff);
 
     assign SELECT_firmware  = `__INCBOUND(16'h5000,cpu_address,16'h6fff);
 
