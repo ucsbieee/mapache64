@@ -29,7 +29,7 @@ cd `dirname "${BASH_SOURCE[0]}"`
 # Dump Vectors
 ${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin <<EOF
 save ${DUMP_PATH}/rom.bin       8000 ffff
-save ${DUMP_PATH}/firmware.bin  4000 6fff
+save ${DUMP_PATH}/firmware.bin  5000 6fff
 save ${DUMP_PATH}/vectors.bin   fffa ffff
 quit
 EOF
@@ -50,7 +50,7 @@ echo "irq   : ${irq}"
 # Run py65mon
 ${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin --goto ${reset} <<EOF
 save ${DUMP_PATH}/zero.bin      0000 00ff
-save ${DUMP_PATH}/vram.bin      3700 3fff
+save ${DUMP_PATH}/vram.bin      4000 4fff
 save ${DUMP_PATH}/ram.bin       0000 3fff
 save ${DUMP_PATH}/final.bin     0000 ffff
 quit

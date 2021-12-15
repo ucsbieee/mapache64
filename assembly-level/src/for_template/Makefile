@@ -60,7 +60,7 @@ images: ${RESOURCES}
 
 # Split the unified memory map into constituent memory sections
 ${DUMP_DIR}/firmware.bin: ${OUTPUT}
-	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;4000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;3000"|bc) count=1 status=none > $@
+	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;5000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;2000"|bc) count=1 status=none > $@
 	@echo "Created $@"
 
 ${DUMP_DIR}/rom.bin: ${OUTPUT}
