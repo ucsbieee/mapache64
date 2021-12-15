@@ -35,6 +35,7 @@ module gpu_m #(
     input                           SELECT_pmb,
     input                           SELECT_ntbl,
     input                           SELECT_obm,
+    input                           SELECT_txbl,
 
     input                           SELECT_in_vblank,
     input                           SELECT_clr_vblank_irq,
