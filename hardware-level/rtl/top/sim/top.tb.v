@@ -12,7 +12,6 @@
     `include "hardware-level/rtl/top/rtl/top.v"
     `include "hardware-level/rtl/misc/timing.v"
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
-    `include "hardware-level/rtl/misc/clk_mask.v"
 `endif
 
 `timescale `TIMESCALE
@@ -42,7 +41,7 @@ wire            vblank_irq_B;
 wire      [1:0] r, g, b;
 wire            hsync, vsync;
 
-wire            controller_clk_in_enable;
+wire            controller_clk_in;
 wire            controller_clk_out_enable;
 wire            controller_latch;
 wire            controller_1_data_in_B;
@@ -54,15 +53,9 @@ reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
 
-assign cpu_clk_enable = 1;
-
-clk_mask_m #(100) controller_clk_mask (
-    clk_1, rst,
-    controller_clk_in_enable
-);
-
 top_m top (
-    clk_12_5875, clk_1, cpu_clk_enable, rst,
+    clk_12_5875, clk_1, rst,
+
     cpu_address,
     data_in,
     data_out,
@@ -78,7 +71,7 @@ top_m top (
     r, g, b,
     hsync, vsync,
 
-    controller_clk_in_enable,
+    controller_clk_in,
     controller_clk_out_enable,
     controller_latch,
     controller_1_data_in_B,
@@ -92,16 +85,14 @@ reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
 controller_m #(1'b1) controller_1 (
     ~controller_1_buttons_in,
-    clk_5,
-    controller_clk_out_enable,
+    controller_clk_in,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller_m controller_2 (
     ~controller_2_buttons_in,
-    clk_5,
-    controller_clk_out_enable,
+    controller_clk_in,
     controller_latch,
     controller_2_data_in_B
 );

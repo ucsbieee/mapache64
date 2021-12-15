@@ -15,7 +15,7 @@ module firmware_m (
     reg [7:0] firmware_mem [`__FIRMWARE_SIZE-1:0];
     reg [7:0] vector_mem [5:0];
 
-    wire [2:0] vector_address = ( address[2:0] - 2'h2 );
+    wire [2:0] vector_address = ( address[2:0] - 3'h2 );
 
     assign data_out =
         SELECT_firmware ? firmware_mem[address]         :
