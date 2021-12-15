@@ -19,7 +19,7 @@ if __name__ == '__main__':
         filein = sys.argv[1]
         fileout = sys.argv[2]
     except IndexError:
-        print("[Arguemnt error]: filein and fileout not given")
+        print("[Argument error]: filein and fileout not given")
         exit(1)
 
     # Load Image

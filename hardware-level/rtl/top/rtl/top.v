@@ -16,6 +16,7 @@ module top_m #(
     input               gpu_clk,
     input               cpu_clk,
     input               rst,
+
     input        [15:0] cpu_address,
     input         [7:0] data_in,
     output wire   [7:0] data_out,
