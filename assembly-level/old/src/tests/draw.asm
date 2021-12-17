@@ -360,5 +360,5 @@ SKY_SCANLINE:
 
 GROUND_SCANLINE:
         .repeat 32
-        .db LIGHT_GRAY_PMBA | COLOR_ALT
+        .db LIGHT_GRAY_PMBA | COLOR_SELECT
         .endr
