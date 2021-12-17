@@ -30,4 +30,6 @@ void fill_vram(void) {
     OBM[0].pattern_config = 0;
 
     load_foreground_pattern(ball_pattern, 0);
+
+    stop();
 }
