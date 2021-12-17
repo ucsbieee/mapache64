@@ -65,7 +65,7 @@ MAGENTA_C1      = MAGENTA_C    << 3
 YELLOW_C1       = YELLOW_C     << 3
 WHITE_C1        = WHITE_C      << 3
 
-COLOR_ALT       = %10000000
+COLOR_SELECT    = %10000000
 HFLIP           = %01000000
 VFLIP           = %00100000
 
