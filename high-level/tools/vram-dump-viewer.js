@@ -4,7 +4,7 @@
 
 var drawn_file = true;
 var read = new FileReader();
-const ExpectedFileSize = PMF.length + PMB.length + NTBL.length + OBM.length;
+const ExpectedFileSize = 0x1000;
 
 const FileInput = document.getElementById("FileInput");
 FileInput.addEventListener( "change", handleImageUpload, false );
@@ -18,14 +18,12 @@ function fill_vram() {
     if ( drawn_file ) return;
 
     // load image here
-    let offset = 0;
-    PMF = new Uint8Array(read.result, offset, PMF.length);
-    offset += PMF.length;
-    PMB = new Uint8Array(read.result, offset, PMB.length);
-    offset += PMB.length;
-    NTBL = new Uint8Array(read.result, offset, NTBL.length);
-    offset += NTBL.length;
-    OBM = new Uint8Array(read.result, offset, OBM.length);
+    PMF     = new Uint8Array(read.result, 0x000, PMF.length);
+    PMB     = new Uint8Array(read.result, 0x200, PMB.length);
+    NTBL    = new Uint8Array(read.result, 0x400, NTBL.length);
+    OBM     = new Uint8Array(read.result, 0x800, OBM.length);
+    TXBL    = new Uint8Array(read.result, 0x900, TXBL.length);
+
 
     NTBL_Color0 = ( NTBL[960] >> 0 ) & 0x7;
     NTBL_Color1 = ( NTBL[960] >> 3 ) & 0x7;
