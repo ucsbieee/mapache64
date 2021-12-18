@@ -17,7 +17,7 @@
 #include <controller.h>
 #include <screen.h>
 
-char text[] =
+const char text[] =
 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
 "et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi uta"
 "liquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cill"
@@ -25,7 +25,7 @@ char text[] =
 "ui officia deserunt mollit anim id est laborum."
 ;
 
-char stamp[] =
+const char stamp[] =
 "       UCSB IEEE 2021-22        "
 "        Ethan Sifferman         "
 ;
@@ -58,6 +58,7 @@ void fill_vram(void) {
             if (stamp[x] != 0)
                 x++;
         }
+
     stop();
 
 }
