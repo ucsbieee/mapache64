@@ -28,5 +28,6 @@ save ${DUMP_DIR}/zero.bin      0000 00ff
 save ${DUMP_DIR}/vram.bin      3700 3fff
 save ${DUMP_DIR}/ram.bin       0000 3fff
 save ${DUMP_DIR}/final.bin     0000 ffff
+cycles
 quit
 EOF
