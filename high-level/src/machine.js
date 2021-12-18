@@ -129,8 +129,7 @@ function OBM_setAddr(index,Addr) { OBM[4*index+2] &= ~0x1f; OBM[4*index+2] |= (A
 function OBM_setColor(index,Color) { OBM[4*index+3] &= ~0x07; OBM[4*index+3] |= (Color & 0x7); }
 
 // Object Scanline Memory
-const NumObjectScanlines    = 8;
-const BytesPerObjectScanline= 4;
+const NumObjectScanlines    = NumObjects;
 var OBSM                    = new Uint32Array( NumObjectScanlines );
 var OBSM_Size               = 0;
 
