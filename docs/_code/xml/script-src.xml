@@ -1,6 +1,7 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/firmware.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/font.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/machine.js" defer></script>
     <script src="test.js" defer></script>
     <script src="https://cdn.jsdelivr.net/gh/ucsbieee/arcade@main/high-level/src/player.js" defer></script>
