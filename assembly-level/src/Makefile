@@ -76,7 +76,7 @@ ${BUILD_DIR}/arcade.lib:
 # Compile .c source files
 ${BUILD_DIR}/o/${BIN_PREFIX}%.o: backend_src/%.c $(shell find headers -type f)
 	@mkdir -p ${BUILD_DIR}/s
-	$(CC) -I headers $(CFLAGS) $< -o ${BUILD_DIR}/s/$(notdir $(<:.c=.s))
+	$(CC) -Oi -I headers $(CFLAGS) $< -o ${BUILD_DIR}/s/$(notdir $(<:.c=.s))
 	@mkdir -p ${BUILD_DIR}/o
 	$(AS) $(ASFLAGS) ${BUILD_DIR}/s/$(notdir $(<:.c=.s)) -o $@
 

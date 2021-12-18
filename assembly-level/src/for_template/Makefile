@@ -120,7 +120,7 @@ ${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN} ${HEADERS}
 # Override the default/implicit *.c compilation rule to use the cc65/ca65 syntax
 ${BUILD_DIR}/%.c.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(^:.c=.c.s)
+	$(CC) -Oi -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(^:.c=.c.s)
 	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(^:.c=.c.s) -o $@
 
 # Override the default/implicit *.s assembly rule to use the ca65 syntax
