@@ -17,13 +17,18 @@
 #include <controller.h>
 #include <screen.h>
 
-char text[] = "\
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore\
-et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi uta\
-liquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cill\
-um dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa q\
-ui officia deserunt mollit anim id est laborum.\
-";
+char text[] =
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore"
+"et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi uta"
+"liquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cill"
+"um dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa q"
+"ui officia deserunt mollit anim id est laborum."
+;
+
+char stamp[] =
+"       UCSB IEEE 2021-22        "
+"        Ethan Sifferman         "
+;
 
 void reset(void) { }
 
@@ -31,12 +36,26 @@ void do_logic(void) { }
 
 void fill_vram(void) {
     uint8_t i, j;
-    uint16_t x = 0;
+    uint16_t x;
 
-    for (i = 0; i < 30; i++)
-        for (j = 0; j < 32; j++) {
+    x = 0;
+    for (i = 0; i < 4; i++)
+        for (j = 0; j < 32; j++)
+            TXBL[i][j] = x++ | COLOR_SELECT_MASK;
+
+    x = 0;
+    for (i = 7; i < 26; i++)
+        for (j = 1; j < 31; j++) {
             TXBL[i][j] = text[x] | COLOR_SELECT_MASK;
             if (text[x] != 0)
+                x++;
+        }
+
+    x = 0;
+    for (i = 26; i < 28; i++)
+        for (j = 0; j < 32; j++) {
+            TXBL[i][j] = stamp[x] | COLOR_SELECT_MASK;
+            if (stamp[x] != 0)
                 x++;
         }
     stop();
