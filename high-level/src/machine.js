@@ -32,17 +32,17 @@ ctx.imageSmoothingEnabled = false;
 
 /* ====== Full Screen ====== */
 
-//if inGameView false, add box shadow and disable scroll. otherwise reset.
+// if in inGameView, add box shadow and disable scroll. otherwise reset.
 var inGameView = false;
 function toggleGameView() {
-    if (inGameView === false){
+    if (inGameView === false) {
         Canvas.style.boxShadow = "0 0 0 100vmax black";
         Game.style.top = "50%"; Game.style.left = "50%";
         Game.style.transform = "translate(-50%,-50%)";
         Game.style.position = "fixed";
         inGameView = true;
     }
-    else{
+    else {
         Canvas.style.boxShadow = "";
         Game.style.position =  "";
         Game.style.top = ""; Game.style.left = "";
@@ -69,27 +69,32 @@ var disableInterrupts = false;
 /* ====== VRAM ====== */
 
 // Pattern Memory Foreground
-const NumSprites            = 32;
-const BytesPerSprite        = 16;
-var PMF                     = new Uint8Array( NumSprites * BytesPerSprite );
+const NumSprites         = 32;
+const BytesPerSprite     = 16;
+var PMF                  = new Uint8Array( NumSprites * BytesPerSprite );
 
 // Pattern Memory Background
-const NumTiles              = 32;
-const BytesPerTile          = 16;
-var PMB                     = new Uint8Array( NumTiles * BytesPerTile );
+const NumTiles          = 32;
+const BytesPerTile      = 16;
+var PMB                 = new Uint8Array( NumTiles * BytesPerTile );
 
 // Nametable
-const NTBL_Size             = 1024;
-var NTBL                    = new Uint8Array( NTBL_Size );
-var NTBL_Color0             = 0b111;
-var NTBL_Color1             = 0b001;
+const NTBL_Size         = 1024;
+var NTBL                = new Uint8Array( NTBL_Size );
+var NTBL_Color0         = 0b111;
+var NTBL_Color1         = 0b001;
+
+// Object Memory
+const NumObjects        = 64;
+const BytesPerObject    = 4;
+var OBM                 = new Uint8Array( NumObjects * BytesPerObject );
 
 // Text Table
-const TXBL_Size             = NTBL_Size;
-var TXBL                    = new Uint8Array( NTBL_Size );
+const TXBL_Size         = NTBL_Size;
+var TXBL                = new Uint8Array( NTBL_Size );
 
-// Pattern Memory Character Methods
-const BytesPerCharacter     = 8;
+// Pattern Memory Character
+const BytesPerCharacter = 8;
 
 // Nametable Methods
 const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));
@@ -101,20 +106,6 @@ function NTBL_setColor(index,Color) { NTBL[index] &= ~0b10000000; NTBL[index] |=
 function NTBL_setHFlip(index,HFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (HFlip & 0b1) << 6; }
 function NTBL_setVFlip(index,VFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (VFlip & 0b1) << 5; }
 function NTBL_setAddr(index,Addr) { NTBL[index] &= ~0b00011111; NTBL[index] |= (Addr & 0x1f); }
-
-// Current Tile Scanline
-var CTS                     = 0;
-
-// Current Tile Scanline Methods
-const CTS_getColor = () => CTS & 0b111;
-const CTS_getData = () => (CTS >>> 8) & 0xffff;
-function CTS_setColor(Color) { CTS &= ~0x000007; CTS |= (Color & 0b111); }
-function CTS_setData(Data) { CTS &= ~0xffff00; CTS |= (Data & 0xffff) << 8; }
-
-// Object Memory
-const NumObjects            = 64;
-const BytesPerObject        = 4;
-var OBM                     = new Uint8Array( NumObjects * 4 );
 
 // Object Memory Methods
 const OBM_getX = (index) => (OBM[4*index]);
@@ -135,19 +126,6 @@ function OBM_setHFlip(index,HFlip) { OBM[4*index+2] &= ~0x80; OBM[4*index+2] |= 
 function OBM_setVFlip(index,VFlip) { OBM[4*index+2] &= ~0x40; OBM[4*index+2] |= (VFlip & 0b1) << 6; }
 function OBM_setAddr(index,Addr) { OBM[4*index+2] &= ~0x1f; OBM[4*index+2] |= (Addr & 0x1f); }
 function OBM_setColor(index,Color) { OBM[4*index+3] &= ~0x07; OBM[4*index+3] |= (Color & 0x7); }
-
-// Object Scanline Memory
-const NumObjectScanlines    = NumObjects;
-var OBSM                    = new Uint32Array( NumObjectScanlines );
-var OBSM_Size               = 0;
-
-// Object Scanline Memory Methods
-const OBSM_getX = (index) => (OBSM[index] >>> 24);
-const OBSM_getData = (index) => (OBSM[index] >>> 8) & 0xffff;
-const OBSM_getColor = (index) => (OBSM[index]) & 0b111;
-function OBSM_setX(index,X) { OBSM[index] &= ~0xff000000; OBSM[index] |= (X & 0xff) << 24; }
-function OBSM_setData(index,Data) { OBSM[index] &= ~0x00ffff00; OBSM[index] |= (Data & 0xffff) << 8; }
-function OBSM_setColor(index,Color) { OBSM[index] &= ~0x00000007; OBSM[index] |= (Color & 0x7); }
 
 // Text Table Methods
 const TXBL_CRToIndex = (c,r) => NTBL_CRToIndex(c,r);
@@ -180,7 +158,6 @@ var PixelBuffer = new Uint8ClampedArray( 4 * GameWidth * GameHeight );
 
 
 // 24 bits - rgb
-var currentColor            = 0;
 function drawScreen() {
     drawBackground();
     drawForeground();
@@ -233,7 +210,7 @@ function drawObject( obma ) {
     const draw_g = (OBM_getColor(obma)>>>1) & 1;
     const draw_b = (OBM_getColor(obma)>>>0) & 1;
     for ( let pattern_y = 0; pattern_y < (end_y-object_y); pattern_y++ ) {
-        let address = (OBM_getAddr(obma) << 4) + 2*( OBM_getVFlip(obma) ? (7-pattern_y) : pattern_y); // address into PMF
+        let address = (OBM_getAddr(obma) << 4) + 2*( OBM_getVFlip(obma) ? (7-pattern_y) : pattern_y); // obma to PMF address
         let data = (PMF[ address ] << 8) | (PMF[ address + 1 ]); // load scanline
         data = OBM_getHFlip(obma) ? flip(data) : data; // flip scanline if needed
         for ( let pattern_x = 0; pattern_x < (end_x-object_x); pattern_x++ ) { // draw each pixel in scanline
@@ -276,7 +253,7 @@ function flip( pattern_scanline ) {
     return out;
 }
 
-function drawText( x, y ) {
+function drawText() {
     for ( let y = 0; y < GameWidth; y++ ) {
         for ( let x = 0; x < GameWidth; x++ ) {
             let c = x/8;
