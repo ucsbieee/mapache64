@@ -10,11 +10,10 @@ CFLAGS = --cpu 65c02 -t none -O
 BUILD_DIR = build
 DUMP_DIR = dump
 
-# Unknown usage
+# Add prefix to generated .o file
 BIN_PREFIX =
 
-# Define a list of all C and Assemnbly source files, as well as the location to
-# save the assembled object files
+# Define a list of all C and Assemnbly source files, and the assembled object file locations
 CXX_SRC = vram.c Q9_6.c
 CXX_BIN = $(addprefix ${BUILD_DIR}/o/${BIN_PREFIX},$(CXX_SRC:.c=.o))
 
