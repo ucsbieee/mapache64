@@ -32,7 +32,7 @@ extern pattern_t PMB[32]; // Pattern Memory Background
 extern tile_t NTBL[30][32]; // NameTaBLe
 extern background_palette_t background_palette;
 
-extern object_t OBM[32]; // OBject Memory
+extern object_t OBM[64]; // OBject Memory
 
 // Tile byte flag masks
 #define COLOR_ALT_MASK          ((uint8_t)0x80)
