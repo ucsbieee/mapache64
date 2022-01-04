@@ -8,10 +8,12 @@ filesets:
     files:
       - rtl/vram_parameters.v:                        {file_type: verilogSource}
       - rtl/video-timing.v:                           {file_type: verilogSource}
+      - rtl/text.sv:                                  {file_type: systemVerilogSource}
       - rtl/foreground.sv:                            {file_type: systemVerilogSource}
       - rtl/background.sv:                            {file_type: systemVerilogSource}
       - rtl/gpu.v:                                    {file_type: verilogSource}
       - tests/fill_vram.sv:                           {file_type: systemVerilogSource}
+      - fusesoc/pmc.mem:                              {file_type: user, copyto: pmc.mem}
     depend:
       - e4tham::ffs
 

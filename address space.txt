@@ -1,84 +1,41 @@
 RAM         0000-3fff
-
   Zero Page   0000-00ff
-    INT8_G1       00
-    INT8_G2       01
-    INT8_G3       02
-    INT8_G4       03
-    INT8_G5       04
-    INT8_I1       05
-    INT8_I2       06
-    INT8_O        07
-
-    INT16_G1      08
-    INT16_G2      0a
-    INT16_G3      0c
-    INT16_G4      0e
-    INT16_G5      10
-    INT16_I1      12
-    INT16_I2      14
-    INT16_O       16
-
-    Q9_6_G1       18
-    Q9_6_G2       1a
-    Q9_6_G3       1c
-    Q9_6_G4       1e
-    Q9_6_G5       20
-    Q9_6_I1       22
-    Q9_6_I2       24
-    Q9_6_O        26
-
-    ADDRESS16_1   28
-    ADDRESS16_2   2a
-    ADDRESS16_3   2c
-    ADDRESS16_4   2e
-
-    FRAME         30
-
   Stack       0100-01ff
-
-  Misc        0200-36ff
-
-  VRAM        3700-3fff
-    PMF         3700-38ff
-      PMF1        3700
-      PMF1        3800
-    PMB         3900-3aff
-      PMB1        3900
-      PMB1        3a00
-    NTBL        3b00-3eff
-      NTBL1       3b00
-      NTBL2       3c00
-      NTBL3       3d00
-      NTBL4       3e00
-    OBM         3f00-3fff
+  Misc        0200-3fff
 
 
 
-Firmware    4000-6fff
-  clear VRAM
-  copy entire nametable from address into VRAM
-  copy entire PMF from address into VRAM
-  copy entire PMB from address into VRAM
-  int8 add
-  int8 subtract
-  int8 multiply
-  int8 divide
-  int16 add
-  int16 subtract
-  int16 multiply
-  int16 divide
-  Q9_6 add
-  Q9_6 subtract
-  Q9_6 multiply
-  Q9_6 divide
+VRAM        4000-4fff
+  PMF         4000-41ff
+  PMB         4200-43ff
+  NTBL        4400-47ff
+  OBM         4800-48ff
+  TXBL        4900-4cff
+
+
+
+Firmware    5000-6fff
 
 
 
 IO          7000-7fff
-  gpu in v-blank  7000
-  controller
+  gpu in vblank     7000
+  clear vblank irq  7001
+  controller 1      7002
+  controller 2      7003
 
 
 
-Game ROM    8000-ffff
+Game ROM    8000-fff9
+  misc      8000-fff3
+  game vectors fff4-fff9
+    game_reset  fff4
+    do_logic    fff6
+    fill_vram   fff8
+
+
+
+CPU Vectors fffa-ffff
+  handle_nmi  fffa
+  handle_rst  fffc
+  handle_irq  fffe

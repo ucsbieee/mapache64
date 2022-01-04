@@ -1,5 +1,5 @@
-// Define all VRAM component arrays in the proper memory segments corresponding
-// to their memory map location
+
+// Definition of VRAM segments
 #include "vram.h"
 
 #pragma bss-name ("PMF")
@@ -14,3 +14,6 @@ background_palette_t background_palette;
 
 #pragma bss-name ("OBM")
 object_t OBM[64];
+
+#pragma bss-name ("TXBL")
+tile_t TXBL[30][32];

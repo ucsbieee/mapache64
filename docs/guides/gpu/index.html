@@ -48,6 +48,9 @@
             <li class="clickable"><a href="#Object-Memory">
                 Object Memory
             </a></li>
+            <li class="clickable"><a href="#Text-Table">
+                Text Table
+            </a></li>
             <li class="clickable"><a href="#Video-Timing">
                 Video Timing
             </a></li>
@@ -61,7 +64,7 @@
             All the GPU does is display to the screen based off what is in the VRAM. Therefore, to display to the screen, you must fill the VRAM accordingly.
         </p>
         <p>
-            There are three parts of the VRAM: Pattern Memory, Nametable, and Object Memory.
+            There are 4 parts of the VRAM: Pattern Memory, Nametable, Object Memory, and Text Table.
         </p>
         <ul>
             <li>
@@ -72,6 +75,9 @@
             </li>
             <li>
                 The Object Memory (OBM) stores the arrangement of 64 foreground sprites.
+            </li>
+            <li>
+                The Text Table (TXBL) stores the arrangement of 32&times;30 characters on the screen.
             </li>
         </ul>
         <br>
@@ -150,6 +156,27 @@
             Each object has an X and Y position, a sprite address, an H-Flip and V-Flip modifier, and a color. If two objects overlap, whichever object appears last in OBM will be on top.
         </p>
         <img class="center" src="/_media/GPU/VRAM/ObjectMemory.svg" alt="Object Memory Diagram">
+
+
+
+
+        <h1 id="Text-Table">Text Table</h1>
+        <p>
+            The Text Table (TXBL) can be used to write text over the screen. The TXBL is similar to the NTBL, except the TXBL's tiles appear in front of foreground objects and uses read-only character pattern memory (PMC).
+        </p>
+        <p>
+            There are 128 characters in the font. Each character can be accessed by using the lower 7 bits of the character data in the TXBL. The font uses ASCII for all printable characters.
+        </p>
+        <a href="https://github.com/ucsbieee/arcade/blob/main/txbl_font/font.png" target="_blank" rel="noopener noreferrer">
+            <img class="center" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/txbl_font/font.png" alt="PMC Font">
+        </a>
+        <p>
+            If the character data's color select is 0, the character is printed black.
+            If the character data's color select is 1, the character is printed white.
+        </p>
+
+        <img class="center" src="/_media/GPU/VRAM/TextTable.svg" alt="Text Table Diagram">
+
 
 
 

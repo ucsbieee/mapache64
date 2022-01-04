@@ -60,7 +60,7 @@ images: ${RESOURCES}
 
 # Split the unified memory map into constituent memory sections
 ${DUMP_DIR}/firmware.bin: ${OUTPUT}
-	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;4000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;3000"|bc) count=1 status=none > $@
+	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;5000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;2000"|bc) count=1 status=none > $@
 	@echo "Created $@"
 
 ${DUMP_DIR}/rom.bin: ${OUTPUT}
@@ -95,13 +95,13 @@ run ${RUN_FILES}: ${OUTPUT} ${DUMP_DIR}/vectors.bin
 # understandable by the py65 simulator
 ${OUTPUT}: ${MEMORY_DIR}/
 	@mkdir -p ${DUMP_DIR}
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=16384 status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;5000"|bc) status=none
 	@cat ${MEMORY_DIR}/${MACHINE}_fw.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=28672 status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;7000"|bc) status=none
 	@cat ${MEMORY_DIR}/${MACHINE}_io.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=32768 status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;8000"|bc) status=none
 	@cat ${MEMORY_DIR}/${MACHINE}_rom.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=65536 status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;10000"|bc) status=none
 	@echo "Created $@"
 
 # Build the three different binaries (ROM, FPGA ROM, IO area)

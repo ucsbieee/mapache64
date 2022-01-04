@@ -49,7 +49,7 @@ void fill_vram() {
     // init NTBL
     for ( i = 0; i < 30; i+=1 )
         for ( j = 0; j < 32; j++ )
-            NTBL[i][j] = (((i^j)&1)==0) ? COLOR_ALT_MASK : 0;
+            NTBL[i][j] = (((i^j)&1)==0) ? COLOR_SELECT_MASK : 0;
 
     background_palette = MAGENTA_C1_MASK | GREEN_C0_MASK;
 

@@ -18,7 +18,14 @@ module top_tb_m ();
 reg [15:0] cpu_address;
 
 wire SELECT_ram;
+
 wire SELECT_vram;
+wire SELECT_pmf;
+wire SELECT_pmb;
+wire SELECT_ntbl;
+wire SELECT_obm;
+wire SELECT_txbl;
+
 wire SELECT_firmware;
 wire SELECT_rom;
 wire SELECT_vectors;
@@ -32,7 +39,14 @@ address_bus_m address_bus (
     cpu_address,
 
     SELECT_ram,
+
     SELECT_vram,
+    SELECT_pmf,
+    SELECT_pmb,
+    SELECT_ntbl,
+    SELECT_obm,
+    SELECT_txbl,
+
     SELECT_firmware,
     SELECT_rom,
     SELECT_vectors,
@@ -51,12 +65,12 @@ $dumpvars();
 //\\ =========================== \\//
 
 cpu_address = 16'h0000; #1
-cpu_address = 16'h36ff; #1
-
-cpu_address = 16'h3700; #1
 cpu_address = 16'h3fff; #1
 
 cpu_address = 16'h4000; #1
+cpu_address = 16'h4fff; #1
+
+cpu_address = 16'h5000; #1
 cpu_address = 16'h6fff; #1
 
 cpu_address = 16'h8000; #1

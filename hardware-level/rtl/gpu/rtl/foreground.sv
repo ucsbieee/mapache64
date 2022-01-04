@@ -30,8 +30,9 @@ module foreground_m #(
 
     // VRAM interface
     input                     [7:0] data_in,
-    input    [`VRAM_ADDR_WIDTH-1:0] address,
-    input                           write_enable
+    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
+    input                           write_enable,
+    input                           SELECT_pmf, SELECT_obm
 );
 
     localparam MAX_Y = $rtoi($ceil((1.0 * NUM_ROWS)/LINE_REPEAT));
@@ -56,16 +57,13 @@ module foreground_m #(
 
 
 
-    // writing to vram
-    wire in_pmf = ( address >= 12'h000 && address < 12'h200 );
-    wire in_obm = ( address >= 12'h800 && address < 12'h900 );
-
+    // write to vram
     always_ff @ ( negedge cpu_clk ) begin : write_to_vram
         if ( write_enable ) begin
-            if ( in_pmf )
-                PMF[ address - 12'h000 ] <= data_in;
-            if ( in_obm )
-                OBM[ address - 12'h800 ] <= data_in;
+            if ( SELECT_pmf )
+                PMF[ vram_address - 12'h000 ] <= data_in;
+            if ( SELECT_obm )
+                OBM[ vram_address - 12'h800 ] <= data_in;
         end
     end
 

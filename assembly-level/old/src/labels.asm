@@ -3,18 +3,18 @@
 
 ; VRAM
 
-_PMF1           = $3700 ; Pattern Memory Foreground page1
-_PMF2           = $3800 ; Pattern Memory Foreground page2
-_PMB1           = $3900 ; Pattern Memory Background page1
-_PMB2           = $3a00 ; Pattern Memory Background page2
-_NTBL1          = $3b00 ; Nametable page1
-_NTBL2          = $3c00 ; Nametable page2
-_NTBL3          = $3d00 ; Nametable page3
-_NTBL4          = $3e00 ; Nametable page4
-_NTBL_COLORS    = $3ec0 ; Nametable Colors
-_OBM            = $3f00 ; Object Memory
+_PMF1           = $4000 ; Pattern Memory Foreground page1
+_PMF2           = $4100 ; Pattern Memory Foreground page2
+_PMB1           = $4200 ; Pattern Memory Background page1
+_PMB2           = $4300 ; Pattern Memory Background page2
+_NTBL1          = $4400 ; Nametable page1
+_NTBL2          = $4500 ; Nametable page2
+_NTBL3          = $4600 ; Nametable page3
+_NTBL4          = $4700 ; Nametable page4
+_NTBL_COLORS    = $47c0 ; Nametable Colors
+_OBM            = $4800 ; Object Memory
 
-_FIRMWARE_START = $4000
+_FIRMWARE_START = $5000
 
 _ROM_START      = $8000
 
@@ -65,7 +65,7 @@ MAGENTA_C1      = MAGENTA_C    << 3
 YELLOW_C1       = YELLOW_C     << 3
 WHITE_C1        = WHITE_C      << 3
 
-COLOR_ALT       = %10000000
+COLOR_SELECT    = %10000000
 HFLIP           = %01000000
 VFLIP           = %00100000
 

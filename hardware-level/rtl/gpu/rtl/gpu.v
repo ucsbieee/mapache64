@@ -7,6 +7,7 @@
 
 `ifdef LINTER
     `include "hardware-level/rtl/gpu/rtl/video-timing.v"
+    `include "hardware-level/rtl/gpu/rtl/text.sv"
     `include "hardware-level/rtl/gpu/rtl/foreground.sv"
     `include "hardware-level/rtl/gpu/rtl/background.sv"
     `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
@@ -28,9 +29,14 @@ module gpu_m #(
     // VRAM interface
     input                     [7:0] data_in,
     output                    [7:0] data_out,
-    input    [`VRAM_ADDR_WIDTH-1:0] address,
+    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_vram,
+    input                           SELECT_pmf,
+    input                           SELECT_pmb,
+    input                           SELECT_ntbl,
+    input                           SELECT_obm,
+    input                           SELECT_txbl,
 
     input                           SELECT_in_vblank,
     input                           SELECT_clr_vblank_irq,
@@ -59,14 +65,17 @@ module gpu_m #(
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
 
+    wire text_color, text_valid;
     wire [1:0] foreground_r, foreground_g, foreground_b;
     wire [1:0] background_r, background_g, background_b;
 
     wire drawing = visible && (0 <= current_x && current_x < 256) && (0 <= current_y && current_y < 240);
 
-    assign {r,g,b} = !drawing           ? 3'b0 :
-                    foreground_valid    ? {foreground_r,foreground_g,foreground_b} :
-                    {background_r,background_g,background_b};
+    assign {r,g,b} =
+        !drawing            ? 6'b0                                      :
+        text_valid          ? {6{text_color}}                           :
+        foreground_valid    ? {foreground_r,foreground_g,foreground_b}  :
+        {background_r,background_g,background_b};
 
 
     assign current_x = hcounter[8:0] - 9'd32;
@@ -84,6 +93,13 @@ module gpu_m #(
 
     wire vram_write_enable = writable & SELECT_vram & write_enable;
 
+    text_m text (
+        gpu_clk, cpu_clk,
+        current_x[7:0], current_y[7:0],
+        text_color, text_valid,
+        data_in, vram_address, write_enable, SELECT_txbl
+    );
+
     foreground_m #(
         .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS),
         .LINE_REPEAT(2),
@@ -93,14 +109,16 @@ module gpu_m #(
         current_x, current_y, hsync,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
-        data_in, address, vram_write_enable
+        data_in, vram_address, vram_write_enable,
+        SELECT_pmf, SELECT_obm
     );
 
     background_m background (
         gpu_clk, cpu_clk, rst,
         current_x[7:0], current_y[7:0],
         background_r, background_g, background_b,
-        data_in, address, vram_write_enable
+        data_in, vram_address, vram_write_enable,
+        SELECT_pmb, SELECT_ntbl
     );
 
 endmodule
