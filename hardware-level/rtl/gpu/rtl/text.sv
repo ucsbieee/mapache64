@@ -47,7 +47,7 @@ module text_m (
     reg [7:0]  PMC      [1023:0];
     initial $readmemb( "pmc.mem", PMC, 0, 1023 );
 
-    `define PMC_VALID(PMCA,PATTERN_X,PATTERN_Y) PMC[ {$unsigned(7'(PMCA)), $unsigned(3'(PATTERN_Y))} ][PATTERN_X]
+    `define PMC_VALID(PMCA,PATTERN_X,PATTERN_Y) PMC[ {$unsigned(7'(PMCA)), $unsigned(3'(PATTERN_Y))} ][3'h7-$unsigned(3'(PATTERN_X))]
     // -------------------------
 
     // write to vram

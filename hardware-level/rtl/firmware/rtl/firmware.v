@@ -3,7 +3,7 @@
 `define __UCSBIEEE__FIRMWARE__RTL__FIRMWARE_V
 
 
-`define __FIRMWARE_SIZE 14'h3000
+`define __FIRMWARE_SIZE 14'h2000
 
 module firmware_m (
     input        [$clog2(`__FIRMWARE_SIZE)-1:0] address,

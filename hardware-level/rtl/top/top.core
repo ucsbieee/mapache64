@@ -6,7 +6,7 @@ filesets:
   # default
   rtl:
     files:
-      - rtl/top.v:                                {file_type: verilogSource}
+      - rtl/top.sv:                               {file_type: systemVerilogSource}
     depend:
       - ucsbieee:arcade:gpu
       - ucsbieee:arcade:firmware

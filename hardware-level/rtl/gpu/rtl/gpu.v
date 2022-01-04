@@ -27,7 +27,7 @@ module gpu_m #(
     output wire                     controller_start_fetch,
 
     // VRAM interface
-     input                     [7:0] data_in,
+    input                     [7:0] data_in,
     output                    [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
     input                           write_enable,
