@@ -104,9 +104,8 @@ module top_m #(
         {8{1'bz}};
 
 
-
     firmware_m firmware (
-        cpu_address[13:0], firmware_data_out, SELECT_firmware, SELECT_vectors
+        13'(cpu_address-16'h5000), firmware_data_out, SELECT_firmware, SELECT_vectors
     );
 
 
