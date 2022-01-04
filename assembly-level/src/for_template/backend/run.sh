@@ -25,7 +25,7 @@ echo "irq   : ${irq}"
 # Run py65mon
 py65mon --mpu 65C02 --load ${INPUT} --goto ${reset} <<EOF
 save ${DUMP_DIR}/zero.bin      0000 00ff
-save ${DUMP_DIR}/vram.bin      3700 3fff
+save ${DUMP_DIR}/vram.bin      4000 4fff
 save ${DUMP_DIR}/ram.bin       0000 3fff
 save ${DUMP_DIR}/final.bin     0000 ffff
 cycles

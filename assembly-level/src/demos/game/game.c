@@ -118,7 +118,7 @@ void init_vram(void) {
     }
     for (i = 28; i < 30; i++) {
         for (j = 0; j < 32; j++) {
-            NTBL[i][j] = light_gray_pmba | COLOR_ALT_MASK;
+            NTBL[i][j] = light_gray_pmba | COLOR_SELECT_MASK;
         }
     }
 

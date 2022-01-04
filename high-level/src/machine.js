@@ -83,6 +83,13 @@ var NTBL                    = new Uint8Array( NTBL_Size );
 var NTBL_Color0             = 0b111;
 var NTBL_Color1             = 0b001;
 
+// Text Table
+const TXBL_Size             = NTBL_Size;
+var TXBL                    = new Uint8Array( NTBL_Size );
+
+// Pattern Memory Character Methods
+const BytesPerCharacter     = 8;
+
 // Nametable Methods
 const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));
 const NTBL_getColor = (index) => NTBL[index] >>> 7;
@@ -141,6 +148,13 @@ function OBSM_setX(index,X) { OBSM[index] &= ~0xff000000; OBSM[index] |= (X & 0x
 function OBSM_setData(index,Data) { OBSM[index] &= ~0x00ffff00; OBSM[index] |= (Data & 0xffff) << 8; }
 function OBSM_setColor(index,Color) { OBSM[index] &= ~0x00000007; OBSM[index] |= (Color & 0x7); }
 
+// Text Table Methods
+const TXBL_CRToIndex = (c,r) => NTBL_CRToIndex(c,r);
+const TXBL_getColor = (index) => TXBL[index] >>> 7;
+const TXBL_getAddr = (index) => TXBL[index] & 0x7f;
+function TXBL_setColor(index,Color) { TXBL[index] &= ~0b10000000; TXBL[index] |= (Color & 0b1) << 7; }
+function TXBL_setAddr(index,Addr) { TXBL[index] &= ~0x7f; TXBL[index] |= (Addr & 0x7f); }
+
 // For Debug Only
 function VRAM_RESET() {
     for ( let i = 0; i < PMF.length; i++ )
@@ -153,6 +167,8 @@ function VRAM_RESET() {
         OBM[i] = 0;
         OBM_setY( i, 0xff );
     }
+    for ( let i = 0; i < TXBL.length; i++ )
+        TXBL[i] = 0;
 }
 
 
@@ -179,6 +195,9 @@ function drawScreen() {
 
             // get object pixel color
             loadOBMColor(j);
+
+            // change current color to display text
+            loadTextColor(j,i);
 
             // draw pixel
             const pixelLocation = 4*CanvasScalar*(CanvasWidth*i + j);
@@ -297,6 +316,16 @@ function numToColor( num ) {
 }
 
 
+function loadTextColor( x, y ) {
+    let c = x/8;
+    let r = y/8;
+    let txbl_index = TXBL_CRToIndex(c,r);
+    let pmca = TXBL_getAddr(txbl_index);
+    let pmc_index = pmca * BytesPerCharacter + (y%8);
+    let valid = (PMC[pmc_index] >>> (7-(x%8)))&1;
+    if (valid)
+        currentColor = (TXBL_getColor(txbl_index) * 0xffffff);
+}
 
 
 

@@ -131,7 +131,7 @@
         </p>
         <ul>
             <li><code>reset</code>: run once at the beginning of the code</li>
-            <li><code>do_logic</code>: run 60 times a second. Put as much game logic here as you can. However, do not touch the VRAM (addresses <code>$3700-$3fff</code>)</li>
+            <li><code>do_logic</code>: run 60 times a second. Put as much game logic here as you can. However, do not touch the VRAM (addresses <code>$4000-$4fff</code>)</li>
             <li><code>fill_vram</code>: run after <code>do_logic</code>, once in the vertical blanking area. Here, you can touch the VRAM</li>
         </ul>
         <p>
@@ -167,10 +167,10 @@
                 The zero page takes up <code>$0000-$00ff</code>. It enables &ldquo;Zero Page Indirect&rdquo; addressing.
             </li>
             <li>
-                The VRAM takes up <code>$3700-$3fff</code>. Filling this will update the screen.
+                The VRAM takes up <code>$4000-$4fff</code>. Filling this will update the screen.
             </li>
             <li>
-                The firmware ROM takes up <code>$4000-$6fff</code>. All firmware subroutines must have an origin within that range.
+                The firmware ROM takes up <code>$5000-$6fff</code>. All firmware subroutines must have an origin within that range.
             </li>
             <li>
                 ROM takes up <code>$8000-$ffff</code>.

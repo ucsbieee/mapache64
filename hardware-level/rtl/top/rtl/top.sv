@@ -42,7 +42,9 @@ module top_m #(
 );
 
     // internal
-    wire SELECT_vram, SELECT_firmware, SELECT_vectors, SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
+    wire SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl;
+    wire SELECT_firmware, SELECT_vectors;
+    wire SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
 
     // inputs
     wire write_enable = ~write_enable_B;
@@ -70,7 +72,14 @@ module top_m #(
     address_bus_m address_bus (
         cpu_address,
         SELECT_ram,
+
         SELECT_vram,
+        SELECT_pmf,
+        SELECT_pmb,
+        SELECT_ntbl,
+        SELECT_obm,
+        SELECT_txbl,
+
         SELECT_firmware,
         SELECT_rom,
         SELECT_vectors,
@@ -95,18 +104,18 @@ module top_m #(
         {8{1'bz}};
 
 
-
     firmware_m firmware (
-        cpu_address[13:0], firmware_data_out, SELECT_firmware, SELECT_vectors
+        13'(cpu_address-16'h5000), firmware_data_out, SELECT_firmware, SELECT_vectors
     );
 
 
 
-    wire [11:0] gpu_address = ( cpu_address - 16'h3700 );
+    wire [11:0] vram_address = ( cpu_address - 16'h4000 );
     gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
         gpu_clk, cpu_clk, rst,
         r,g,b, hsync, vsync, controller_start_fetch,
-        data_in, gpu_data_out, gpu_address, write_enable, SELECT_vram,
+        data_in, gpu_data_out, vram_address, write_enable,
+        SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl,
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 
