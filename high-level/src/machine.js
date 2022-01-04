@@ -26,22 +26,23 @@ Canvas.setAttribute( "height", CanvasHeight );
 Canvas.setAttribute( "id", "Game__Canvas" );
 Game.appendChild( Canvas );
 const ctx = Canvas.getContext("2d", { alpha: false });
+ctx.imageSmoothingEnabled = false;
 
 
 
 /* ====== Full Screen ====== */
 
-//if inGameView false, add box shadow and disable scroll. otherwise reset.
+// if in inGameView, add box shadow and disable scroll. otherwise reset.
 var inGameView = false;
 function toggleGameView() {
-    if (inGameView === false){
+    if (inGameView === false) {
         Canvas.style.boxShadow = "0 0 0 100vmax black";
         Game.style.top = "50%"; Game.style.left = "50%";
         Game.style.transform = "translate(-50%,-50%)";
         Game.style.position = "fixed";
         inGameView = true;
     }
-    else{
+    else {
         Canvas.style.boxShadow = "";
         Game.style.position =  "";
         Game.style.top = ""; Game.style.left = "";
@@ -68,27 +69,32 @@ var disableInterrupts = false;
 /* ====== VRAM ====== */
 
 // Pattern Memory Foreground
-const NumSprites            = 32;
-const BytesPerSprite        = 16;
-var PMF                     = new Uint8Array( NumSprites * BytesPerSprite );
+const NumSprites         = 32;
+const BytesPerSprite     = 16;
+var PMF                  = new Uint8Array( NumSprites * BytesPerSprite );
 
 // Pattern Memory Background
-const NumTiles              = 32;
-const BytesPerTile          = 16;
-var PMB                     = new Uint8Array( NumTiles * BytesPerTile );
+const NumTiles          = 32;
+const BytesPerTile      = 16;
+var PMB                 = new Uint8Array( NumTiles * BytesPerTile );
 
 // Nametable
-const NTBL_Size             = 1024;
-var NTBL                    = new Uint8Array( NTBL_Size );
-var NTBL_Color0             = 0b111;
-var NTBL_Color1             = 0b001;
+const NTBL_Size         = 1024;
+var NTBL                = new Uint8Array( NTBL_Size );
+var NTBL_Color0         = 0b111;
+var NTBL_Color1         = 0b001;
+
+// Object Memory
+const NumObjects        = 64;
+const BytesPerObject    = 4;
+var OBM                 = new Uint8Array( NumObjects * BytesPerObject );
 
 // Text Table
-const TXBL_Size             = NTBL_Size;
-var TXBL                    = new Uint8Array( NTBL_Size );
+const TXBL_Size         = NTBL_Size;
+var TXBL                = new Uint8Array( NTBL_Size );
 
-// Pattern Memory Character Methods
-const BytesPerCharacter     = 8;
+// Pattern Memory Character
+const BytesPerCharacter = 8;
 
 // Nametable Methods
 const NTBL_CRToIndex = (c,r) => ((r&0b11111)<<5) | ((c&0b11111));
@@ -100,20 +106,6 @@ function NTBL_setColor(index,Color) { NTBL[index] &= ~0b10000000; NTBL[index] |=
 function NTBL_setHFlip(index,HFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (HFlip & 0b1) << 6; }
 function NTBL_setVFlip(index,VFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (VFlip & 0b1) << 5; }
 function NTBL_setAddr(index,Addr) { NTBL[index] &= ~0b00011111; NTBL[index] |= (Addr & 0x1f); }
-
-// Current Tile Scanline
-var CTS                     = 0;
-
-// Current Tile Scanline Methods
-const CTS_getColor = () => CTS & 0b111;
-const CTS_getData = () => (CTS >>> 8) & 0xffff;
-function CTS_setColor(Color) { CTS &= ~0x000007; CTS |= (Color & 0b111); }
-function CTS_setData(Data) { CTS &= ~0xffff00; CTS |= (Data & 0xffff) << 8; }
-
-// Object Memory
-const NumObjects            = 64;
-const BytesPerObject        = 4;
-var OBM                     = new Uint8Array( NumObjects * 4 );
 
 // Object Memory Methods
 const OBM_getX = (index) => (OBM[4*index]);
@@ -134,19 +126,6 @@ function OBM_setHFlip(index,HFlip) { OBM[4*index+2] &= ~0x80; OBM[4*index+2] |= 
 function OBM_setVFlip(index,VFlip) { OBM[4*index+2] &= ~0x40; OBM[4*index+2] |= (VFlip & 0b1) << 6; }
 function OBM_setAddr(index,Addr) { OBM[4*index+2] &= ~0x1f; OBM[4*index+2] |= (Addr & 0x1f); }
 function OBM_setColor(index,Color) { OBM[4*index+3] &= ~0x07; OBM[4*index+3] |= (Color & 0x7); }
-
-// Object Scanline Memory
-const NumObjectScanlines    = NumObjects;
-var OBSM                    = new Uint32Array( NumObjectScanlines );
-var OBSM_Size               = 0;
-
-// Object Scanline Memory Methods
-const OBSM_getX = (index) => (OBSM[index] >>> 24);
-const OBSM_getData = (index) => (OBSM[index] >>> 8) & 0xffff;
-const OBSM_getColor = (index) => (OBSM[index]) & 0b111;
-function OBSM_setX(index,X) { OBSM[index] &= ~0xff000000; OBSM[index] |= (X & 0xff) << 24; }
-function OBSM_setData(index,Data) { OBSM[index] &= ~0x00ffff00; OBSM[index] |= (Data & 0xffff) << 8; }
-function OBSM_setColor(index,Color) { OBSM[index] &= ~0x00000007; OBSM[index] |= (Color & 0x7); }
 
 // Text Table Methods
 const TXBL_CRToIndex = (c,r) => NTBL_CRToIndex(c,r);
@@ -175,159 +154,123 @@ function VRAM_RESET() {
 
 /* ============= GPU ============= */
 
-var PixelBuffer = new Uint8ClampedArray( CanvasWidth * CanvasHeight * 4 );
+var PixelBuffer = new Uint8ClampedArray( 4 * GameWidth * GameHeight );
 
 
 // 24 bits - rgb
-var currentColor            = 0;
 function drawScreen() {
-    OBSM_Size = 0;
-    for ( let i = 0; i < GameHeight; i++ ) {
+    drawBackground();
+    drawForeground();
+    drawText();
+    const screenImage = new ImageData( PixelBuffer, GameWidth, GameHeight );
+    createImageBitmap(screenImage).then(function(screenBitmap) {
+        ctx.drawImage( screenBitmap, 0, 0, CanvasWidth, CanvasHeight );
+    });
+}
 
-        // find color of each pixel
-        for ( let j = 0; j < GameWidth; j++ ) {
-            // at every new tile, load its scanline
-            if ( (j & 0b111) == 0 )
-                loadToCTS(j,i);
-
-            // get background pixel color
-            loadCTSColor(j);
-
-            // get object pixel color
-            loadOBMColor(j);
-
-            // change current color to display text
-            loadTextColor(j,i);
-
-            // draw pixel
-            const pixelLocation = 4*CanvasScalar*(CanvasWidth*i + j);
-            for ( let vs = 0; vs < CanvasScalar; vs++ ) {
-                for ( let hs = 0; hs < CanvasScalar; hs++ ) {
-                    const subpixelLocation = pixelLocation + 4*CanvasWidth*vs + 4*(hs);
-                    PixelBuffer[ subpixelLocation + 0 ] = (currentColor & 0xff0000) >>> 16;
-                    PixelBuffer[ subpixelLocation + 1 ] = (currentColor & 0x00ff00) >>>  8;
-                    PixelBuffer[ subpixelLocation + 2 ] = (currentColor & 0x0000ff) >>>  0;
-                    PixelBuffer[ subpixelLocation + 3 ] = 0xff;
-                }
+function drawBackground() {
+    let current_tile_data;
+    let current_tile_color;
+    for ( let y = 0; y < GameHeight; y++ ) {
+        for ( let x = 0; x < GameWidth; x++ ) {
+            if ( x % 8 == 0 ) { // if at new tile
+                current_tile_data = get_tile_data(x,y);
+                current_tile_color = get_tile_color(x,y);
             }
+            let pattern_pixel = (current_tile_data >>> (14-2*(x%8))) & 0b11;
+            let buffer_pixel =
+                (pattern_pixel == 0b11) ? 0xff :
+                (pattern_pixel == 0b10) ? 0x7f :
+                (pattern_pixel == 0b01) ? 0x3f :
+                0x00;
+            const draw_r = (current_tile_color>>>2) & 1;
+            const draw_g = (current_tile_color>>>1) & 1;
+            const draw_b = (current_tile_color>>>0) & 1;
+            const pixelLocation = 4*(GameWidth*y + x);
+            PixelBuffer[ pixelLocation + 0 ] = draw_r ? buffer_pixel : 0x00;
+            PixelBuffer[ pixelLocation + 1 ] = draw_g ? buffer_pixel : 0x00;
+            PixelBuffer[ pixelLocation + 2 ] = draw_b ? buffer_pixel : 0x00;
+            PixelBuffer[ pixelLocation + 3 ] = 0xff;
         }
-
-        // load next OBSM
-        loadToOBSM( i+1 );
-
-    }
-    const screenImage = new ImageData( PixelBuffer, CanvasWidth, CanvasHeight );
-    ctx.putImageData( screenImage, 0, 0 );
-}
-
-function printOBM() {
-    for ( let i = 0; i < NumObjects; i++ ) {
-        console.log(`${i}: ${OBM_getX(i)},${OBM_getY(i)}`);
     }
 }
 
-function loadToCTS( x, y ) {
-    x &= 0xff;
-    y &= 0xff;
+function drawForeground() {
+    for ( let i = 0; i < NumObjects; i++ )
+        if ( OBM_getY(i) < GameHeight )
+            drawObject( i );
+}
+
+function drawObject( obma ) {
+    let object_x = OBM_getX(obma);
+    let object_y = OBM_getY(obma);
+    let end_x = Math.min( object_x+8, GameWidth );
+    let end_y = Math.min( object_y+8, GameHeight );
+    const draw_r = (OBM_getColor(obma)>>>2) & 1;
+    const draw_g = (OBM_getColor(obma)>>>1) & 1;
+    const draw_b = (OBM_getColor(obma)>>>0) & 1;
+    for ( let pattern_y = 0; pattern_y < (end_y-object_y); pattern_y++ ) {
+        let address = (OBM_getAddr(obma) << 4) + 2*( OBM_getVFlip(obma) ? (7-pattern_y) : pattern_y); // obma to PMF address
+        let data = (PMF[ address ] << 8) | (PMF[ address + 1 ]); // load scanline
+        data = OBM_getHFlip(obma) ? flip(data) : data; // flip scanline if needed
+        for ( let pattern_x = 0; pattern_x < (end_x-object_x); pattern_x++ ) { // draw each pixel in scanline
+            let pattern_pixel = (data >>> (14-2*pattern_x)) & 0b11;
+            if ( pattern_pixel == 0b00 ) continue;
+            let buffer_pixel =
+                (pattern_pixel == 0b11) ? 0xff :
+                (pattern_pixel == 0b10) ? 0x7f :
+                0x3f;
+            const pixelLocation = 4*(GameWidth*(pattern_y+object_y) + pattern_x+object_x);
+
+            PixelBuffer[ pixelLocation + 0 ] = draw_r ? buffer_pixel : 0x00;
+            PixelBuffer[ pixelLocation + 1 ] = draw_g ? buffer_pixel : 0x00;
+            PixelBuffer[ pixelLocation + 2 ] = draw_b ? buffer_pixel : 0x00;
+        }
+    }
+}
+
+function get_tile_data( x, y ) {
     let index = ((y&0b11111000)<<2) | ((x&0b11111000)>>>3);
     x &= 0b111;
     y &= 0b111;
     let address = NTBL_getAddr(index) << 4;
     address += 2*( NTBL_getVFlip(index) ? (7-y) : y );
     let data = (PMB[ address ] << 8) | (PMB[ address + 1 ]);
-    CTS_setData( NTBL_getHFlip(index) ? flip(data) : data );
-    CTS_setColor( NTBL_getColor(index) ? NTBL_Color1 : NTBL_Color0 );
+    return NTBL_getHFlip(index) ? flip(data) : data;
 }
 
-function loadCTSColor( x ) {
-    x &= 0b111;
-    let pixel = (CTS_getData() >>> (14-2*x)) & 0b11;
-    switch (pixel) {
-        case 0b11: currentColor = 0xffffff; break;
-        case 0b10: currentColor = 0x7f7f7f; break;
-        case 0b01: currentColor = 0x3f3f3f; break;
-        case 0b00: currentColor = 0x000000; break;
-        default: break;
-    }
-    if ( !( (CTS_getColor()>>>2) & 1 ) )
-        currentColor &= ~0xff0000;
-    if ( !( (CTS_getColor()>>>1) & 1 ) )
-        currentColor &= ~0x00ff00;
-    if ( !( (CTS_getColor()>>>0) & 1 ) )
-        currentColor &= ~0x0000ff;
-
+function get_tile_color( x, y ) {
+    let index = ((y&0b11111000)<<2) | ((x&0b11111000)>>>3);
+    return NTBL_getColor(index) ? NTBL_Color1 : NTBL_Color0;
 }
 
-function loadOBMColor( x ) {
-    for ( let object_i = 0; object_i < OBSM_Size; object_i++ ) {
-        let distance = x - OBSM_getX(object_i);
-        if ( 0 <= distance && distance < 8 ) {
-            let pixel = (OBSM_getData(object_i) >>> (14-2*distance)) & 0b11;
-            if ( pixel != 0b00 ) {
-                switch (pixel) {
-                    case 0b11: currentColor = 0xffffff; break;
-                    case 0b10: currentColor = 0x7f7f7f; break;
-                    case 0b01: currentColor = 0x3f3f3f; break;
-                    default: break;
-                }
-                if ( !( (OBSM_getColor(object_i)>>>2) & 1 ) )
-                    currentColor &= ~0xff0000;
-                if ( !( (OBSM_getColor(object_i)>>>1) & 1 ) )
-                    currentColor &= ~0x00ff00;
-                if ( !( (OBSM_getColor(object_i)>>>0) & 1 ) )
-                    currentColor &= ~0x0000ff;
-                break;
-            }
-
-        }
-    }
-}
-
-function loadToOBSM( y ) {
-    OBSM_Size = 0;
-    for ( let object_i = 0; object_i < NumObjects; object_i++ ) {
-        let scanline = y - OBM_getY(object_i);
-        if ( 0 <= scanline && scanline < 8 ) {
-            // load next sprite
-            OBSM_setX( OBSM_Size, OBM_getX(object_i) );
-            OBSM_setData( OBSM_Size, OBM_getScanline(object_i,scanline) );
-            OBSM_setColor( OBSM_Size, OBM_getColor(object_i) );
-            OBSM_Size++;
-            // if OBSM_Size max is reached, exit loop
-            if ( OBSM_Size == NumObjectScanlines ) break;
-        }
-    }
-}
-
-function flip( num ) {
+function flip( pattern_scanline ) {
     let out = 0;
     for ( let i = 0; i < 8; i++ ) {
-        out |= (num&0b11) << (14-2*i);
-        num >>>= 2;
+        out |= (pattern_scanline&0b11) << (14-2*i);
+        pattern_scanline >>>= 2;
     }
     return out;
 }
 
-function numToColor( num ) {
-    let hex = num.toString(16);
-    while ( hex.length < 6 )
-        hex = "0" + hex;
-    return "#" + hex;
+function drawText() {
+    for ( let y = 0; y < GameWidth; y++ ) {
+        for ( let x = 0; x < GameWidth; x++ ) {
+            let c = x/8;
+            let r = y/8;
+            let txbl_index = TXBL_CRToIndex(c,r);
+            let pmca = TXBL_getAddr(txbl_index);
+            let pmc_index = pmca * BytesPerCharacter + (y%8);
+            let valid = (PMC[pmc_index] >>> (7-(x%8)))&1;
+            if (valid) {
+                const pixelLocation = 4*(GameWidth*y + x);
+                PixelBuffer[ pixelLocation + 0 ] = TXBL_getColor(txbl_index) ? 0xff : 0x00;
+                PixelBuffer[ pixelLocation + 1 ] = TXBL_getColor(txbl_index) ? 0xff : 0x00;
+                PixelBuffer[ pixelLocation + 2 ] = TXBL_getColor(txbl_index) ? 0xff : 0x00;
+            }
+        }
+    }
 }
-
-
-function loadTextColor( x, y ) {
-    let c = x/8;
-    let r = y/8;
-    let txbl_index = TXBL_CRToIndex(c,r);
-    let pmca = TXBL_getAddr(txbl_index);
-    let pmc_index = pmca * BytesPerCharacter + (y%8);
-    let valid = (PMC[pmc_index] >>> (7-(x%8)))&1;
-    if (valid)
-        currentColor = (TXBL_getColor(txbl_index) * 0xffffff);
-}
-
-
 
 /* ====== Controller ====== */
 
