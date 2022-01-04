@@ -152,6 +152,7 @@ module foreground_m #(
                 // if just before top scanline and the object is at the top
                 (`OBM_OBJECT_Y(parsing_object) == 0 && current_y == MAX_Y)
                 || ( // or if Y overlaps the parsing object
+                    (current_y < 239) &&
                     ({1'b0,`OBM_OBJECT_Y(parsing_object)} <= (current_y+9'd1)) &&
                     (({1'b0,`OBM_OBJECT_Y(parsing_object)}+9'd6) >= current_y)
                 )
