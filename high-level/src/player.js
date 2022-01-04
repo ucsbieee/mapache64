@@ -35,7 +35,8 @@ function _next_frame() {
 
     fill_vram();
 
-    // console.log(`Second: ${frame/FPS}`);
+    // if ( frame % FPS == 0 )
+    //     console.log(`Second: ${frame/FPS}`);
 
 }
 
