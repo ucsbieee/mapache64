@@ -118,8 +118,8 @@ var OBM                     = new Uint8Array( NumObjects * 4 );
 // Object Memory Methods
 const OBM_getX = (index) => (OBM[4*index]);
 const OBM_getY = (index) => (OBM[4*index+1]);
-const OBM_getHFlip = (index) => (OBM[4*index+2] >>> 7) & 0b1;
-const OBM_getVFlip = (index) => (OBM[4*index+2] >>> 6) & 0b1;
+const OBM_getHFlip = (index) => (OBM[4*index+2] >>> 6) & 0b1;
+const OBM_getVFlip = (index) => (OBM[4*index+2] >>> 5) & 0b1;
 const OBM_getAddr = (index) => (OBM[4*index+2]) & 0x1f;
 const OBM_getColor = (index) => (OBM[4*index+3]) & 0x7;
 const OBM_getScanline = (index, scanline) => {
