@@ -98,6 +98,7 @@ module top_m #(
     assign data_out =
         SELECT_firmware         ? firmware_data_out         :
         SELECT_vectors          ? firmware_data_out         :
+        SELECT_vram             ? gpu_data_out              :
         SELECT_in_vblank        ? gpu_data_out              :
         SELECT_controller_1     ? controller_1_buttons_out  :
         SELECT_controller_2     ? controller_2_buttons_out  :
