@@ -23,6 +23,7 @@ module background_m (
 
     // VRAM interface
     input                     [7:0] data_in,
+    output wire               [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_pmb, SELECT_ntbl
@@ -53,13 +54,22 @@ module background_m (
     `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
     // -------------------------
 
+    wire [11:0] pmb_address = vram_address - 12'h200;
+    wire [11:0] ntbl_address = vram_address - 12'h400;
+
+    // read from vram
+    assign data_out =
+        SELECT_pmb  ? PMB[ pmb_address ]    :
+        SELECT_ntbl ? NTBL[ ntbl_address ]  :
+        {8{1'bz}};
+
     // write to vram
     always_ff @ ( negedge cpu_clk ) begin : write_to_vram
         if ( write_enable ) begin
             if ( SELECT_pmb )
-                PMB[ vram_address - 12'h200 ] <= data_in;
+                PMB[ pmb_address ] <= data_in;
             if ( SELECT_ntbl )
-                NTBL[ vram_address - 12'h400 ] <= data_in;
+                NTBL[ ntbl_address ] <= data_in;
         end
     end
 

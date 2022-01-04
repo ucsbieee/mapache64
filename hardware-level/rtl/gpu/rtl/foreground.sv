@@ -30,6 +30,7 @@ module foreground_m #(
 
     // VRAM interface
     input                     [7:0] data_in,
+    output wire               [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_pmf, SELECT_obm
@@ -55,15 +56,22 @@ module foreground_m #(
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
+    wire [11:0] pmf_address = vram_address - 12'h000;
+    wire [11:0] obm_address = vram_address - 12'h800;
 
+    // read from vram
+    assign data_out =
+        SELECT_pmf  ? PMF[ pmf_address ]    :
+        SELECT_obm  ? OBM[ obm_address ]    :
+        {8{1'bz}};
 
     // write to vram
     always_ff @ ( negedge cpu_clk ) begin : write_to_vram
         if ( write_enable ) begin
             if ( SELECT_pmf )
-                PMF[ vram_address - 12'h000 ] <= data_in;
+                PMF[ pmf_address ] <= data_in;
             if ( SELECT_obm )
-                OBM[ vram_address - 12'h800 ] <= data_in;
+                OBM[ obm_address ] <= data_in;
         end
     end
 

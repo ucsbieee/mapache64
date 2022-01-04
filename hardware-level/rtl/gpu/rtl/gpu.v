@@ -45,7 +45,12 @@ module gpu_m #(
 
     // VBLANK IRQ
     wire writable;
-    assign data_out = SELECT_in_vblank ? {7'b0,writable} : {8{1'bz}};
+    assign data_out =
+        (SELECT_in_vblank)          ? {7'b0,writable}       :
+        (SELECT_txbl)               ? text_data_out         :
+        (SELECT_pmf||SELECT_obm)    ? background_data_out   :
+        (SELECT_pmb||SELECT_ntbl)   ? foreground_data_out   :
+        {8{1'bz}};
 
     reg writable_prev;
     initial writable_prev = 0;
@@ -92,12 +97,13 @@ module gpu_m #(
     assign controller_start_fetch = ( hcounter < 10'h20 ) && ( vcounter == 10'b0 );
 
     wire vram_write_enable = writable & SELECT_vram & write_enable;
+    wire [7:0] text_data_out, foreground_data_out, background_data_out;
 
     text_m text (
         gpu_clk, cpu_clk,
         current_x[7:0], current_y[7:0],
         text_color, text_valid,
-        data_in, vram_address, write_enable, SELECT_txbl
+        data_in, text_data_out, vram_address, vram_write_enable, SELECT_txbl
     );
 
     foreground_m #(
@@ -109,7 +115,7 @@ module gpu_m #(
         current_x, current_y, hsync,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
-        data_in, vram_address, vram_write_enable,
+        data_in, foreground_data_out, vram_address, vram_write_enable,
         SELECT_pmf, SELECT_obm
     );
 
@@ -117,7 +123,7 @@ module gpu_m #(
         gpu_clk, cpu_clk, rst,
         current_x[7:0], current_y[7:0],
         background_r, background_g, background_b,
-        data_in, vram_address, vram_write_enable,
+        data_in, background_data_out, vram_address, vram_write_enable,
         SELECT_pmb, SELECT_ntbl
     );
 

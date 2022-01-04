@@ -23,6 +23,7 @@ module text_m (
 
     // VRAM interface
     input                     [7:0] data_in,
+    output wire               [7:0] data_out,
     input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_txbl
@@ -50,10 +51,17 @@ module text_m (
     `define PMC_VALID(PMCA,PATTERN_X,PATTERN_Y) PMC[ {$unsigned(7'(PMCA)), $unsigned(3'(PATTERN_Y))} ][3'h7-$unsigned(3'(PATTERN_X))]
     // -------------------------
 
+    wire [11:0] txbl_address = vram_address - 12'h900;
+
+    // read from vram
+    assign data_out =
+        SELECT_txbl ? TXBL[ txbl_address ]  :
+        {8{1'bz}};
+
     // write to vram
     always_ff @ ( negedge cpu_clk ) begin : write_to_vram
         if ( write_enable && SELECT_txbl ) begin
-            TXBL[ vram_address - 12'h900 ] <= data_in;
+            TXBL[ txbl_address ] <= data_in;
         end
     end
 

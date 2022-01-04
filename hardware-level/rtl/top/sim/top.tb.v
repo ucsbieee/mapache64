@@ -122,6 +122,20 @@ write_data = 8'b0;
 cpu_address = 16'h4901;
 write_data = 8'h41; // A
 
+@(posedge clk_1);
+write_enable_B = 1;
+
+@(posedge clk_1);
+cpu_address = 16'h4900;
+@(posedge clk_1);
+cpu_address = 16'h4901;
+
+@(posedge clk_1);
+write_enable_B = 0;
+
+
+
+
 // pmf
 @(posedge clk_1);
 for ( reg [7:0] i = 0; i < 16; i=i+1 ) begin
