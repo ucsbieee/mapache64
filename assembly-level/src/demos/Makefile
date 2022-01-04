@@ -8,4 +8,4 @@ default:
 	@echo "Building \"${DEMO}\"."
 	make -C ..
 	cp -r ${DEMO}/. ../template/.
-	make -C ../template run
+	make -C ../template

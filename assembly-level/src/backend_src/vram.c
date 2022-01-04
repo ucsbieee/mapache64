@@ -13,4 +13,4 @@ tile_t NTBL[30][32];
 background_palette_t background_palette;
 
 #pragma bss-name ("OBM")
-object_t OBM[32];
+object_t OBM[64];
