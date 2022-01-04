@@ -1,6 +1,6 @@
 
 `ifdef LINTER
-    `include "hardware-level/rtl/top/rtl/top.v"
+    `include "hardware-level/rtl/top/rtl/top.sv"
     `include "hardware-level/rtl/top/synth/boards/cmod_a7/clk_mmcm.vh"
     `include "hardware-level/rtl/misc/clk_divider.v"
 `endif

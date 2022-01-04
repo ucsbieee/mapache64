@@ -9,7 +9,7 @@
 `endif
 
 `ifdef LINTER
-    `include "hardware-level/rtl/top/rtl/top.v"
+    `include "hardware-level/rtl/top/rtl/top.sv"
     `include "hardware-level/rtl/misc/timing.v"
     `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
 `endif
@@ -145,7 +145,6 @@ write_data = 8'b0;
 cpu_address = 16'h4803;
 write_data = 8'b111;
 
-@(negedge vsync);
 @(negedge vsync);
 
 
