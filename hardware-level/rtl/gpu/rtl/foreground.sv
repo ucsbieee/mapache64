@@ -124,6 +124,33 @@ module foreground_m #(
     wire transfer_next_to_this;
 
 
+    wire [4:0] parsing_object_pmfa = `OBM_OBJECT_PMFA(parsing_object);
+    wire parsing_object_hflip = `OBM_OBJECT_HFLIP(parsing_object);
+    wire parsing_object_vflip = `OBM_OBJECT_VFLIP(parsing_object);
+    wire [8:0] next_y = (current_y == MAX_Y) ? 0 : current_y+1;
+    wire [2:0] in_parsing_object_y = 3'(next_y - `OBM_OBJECT_Y(parsing_object));
+
+    function automatic [7:0] parsing_object_valid_pixels_f (
+        input [2:0] parsing_object_in_object_y
+    );
+
+        // get vertical position in sprite
+        reg [2:0] parsing_object_in_pattern_y = parsing_object_vflip ? (3'd7-parsing_object_in_object_y) : parsing_object_in_object_y;
+
+        // get object scanline line
+        reg [15:0] parsing_object_line = `PMF_LINE( parsing_object_pmfa, parsing_object_in_pattern_y );
+
+        for (integer i = 0; i < 8; i=i+1 ) begin
+            reg [2:0] parsing_object_in_pattern_x = parsing_object_hflip ? (3'd7-3'(i)) : 3'(i);
+            parsing_object_valid_pixels_f[3'd7-3'(i)] = ( parsing_object_line[ {3'h7-parsing_object_in_pattern_x, 1'b0} +: 2 ] != 2'b0 );
+        end
+
+    endfunction
+
+    reg [7:0] parsing_object_valid_pixels;
+    always_comb parsing_object_valid_pixels = parsing_object_valid_pixels_f(in_parsing_object_y);
+
+
 
 
     // procedural block for writing to scanline memory
@@ -157,25 +184,15 @@ module foreground_m #(
                     (({1'b0,`OBM_OBJECT_Y(parsing_object)}+9'd6) >= current_y)
                 )
             ) begin
-                // update next scanline
-                if (scanline_select) begin
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd0 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd1 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd2 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd3 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd4 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd5 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd6 ] <= parsing_object;
-                    SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd7 ] <= parsing_object;
-                end else begin
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd0 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd1 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd2 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd3 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd4 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd5 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd6 ] <= parsing_object;
-                    SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'd7 ] <= parsing_object;
+                // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_valid_pixels, $realtime);
+                for (integer unsigned i = 0; i < 8; i=i+1) begin
+                    if (parsing_object_valid_pixels[3'h7-3'(i)]) begin
+                        // $display("\t%d", 3'(i));
+                        if (scanline_select)
+                            SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= parsing_object;
+                        else
+                            SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= parsing_object;
+                    end
                 end
             end
 
@@ -249,15 +266,13 @@ module foreground_m #(
 
     // if the video timing counter is at the location of the object
     wire [1:0] current_pixel = line[ {3'h7-in_pattern_x, 1'b0} +: 2 ];
-    // whether the current pixel is transparent
-    wire transparent = ( current_pixel == 2'b0 );
 
     // colors of current pixel
     assign r = current_pixel & {2{color[2]}};
     assign g = current_pixel & {2{color[1]}};
     assign b = current_pixel & {2{color[0]}};
 
-    assign valid = (obma != 7'h40) && !transparent;
+    assign valid = (obma != 7'h40);
 
 
 
