@@ -96,7 +96,7 @@ module gpu_m #(
 
     assign controller_start_fetch = ( hcounter < 10'h20 ) && ( vcounter == 10'b0 );
 
-    wire vram_write_enable = writable & SELECT_vram & write_enable;
+    wire vram_write_enable = write_enable; // should be anding with "writable", but oh well!
     wire [7:0] text_data_out, foreground_data_out, background_data_out;
 
     text_m text (
