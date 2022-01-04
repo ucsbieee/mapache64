@@ -10,7 +10,8 @@ cd ${CORE_DIR}/fusesoc
 echo ${CORE_DIR}/fusesoc > ${CORE_DIR}/fusesoc/.fusesoc_path
 
 {       # try to run fusesoc commands
-    fusesoc library add firmware ${CORE_DIR} --sync-type=local
+    fusesoc library add firmware ${CORE_DIR} --sync-type=local &&
+    ${CORE_DIR}/scripts/get_mem.sh
 } || {  # if commands failed, clean
     >&2 echo "[ERROR in initialize.sh]: Initialization failed. Maybe FuseSoC isn't installed?"
     ${CORE_DIR}/scripts/clean.sh

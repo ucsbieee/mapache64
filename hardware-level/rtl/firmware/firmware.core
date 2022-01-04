@@ -6,14 +6,14 @@ filesets:
   # default
   rtl:
     files:
-      - rtl/firmware.v:   {file_type: verilogSource}
-      - rom/firmware.mem: {file_type: user, copyto: firmware.mem}
-      - rom/vectors.mem:  {file_type: user, copyto: vectors.mem}
+      - rtl/firmware.v:           {file_type: verilogSource}
+      - fusesoc/rom/firmware.mem: {file_type: user, copyto: firmware.mem}
+      - fusesoc/rom/vectors.mem:  {file_type: user, copyto: vectors.mem}
 
   # simulation
   sim:
     files:
-      - sim/top.tb.v:     {file_type: verilogSource}
+      - sim/top.tb.v:             {file_type: verilogSource}
 
 targets:
   default: &default

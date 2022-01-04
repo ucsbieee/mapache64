@@ -12,6 +12,7 @@ echo ${CORE_DIR}/fusesoc > ${CORE_DIR}/fusesoc/.fusesoc_path
 
 {       # try to run fusesoc commands
     ( ${CORES_DIR}/gpu/scripts/verify.sh || ${CORES_DIR}/gpu/scripts/initialize.sh ) &&
+    ( ${CORES_DIR}/firmware/scripts/verify.sh || ${CORES_DIR}/firmware/scripts/initialize.sh ) &&
     fusesoc library add top ${CORES_DIR}/top --sync-type=local &&
     fusesoc library add firmware ${CORES_DIR}/firmware --sync-type=local &&
     fusesoc library add gpu ${CORES_DIR}/gpu --sync-type=local &&

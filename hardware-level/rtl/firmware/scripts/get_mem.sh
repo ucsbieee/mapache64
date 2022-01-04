@@ -12,7 +12,7 @@ echo "Assembler complete."
 
 
 SRC_DIR="$( pwd )"
-DST_DIR=${CORE_DIR}/rom
+DST_DIR=${CORE_DIR}/fusesoc/rom
 
 mkdir -p ${DST_DIR}
 cp ${SRC_DIR}/firmware.bin ${DST_DIR}/firmware.bin
