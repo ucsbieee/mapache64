@@ -113,24 +113,24 @@ rst = 0;
 
 @(posedge clk_1);
 write_enable_B = 0;
+@(posedge clk_1);
 
 // txbl
-@(posedge clk_1);
 cpu_address = 16'h4900;
 write_data = 8'b0;
 @(posedge clk_1);
 cpu_address = 16'h4901;
-write_data = 8'h41; // A
-
+write_data = 8'b0;
 @(posedge clk_1);
+
 write_enable_B = 1;
-
 @(posedge clk_1);
+
 cpu_address = 16'h4900;
 @(posedge clk_1);
 cpu_address = 16'h4901;
-
 @(posedge clk_1);
+
 write_enable_B = 0;
 
 
@@ -143,20 +143,38 @@ for ( reg [7:0] i = 0; i < 16; i=i+1 ) begin
     write_data = i;
     @(posedge clk_1);
 end
+
 // x
 cpu_address = 16'h4800;
 write_data = 8'b0;
-// y
 @(posedge clk_1);
+// y
 cpu_address = 16'h4801;
 write_data = 8'b0;
-// pmfa
 @(posedge clk_1);
+// pmfa
 cpu_address = 16'h4802;
 write_data = 8'b0;
-// color
 @(posedge clk_1);
+// color
 cpu_address = 16'h4803;
+write_data = 8'b111;
+@(posedge clk_1);
+
+// x
+cpu_address = 16'h4810;
+write_data = 8'h8;
+@(posedge clk_1);
+// y
+cpu_address = 16'h4811;
+write_data = 8'b0;
+@(posedge clk_1);
+// pmfa
+cpu_address = 16'h4812;
+write_data = 8'b1000000;
+@(posedge clk_1);
+// color
+cpu_address = 16'h4813;
 write_data = 8'b111;
 
 @(negedge vsync);

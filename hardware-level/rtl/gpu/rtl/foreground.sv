@@ -127,31 +127,30 @@ module foreground_m #(
     wire [4:0] parsing_object_pmfa = `OBM_OBJECT_PMFA(parsing_object);
     wire parsing_object_hflip = `OBM_OBJECT_HFLIP(parsing_object);
     wire parsing_object_vflip = `OBM_OBJECT_VFLIP(parsing_object);
+    wire [2:0] parsing_object_color = `OBM_OBJECT_COLOR(parsing_object);
     wire [8:0] next_y = (current_y == MAX_Y) ? 0 : current_y+1;
     wire [2:0] in_parsing_object_y = 3'(next_y - `OBM_OBJECT_Y(parsing_object));
+    wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
+    wire [15:0] parsing_object_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
 
-    function automatic [7:0] parsing_object_valid_pixels_f (
-        input [2:0] parsing_object_in_object_y
+    function automatic [5:0] get_object_pixel (
+        input [2:0] in_parsing_object_x
     );
-
-        // get vertical position in sprite
-        reg [2:0] parsing_object_in_pattern_y = parsing_object_vflip ? (3'd7-parsing_object_in_object_y) : parsing_object_in_object_y;
-
-        // get object scanline line
-        reg [15:0] parsing_object_line = `PMF_LINE( parsing_object_pmfa, parsing_object_in_pattern_y );
-
-        for (integer i = 0; i < 8; i=i+1 ) begin
-            reg [2:0] parsing_object_in_pattern_x = parsing_object_hflip ? (3'd7-3'(i)) : 3'(i);
-            parsing_object_valid_pixels_f[3'd7-3'(i)] = ( parsing_object_line[ {3'h7-parsing_object_in_pattern_x, 1'b0} +: 2 ] != 2'b0 );
-        end
-
+        reg [2:0] in_parsing_object_pattern_x = parsing_object_hflip ? in_parsing_object_x : (3'd7-in_parsing_object_x);
+        reg [1:0] pixel_pattern = parsing_object_line[2*4'(in_parsing_object_pattern_x)+:2]; // to do: add hflip
+        return {
+            {2{parsing_object_color[2]}} & pixel_pattern,
+            {2{parsing_object_color[1]}} & pixel_pattern,
+            {2{parsing_object_color[0]}} & pixel_pattern
+        };
     endfunction
 
-    reg [7:0] parsing_object_valid_pixels;
-    always_comb parsing_object_valid_pixels = parsing_object_valid_pixels_f(in_parsing_object_y);
-
-
-
+    function automatic [1:0] get_object_pixel_pattern (
+        input [2:0] in_parsing_object_x
+    );
+        reg [2:0] in_parsing_object_pattern_x = parsing_object_hflip ? in_parsing_object_x : (3'd7-in_parsing_object_x);
+        return parsing_object_line[2*4'(in_parsing_object_pattern_x)+:2];
+    endfunction
 
     // procedural block for writing to scanline memory
     always_ff @ ( posedge gpu_clk ) begin
@@ -165,9 +164,9 @@ module foreground_m #(
             // reset next scanline
             for ( integer i = 0; i < 256; i=i+1 ) begin
                 if (scanline_select)
-                    SCANLINE_1[i] <= 7'h40;
+                    SCANLINE_1[i] <= 7'b0;
                 else
-                    SCANLINE_0[i] <= 7'h40;
+                    SCANLINE_0[i] <= 7'b0;
             end
 
         end
@@ -184,14 +183,14 @@ module foreground_m #(
                     (({1'b0,`OBM_OBJECT_Y(parsing_object)}+9'd6) >= current_y)
                 )
             ) begin
-                // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_valid_pixels, $realtime);
+                // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_line, $realtime);
                 for (integer unsigned i = 0; i < 8; i=i+1) begin
-                    if (parsing_object_valid_pixels[3'h7-3'(i)]) begin
-                        // $display("\t%d", 3'(i));
+                    // $display(" pixel: %b", get_object_pixel(i));
+                    if (get_object_pixel_pattern(i) != 2'b0) begin
                         if (scanline_select)
-                            SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= parsing_object;
+                            SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= {1'b1,get_object_pixel(i)};
                         else
-                            SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= parsing_object;
+                            SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= {1'b1,get_object_pixel(i)};
                     end
                 end
             end
@@ -241,38 +240,13 @@ module foreground_m #(
 
     // given calculated scanline, find the current pixel value
 
-    wire [6:0] obma = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
-
-    // object position on screen
-    wire [7:0] object_x = `OBM_OBJECT_X(obma);
-    wire [7:0] object_y = `OBM_OBJECT_Y(obma);
-
-    // pixel location within object
-    wire [2:0] in_object_y = current_y[2:0] - object_y[2:0];
-    wire [2:0] in_object_x = current_x[2:0] - object_x[2:0];
-
-    // object color, sprite, and flip modifiers
-    wire [2:0] color = `OBM_OBJECT_COLOR(obma);
-    wire [4:0] pmfa = `OBM_OBJECT_PMFA(obma);
-    wire hflip = `OBM_OBJECT_HFLIP(obma);
-    wire vflip = `OBM_OBJECT_VFLIP(obma);
-
-    // get vertical position in sprite
-    wire [2:0] in_pattern_y = vflip ? (3'd7-in_object_y) : in_object_y;
-    wire [2:0] in_pattern_x = hflip ? (3'd7-in_object_x) : in_object_x;
-
-    // get object scanline line
-    wire [15:0] line = `PMF_LINE( pmfa, in_pattern_y );
-
-    // if the video timing counter is at the location of the object
-    wire [1:0] current_pixel = line[ {3'h7-in_pattern_x, 1'b0} +: 2 ];
-
     // colors of current pixel
-    assign r = current_pixel & {2{color[2]}};
-    assign g = current_pixel & {2{color[1]}};
-    assign b = current_pixel & {2{color[0]}};
+    wire [6:0] current_pixel = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
+    assign r = current_pixel[4+:2];
+    assign g = current_pixel[2+:2];
+    assign b = current_pixel[0+:2];
 
-    assign valid = (obma != 7'h40);
+    assign valid = current_pixel[6];
 
 
 
