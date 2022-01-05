@@ -127,9 +127,11 @@ module foreground_m #(
     wire [4:0] parsing_object_pmfa = `OBM_OBJECT_PMFA(parsing_object);
     wire parsing_object_hflip = `OBM_OBJECT_HFLIP(parsing_object);
     wire parsing_object_vflip = `OBM_OBJECT_VFLIP(parsing_object);
+    wire [8:0] parsing_object_x = `OBM_OBJECT_X(parsing_object);
+    wire [8:0] parsing_object_y = `OBM_OBJECT_Y(parsing_object);
     wire [2:0] parsing_object_color = `OBM_OBJECT_COLOR(parsing_object);
     wire [8:0] next_y = (current_y == MAX_Y) ? 0 : current_y+1;
-    wire [2:0] in_parsing_object_y = 3'(next_y - `OBM_OBJECT_Y(parsing_object));
+    wire [2:0] in_parsing_object_y = 3'(next_y - parsing_object_y);
     wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
     wire [15:0] parsing_object_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
 
@@ -176,22 +178,32 @@ module foreground_m #(
             this_is_next <= 0;
             if (
                 // if just before top scanline and the object is at the top
-                (`OBM_OBJECT_Y(parsing_object) == 0 && current_y == MAX_Y)
+                (parsing_object_y == 0 && current_y == MAX_Y)
                 || ( // or if Y overlaps the parsing object
                     (current_y < 239) &&
-                    ({1'b0,`OBM_OBJECT_Y(parsing_object)} <= (current_y+9'd1)) &&
-                    (({1'b0,`OBM_OBJECT_Y(parsing_object)}+9'd6) >= current_y)
+                    ({1'b0,parsing_object_y} <= (current_y+9'd1)) &&
+                    (({1'b0,parsing_object_y}+9'd6) >= current_y)
                 )
             ) begin
                 // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_line, $realtime);
-                for (integer unsigned i = 0; i < 8; i=i+1) begin
-                    // $display(" pixel: %b", get_object_pixel(i));
-                    if (get_object_pixel_pattern(i) != 2'b0) begin
-                        if (scanline_select)
-                            SCANLINE_0[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= {1'b1,get_object_pixel(i)};
-                        else
-                            SCANLINE_1[ {1'b0,`OBM_OBJECT_X(parsing_object)} + 9'(i) ] <= {1'b1,get_object_pixel(i)};
-                    end
+                if (scanline_select) begin
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h0 ] <= (get_object_pixel_pattern(0) != 2'b0) ? {1'b1,get_object_pixel(0)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h0 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h1 ] <= (get_object_pixel_pattern(1) != 2'b0) ? {1'b1,get_object_pixel(1)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h1 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h2 ] <= (get_object_pixel_pattern(2) != 2'b0) ? {1'b1,get_object_pixel(2)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h2 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h3 ] <= (get_object_pixel_pattern(3) != 2'b0) ? {1'b1,get_object_pixel(3)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h3 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h4 ] <= (get_object_pixel_pattern(4) != 2'b0) ? {1'b1,get_object_pixel(4)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h4 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h5 ] <= (get_object_pixel_pattern(5) != 2'b0) ? {1'b1,get_object_pixel(5)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h5 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h6 ] <= (get_object_pixel_pattern(6) != 2'b0) ? {1'b1,get_object_pixel(6)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h6 ];
+                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h7 ] <= (get_object_pixel_pattern(7) != 2'b0) ? {1'b1,get_object_pixel(7)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h7 ];
+                end else begin
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h0 ] <= (get_object_pixel_pattern(0) != 2'b0) ? {1'b1,get_object_pixel(0)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h0 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h1 ] <= (get_object_pixel_pattern(1) != 2'b0) ? {1'b1,get_object_pixel(1)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h1 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h2 ] <= (get_object_pixel_pattern(2) != 2'b0) ? {1'b1,get_object_pixel(2)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h2 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h3 ] <= (get_object_pixel_pattern(3) != 2'b0) ? {1'b1,get_object_pixel(3)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h3 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h4 ] <= (get_object_pixel_pattern(4) != 2'b0) ? {1'b1,get_object_pixel(4)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h4 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h5 ] <= (get_object_pixel_pattern(5) != 2'b0) ? {1'b1,get_object_pixel(5)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h5 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h6 ] <= (get_object_pixel_pattern(6) != 2'b0) ? {1'b1,get_object_pixel(6)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h6 ];
+                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h7 ] <= (get_object_pixel_pattern(7) != 2'b0) ? {1'b1,get_object_pixel(7)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h7 ];
                 end
             end
 
