@@ -171,11 +171,18 @@ write_data = 8'b0;
 @(posedge clk_1);
 // pmfa
 cpu_address = 16'h4812;
-write_data = 8'b1000000;
+write_data = 8'b1100000;
 @(posedge clk_1);
 // color
 cpu_address = 16'h4813;
 write_data = 8'b111;
+@(posedge clk_1);
+
+write_enable_B = 1;
+@(posedge clk_1);
+
+cpu_address = 16'h4810;
+@(posedge clk_1);
 
 @(negedge vsync);
 
