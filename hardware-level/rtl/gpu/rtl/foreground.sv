@@ -100,13 +100,14 @@ module foreground_m #(
     reg scanline_select;
     initial scanline_select = 0;
 
-    reg [6:0]   SCANLINE_0  [256+8-1:0];
-    reg [6:0]   SCANLINE_1  [256+8-1:0];
+    reg [4:0] SCANLINE_0 [256+8-1:0];
+    reg [4:0] SCANLINE_1 [256+8-1:0];
+    // pprgb
 
     `ifdef SIM
     generate for ( genvar i = 0; i < 256; i=i+1 ) begin : scanline_x
-        wire [6:0] this_obma = scanline_select ? SCANLINE_1[i] : SCANLINE_0[i];
-        wire [6:0] next_obma = scanline_select ? SCANLINE_0[i] : SCANLINE_1[i];
+        wire [4:0] this_pixel = scanline_select ? SCANLINE_1[i] : SCANLINE_0[i];
+        wire [4:0] next_pixel = scanline_select ? SCANLINE_0[i] : SCANLINE_1[i];
     end endgenerate
     `endif
 
@@ -133,44 +134,35 @@ module foreground_m #(
     wire [8:0] next_y = (current_y == MAX_Y) ? 0 : current_y+1;
     wire [2:0] in_parsing_object_y = 3'(next_y - parsing_object_y);
     wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
-    wire [15:0] parsing_object_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
+    wire [15:0] parsing_object_unflipped_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
+    wire [15:0] parsing_object_line;
+    generate for ( genvar i = 0; i < 8; i=i+1 ) begin
+        assign parsing_object_line[{3'(i),1'b0}+:2] = parsing_object_hflip ? parsing_object_unflipped_line[{3'h7-3'(i),1'b0}+:2] : parsing_object_unflipped_line[{3'(i),1'b0}+:2];
+    end endgenerate
 
-    function automatic [5:0] get_object_pixel (
-        input [2:0] in_parsing_object_x
-    );
-        reg [2:0] in_parsing_object_pattern_x = parsing_object_hflip ? in_parsing_object_x : (3'd7-in_parsing_object_x);
-        reg [1:0] pixel_pattern = parsing_object_line[2*4'(in_parsing_object_pattern_x)+:2]; // to do: add hflip
-        return {
-            {2{parsing_object_color[2]}} & pixel_pattern,
-            {2{parsing_object_color[1]}} & pixel_pattern,
-            {2{parsing_object_color[0]}} & pixel_pattern
-        };
-    endfunction
-
-    function automatic [1:0] get_object_pixel_pattern (
-        input [2:0] in_parsing_object_x
-    );
-        reg [2:0] in_parsing_object_pattern_x = parsing_object_hflip ? in_parsing_object_x : (3'd7-in_parsing_object_x);
-        return parsing_object_line[2*4'(in_parsing_object_pattern_x)+:2];
-    endfunction
+    reg [$clog2(LINE_REPEAT)-1:0] repeat_counter;
 
     // procedural block for writing to scanline memory
     always_ff @ ( posedge gpu_clk ) begin
+        // reset previous pixel if no more line repeats left
+        if (repeat_counter == 0) begin
+            if (scanline_select)
+                SCANLINE_1[current_x] <= 5'b0;
+            else
+                SCANLINE_0[current_x] <= 5'b0;
+        end else begin
+            if (scanline_select)
+                SCANLINE_1[current_x] <= SCANLINE_1[current_x];
+            else
+                SCANLINE_0[current_x] <= SCANLINE_0[current_x];
+        end
 
-        // if we need to swap the scanline arrays
+        // if scanline arrays need to be swapped
         if (transfer_next_to_this) begin
             // make next scanline this scanline
             scanline_select <= ~scanline_select;
             // wait until hsync before transferring again
             this_is_next <= 1;
-            // reset next scanline
-            for ( integer i = 0; i < 256; i=i+1 ) begin
-                if (scanline_select)
-                    SCANLINE_1[i] <= 7'b0;
-                else
-                    SCANLINE_0[i] <= 7'b0;
-            end
-
         end
         // for current_x=[0 ... NUM_OBJECTS-1], parsing_object = current_x
         else if ( current_x < NUM_OBJECTS ) begin
@@ -186,24 +178,19 @@ module foreground_m #(
                 )
             ) begin
                 // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_line, $realtime);
-                if (scanline_select) begin
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h0 ] <= (get_object_pixel_pattern(0) != 2'b0) ? {1'b1,get_object_pixel(0)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h0 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h1 ] <= (get_object_pixel_pattern(1) != 2'b0) ? {1'b1,get_object_pixel(1)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h1 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h2 ] <= (get_object_pixel_pattern(2) != 2'b0) ? {1'b1,get_object_pixel(2)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h2 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h3 ] <= (get_object_pixel_pattern(3) != 2'b0) ? {1'b1,get_object_pixel(3)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h3 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h4 ] <= (get_object_pixel_pattern(4) != 2'b0) ? {1'b1,get_object_pixel(4)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h4 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h5 ] <= (get_object_pixel_pattern(5) != 2'b0) ? {1'b1,get_object_pixel(5)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h5 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h6 ] <= (get_object_pixel_pattern(6) != 2'b0) ? {1'b1,get_object_pixel(6)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h6 ];
-                    SCANLINE_0[ {1'b0,parsing_object_x} + 9'h7 ] <= (get_object_pixel_pattern(7) != 2'b0) ? {1'b1,get_object_pixel(7)} : SCANLINE_0[ {1'b0,parsing_object_x} + 9'h7 ];
-                end else begin
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h0 ] <= (get_object_pixel_pattern(0) != 2'b0) ? {1'b1,get_object_pixel(0)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h0 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h1 ] <= (get_object_pixel_pattern(1) != 2'b0) ? {1'b1,get_object_pixel(1)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h1 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h2 ] <= (get_object_pixel_pattern(2) != 2'b0) ? {1'b1,get_object_pixel(2)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h2 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h3 ] <= (get_object_pixel_pattern(3) != 2'b0) ? {1'b1,get_object_pixel(3)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h3 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h4 ] <= (get_object_pixel_pattern(4) != 2'b0) ? {1'b1,get_object_pixel(4)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h4 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h5 ] <= (get_object_pixel_pattern(5) != 2'b0) ? {1'b1,get_object_pixel(5)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h5 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h6 ] <= (get_object_pixel_pattern(6) != 2'b0) ? {1'b1,get_object_pixel(6)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h6 ];
-                    SCANLINE_1[ {1'b0,parsing_object_x} + 9'h7 ] <= (get_object_pixel_pattern(7) != 2'b0) ? {1'b1,get_object_pixel(7)} : SCANLINE_1[ {1'b0,parsing_object_x} + 9'h7 ];
+                for (integer unsigned i = 0; i < 8; i=i+1) begin
+                    // $display(" pixel: %b", get_object_pixel(i));
+                    if (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) begin
+                        if (scanline_select)
+                            SCANLINE_0[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
+                        else
+                            SCANLINE_1[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
+                    end else begin
+                        if (scanline_select)
+                            SCANLINE_0[ parsing_object_x + 9'(i) ] <= SCANLINE_0[ parsing_object_x + 9'(i) ];
+                        else
+                            SCANLINE_1[ parsing_object_x + 9'(i) ] <= SCANLINE_1[ parsing_object_x + 9'(i) ];
+                    end
                 end
             end
 
@@ -221,7 +208,6 @@ module foreground_m #(
         end else begin
             // make a counter with period LINE_REPEAT
             // when counter == 0, transfer_next_to_this <= 1
-            reg [$clog2(LINE_REPEAT)-1:0] repeat_counter;
             reg incremented_repeat_counter = 0;
             initial begin
                 repeat_counter = 0;
@@ -253,12 +239,12 @@ module foreground_m #(
     // given calculated scanline, find the current pixel value
 
     // colors of current pixel
-    wire [6:0] current_pixel = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
-    assign r = current_pixel[4+:2];
-    assign g = current_pixel[2+:2];
-    assign b = current_pixel[0+:2];
+    wire [4:0] current_pixel = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
+    assign r = current_pixel[4:3] & {2{current_pixel[2]}};
+    assign g = current_pixel[4:3] & {2{current_pixel[1]}};
+    assign b = current_pixel[4:3] & {2{current_pixel[0]}};
 
-    assign valid = current_pixel[6];
+    assign valid = (current_pixel[4:3] != 2'b0);
 
 
 

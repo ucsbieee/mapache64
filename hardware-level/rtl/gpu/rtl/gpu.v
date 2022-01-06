@@ -43,8 +43,11 @@ module gpu_m #(
     output reg                      vblank_irq
 );
 
-    // VBLANK IRQ
+    // for vblank irw
     wire writable;
+
+    // data out
+    wire [7:0] text_data_out, foreground_data_out, background_data_out;
     assign data_out =
         (SELECT_in_vblank)          ? {7'b0,writable}       :
         (SELECT_txbl)               ? text_data_out         :
@@ -52,16 +55,15 @@ module gpu_m #(
         (SELECT_pmb||SELECT_ntbl)   ? background_data_out   :
         {8{1'bz}};
 
+    // for vblank irw
     reg writable_prev;
     initial writable_prev = 0;
 
     always @ ( posedge gpu_clk ) begin
-
         if ( write_enable && SELECT_clr_vblank_irq )
             vblank_irq <= 0;
         else if ( rst || (writable_prev != writable) )
             vblank_irq <= 1;
-
         writable_prev <= writable;
     end
 
@@ -97,7 +99,6 @@ module gpu_m #(
     assign controller_start_fetch = ( hcounter < 10'h20 ) && ( vcounter == 10'b0 );
 
     wire vram_write_enable = write_enable; // should be anding with "writable", but oh well!
-    wire [7:0] text_data_out, foreground_data_out, background_data_out;
 
     text_m text (
         gpu_clk, cpu_clk,
