@@ -48,8 +48,8 @@ module gpu_m #(
     assign data_out =
         (SELECT_in_vblank)          ? {7'b0,writable}       :
         (SELECT_txbl)               ? text_data_out         :
-        (SELECT_pmf||SELECT_obm)    ? background_data_out   :
-        (SELECT_pmb||SELECT_ntbl)   ? foreground_data_out   :
+        (SELECT_pmf||SELECT_obm)    ? foreground_data_out   :
+        (SELECT_pmb||SELECT_ntbl)   ? background_data_out   :
         {8{1'bz}};
 
     reg writable_prev;
