@@ -18,7 +18,7 @@ DUMP_DIR = dump
 
 .PHONY: all dump run verify clean
 
-MACHINE = arcade
+MACHINE = mapache64
 
 # Instruct that compilation and assembly should be done using cc65/ca65 and
 # specify some required flags (https://cc65.github.io/doc/customizing.html#toc9)
@@ -112,7 +112,7 @@ ${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN} ${HEADERS}
 	    ${ASM_BIN} \
 	    ${CXX_BIN} \
 	    ${LIB_FILES} \
-	    backend/arcade.lib \
+	    backend/${MACHINE}.lib \
 	    -o build/.temp_memory/${MACHINE}
 	mv build/.temp_memory $@
 

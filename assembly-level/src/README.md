@@ -1,5 +1,5 @@
 
-# Arcade Software
+# Mapache64 Software Development
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ To build one, cd into `demos` and run `make DEMO=${INSERT_DESIRED_DEMO_DIRECTORY
 4. Test your code:
    1. Install ucsbieee/py65mon from <https://github.com/ucsbieee/py65>.
    2. Run `make run` to simulate in ucsbieee/py65. Simulaton will stop once `stp` instruction is read.
-   3. Open `dump/vram.bin` in [the VRAM dump viewer](https://arcade.ucsbieee.org/tools/vram-dump-viewer) to see what was rendered to the screen while `stp` was read.
+   3. Open `dump/vram.bin` in [the VRAM dump viewer](https://mapache64.ucsbieee.org/tools/vram-dump-viewer) to see what was rendered to the screen while `stp` was read.
 5. Flash your code:
    1. Install DavidGriffith/minipro from <https://gitlab.com/DavidGriffith/minipro>.
    2. Run `make dump` to generate the `rom.bin` file.

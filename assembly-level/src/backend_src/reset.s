@@ -2,7 +2,7 @@
 .CODE
 
 .include  "zeropage.inc"
-.import __RAM_START__, __RAM_SIZE__     ; Import from arcade.cfg symbols
+.import __RAM_START__, __RAM_SIZE__     ; Import from mapache64.cfg symbols
 .import zerobss, copydata
 
 .import _reset

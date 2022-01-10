@@ -1,5 +1,5 @@
 CAPI=2:
-name: ucsbieee:arcade:timing:1.0.0
+name: ucsbieee:mapache64:timing:1.0.0
 description: Timescale and clock frequencies
 
 filesets : {f : {files: [timing.v : {file_type : verilogSource}]}}

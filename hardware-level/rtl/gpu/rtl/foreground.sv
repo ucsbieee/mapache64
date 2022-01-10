@@ -38,13 +38,13 @@ module foreground_m #(
 
     localparam MAX_Y = $rtoi($ceil((1.0 * NUM_ROWS)/LINE_REPEAT));
 
-    // Pattern Memory Foreground    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
+    // Pattern Memory Foreground    https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory
     reg [7:0]   PMF     [ 511:0];
 
     `define PMF_LINE(PMFA,PATTERN_Y)            { PMF[ {$unsigned(5'(PMFA)), $unsigned(3'(PATTERN_Y)), 1'b0} ], PMF[ {$unsigned(5'(PMFA)), $unsigned(3'(PATTERN_Y)), 1'b1} ] }
     // -------------------------
 
-    // Object Memory                https://arcade.ucsbieee.org/guides/gpu/#Object-Memory
+    // Object Memory                https://mapache64.ucsbieee.org/guides/gpu/#Object-Memory
     reg [7:0]   OBM     [ 255:0];
 
     `define OBM_OBJECT(OBMA)                    { OBM[ {$unsigned(6'(OBMA)), 2'd0} ], OBM[ {$unsigned(6'(OBMA)), 2'd1} ], OBM[ {$unsigned(6'(OBMA)), 2'd2} ], OBM[ {$unsigned(6'(OBMA)), 2'd3} ] }

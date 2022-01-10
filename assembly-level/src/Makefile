@@ -17,7 +17,7 @@ BIN_PREFIX =
 CXX_SRC = vram.c Q9_6.c
 CXX_BIN = $(addprefix ${BUILD_DIR}/o/${BIN_PREFIX},$(CXX_SRC:.c=.o))
 
-ASM_SRC = crt0.s vectors.s io.s fw_headers.s stop.s arcade_zero_page.s reset.s verify_firmware.s
+ASM_SRC = crt0.s vectors.s io.s fw_headers.s stop.s mapache64_zero_page.s reset.s verify_firmware.s
 ASM_BIN = $(addprefix ${BUILD_DIR}/o/${BIN_PREFIX},$(ASM_SRC:.s=.o))
 
 # List of files in the for_template directory
@@ -28,7 +28,7 @@ FOR_TEMPLATE_FILES_OUT = $(subst for_template/, template/, $(FOR_TEMPLATE_FILES_
 SUPERVISION_LIB = /usr/share/cc65/lib/supervision.lib
 
 # Previx name for all flashable binary files
-MACHINE = arcade
+MACHINE = mapache64
 
 .PHONY: all template clean
 
@@ -50,15 +50,15 @@ template/backend/lib/: ${CXX_BIN} ${ASM_BIN}
 	@mkdir -p template
 	cp -r ${BUILD_DIR}/o/ $@
 
-template/backend/arcade.lib: ${BUILD_DIR}/arcade.lib
+template/backend/${MACHINE}.lib: ${BUILD_DIR}/${MACHINE}.lib
 	@mkdir -p template
-	cp -r ${BUILD_DIR}/arcade.lib $@
+	cp -r ${BUILD_DIR}/${MACHINE}.lib $@
 
-template/backend/arcade.cfg: arcade.cfg
+template/backend/${MACHINE}.cfg: ${MACHINE}.cfg
 	@mkdir -p template
-	cp -r arcade.cfg $@
+	cp -r ${MACHINE}.cfg $@
 
-template/backend/firmware.bin: ${FOR_TEMPLATE_FILES_OUT} template/backend/headers/ template/backend/lib/ template/backend/arcade.lib template/backend/arcade.cfg
+template/backend/firmware.bin: ${FOR_TEMPLATE_FILES_OUT} template/backend/headers/ template/backend/lib/ template/backend/${MACHINE}.lib template/backend/${MACHINE}.cfg
 # TO DO: Fix template/Makefile clock skew
 	@sleep 1
 	make -C template/ dump &&\
@@ -66,8 +66,8 @@ template/backend/firmware.bin: ${FOR_TEMPLATE_FILES_OUT} template/backend/header
 	make -C template/ clean
 
 
-# Create the arcade machine libraries
-${BUILD_DIR}/arcade.lib:
+# Create the ${MACHINE} machine libraries
+${BUILD_DIR}/${MACHINE}.lib:
 	@mkdir -p ${BUILD_DIR}
 	cp ${SUPERVISION_LIB} $@
 

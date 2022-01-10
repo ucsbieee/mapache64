@@ -9,7 +9,7 @@ IN_EXTEN	= asm
 OUT_EXTEN	= bin
 
 # Target
-MAIN		= arcade
+MAIN		= mapache64
 
 # VASM Config
 VASM_PATH	= ../tools/assembler/vasm6502
@@ -38,20 +38,20 @@ DUMP_PATH	= dump
 
 # === Targets === #
 
-all: clean prep arcade dump
+all: clean prep ${MAIN} dump
 
 prep:
 	chmod +x ${VASM}
 	chmod +x dump.sh
 
-arcade:
+${MAIN}:
 	mkdir -p ${DUMP_PATH}
 	${VASM} ${VASM_FLAGS} -L ${DUMP_PATH}/listing.lst -o ${DUMP_PATH}/${MAIN}.${OUT_EXTEN} ${MAIN}.${IN_EXTEN}
 
-dump: arcade
+dump: ${MAIN}
 	./dump.sh dump
 
-run: arcade
+run: ${MAIN}
 	./dump.sh run
 
 clean:

@@ -3,7 +3,7 @@
 
 #include "Q9_6.h"
 
-// https://github.com/ucsbieee/arcade/blob/main/assembly-level/src/firmware/subroutines/Q9_6.asm
+// https://github.com/ucsbieee/mapache64/blob/main/assembly-level/src/firmware/subroutines/Q9_6.asm
 
 Q9_6 sint8_to_Q9_6(sint8_t num) {
     // TODO

@@ -1,2 +1,2 @@
 
-        .byte "UCSB IEEE Arcade Machine 2021: firmware version: 0.4.0", 0
+        .byte "UCSB IEEE Mapache 64 2021-22: firmware version: 0.4.0", 0
