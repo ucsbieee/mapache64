@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>UCSB IEEE | Arcade Machine</title>
+    <title>UCSB IEEE | Mapache 64</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
@@ -21,7 +21,8 @@
 <body>
     <div id="__NAV__"></div>
     <header>
-        <h1>6502 Arcade Machine</h1>
+        <h1>Mapache 64</h1>
+        <h2>6502 Arcade Machine</h2>
         <img id="IEEE-Logo" src="/_media/UCSB-IEEE.png" alt="UCSB IEEE Logo">
     </header>
 
@@ -30,50 +31,26 @@
 
         <h1>Description</h1>
         <p>
-            UCSB IEEE is working on a large project where we build an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and FPGA(s).
+            UCSB IEEE is working on a large project titled &ldquo;Mapache 64&rdquo; where we are building an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and an FPGA implementing a custom GPU.
         </p>
 
         <h1>Current State</h1>
         <p>
-            The hardware prototype has been finished on breadboards. It works with both the <a href="https://digilent.com/reference/programmable-logic/nexys-a7/start" target="_blank" rel="noopener noreferrer">Nexys A7-100T</a> and <a href="https://digilent.com/reference/programmable-logic/cmod-a7/start" target="_blank" rel="noopener noreferrer">Cmod A7-35T</a> <a href="https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html" target="_blank" rel="noopener noreferrer">Artix-7</a> development boards. All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is writing the software.
+            The hardware prototype has been finished on breadboards. It works with the <a href="https://digilent.com/reference/programmable-logic/cmod-a7/start" target="_blank" rel="noopener noreferrer">Cmod A7-35T</a> <a href="https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html" target="_blank" rel="noopener noreferrer">Artix-7</a> development board. All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is writing the games creating a custom PCB.
         </p>
         <p>
-            For the software, we are currently trying to configure a custom <a href="https://cc65.github.io/" target="_blank" rel="noopener noreferrer">cc65</a> linker so that we can simply write the games in C instead of 6502 assembly. Check back for updates!
+            For the software, we have configured a custom <a href="https://cc65.github.io/" target="_blank" rel="noopener noreferrer">cc65</a> linker so that we can simply write the games in C instead of 6502 assembly.
         </p>
         <div class="center-text">
             <img src="/_media/physical/picture.jpg" alt="picture">
-            The arcade machine plugged into a monitor.
+            Video screen
         </div>
         <br>
         <div class="center-text">
             <img src="/_media/physical/cmod.jpg" alt="cmod">
             The breadboard circuit with a Cmod A7.
         </div>
-        <br>
-        <div class="center-text">
-            <img src="/_media/physical/nexys_a7.jpg" alt="nexys_a7">
-            The breadboard circuit with a Nexys A7.
-        </div>
 
-        <h1>How to Contribute</h1>
-        <div class="clickable external-link center"><a href="https://github.com/ucsbieee/arcade" target="_blank" rel="noopener noreferrer">
-            GitHub Repository
-        </a></div>
-
-        <p>
-            To contribute, just follow this guide: <a href="guides/github/">GitHub Guide</a>.
-        </p>
-        <div>
-            Issue lists:
-        </div>
-        <ul>
-            <li class="clickable external-link"><a href="https://github.com/ucsbieee/arcade/issues" target="_blank" rel="noopener noreferrer">
-                Arcade Machine Issue List
-            </a></li>
-            <li class="clickable external-link"><a href="https://github.com/ucsbieee/arcade-pong/issues" target="_blank" rel="noopener noreferrer">
-                Pong Issue List
-            </a></li>
-        </ul>
 
         <h1>More</h1>
         <ul>
