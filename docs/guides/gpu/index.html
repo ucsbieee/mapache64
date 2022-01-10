@@ -167,8 +167,8 @@
         <p>
             There are 128 characters in the font. Each character can be accessed by using the lower 7 bits of the character data in the TXBL. The font uses ASCII for all printable characters.
         </p>
-        <a href="https://github.com/ucsbieee/arcade/blob/main/txbl_font/font.png" target="_blank" rel="noopener noreferrer">
-            <img class="center" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/txbl_font/font.png" alt="PMC Font">
+        <a href="https://github.com/ucsbieee/mapache64/blob/main/txbl_font/font.png" target="_blank" rel="noopener noreferrer">
+            <img class="center" src="https://raw.githubusercontent.com/ucsbieee/mapache64/main/txbl_font/font.png" alt="PMC Font">
         </a>
         <p>
             If the character data's color select is 0, the character is printed black.
@@ -201,10 +201,10 @@
         <p>
             <strong>The CPU must only touch the VRAM while inside the <code>fill_vram</code> subroutine.</strong> This ensures that the CPU and the GPU are not trying to access the VRAM at the same time. Every time the GPU needs to use the VRAM, it sends an interrupt to the CPU. If the CPU is in <code>fill_vram</code>, it will pause. Once the GPU no longer needs the VRAM, it will send another interrupt to the CPU so that the CPU knows when to continue. Observe this code:
         </p>
-        <div class="clickable external-link center"><a href="https://raw.githubusercontent.com/ucsbieee/arcade/main/assembly-level/src/backend_src/crt0.s" target="_blank" rel="noopener noreferrer">
+        <div class="clickable external-link center"><a href="https://raw.githubusercontent.com/ucsbieee/mapache64/main/assembly-level/src/backend_src/crt0.s" target="_blank" rel="noopener noreferrer">
             interrupts.s
         </a></div>
-        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/arcade/main/assembly-level/src/backend_src/crt0.s"></textarea>
+        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/mapache64/main/assembly-level/src/backend_src/crt0.s"></textarea>
 
 
     </div>

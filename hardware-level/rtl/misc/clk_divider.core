@@ -1,5 +1,5 @@
 CAPI=2:
-name: ucsbieee:arcade:clk_divider:1.0.0
+name: ucsbieee:mapache64:clk_divider:1.0.0
 description: Create clock divider
 
 filesets : {f : {files: [clk_divider.v : {file_type : verilogSource}]}}

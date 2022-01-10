@@ -27,7 +27,7 @@ Please install it from ${ASSEMBLY_SRC_DIR}/tools/py65/py65ucsbieee.";
 cd `dirname "${BASH_SOURCE[0]}"`
 
 # Dump Vectors
-${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin <<EOF
+${PY65} --mpu 65C02 --load ${DUMP_PATH}/mapache64.bin <<EOF
 save ${DUMP_PATH}/rom.bin       8000 ffff
 save ${DUMP_PATH}/firmware.bin  5000 6fff
 save ${DUMP_PATH}/vectors.bin   fffa ffff
@@ -48,7 +48,7 @@ echo "reset : ${reset}"
 echo "irq   : ${irq}"
 
 # Run py65mon
-${PY65} --mpu 65C02 --load ${DUMP_PATH}/arcade.bin --goto ${reset} <<EOF
+${PY65} --mpu 65C02 --load ${DUMP_PATH}/mapache64.bin --goto ${reset} <<EOF
 save ${DUMP_PATH}/zero.bin      0000 00ff
 save ${DUMP_PATH}/vram.bin      4000 4fff
 save ${DUMP_PATH}/ram.bin       0000 3fff

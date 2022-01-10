@@ -35,13 +35,13 @@ module background_m (
     wire [2:0] in_tile_y    = current_y[2:0];
 
 
-    // Pattern Memory Background    https://arcade.ucsbieee.org/guides/gpu/#Pattern-Memory
+    // Pattern Memory Background    https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory
     reg [7:0]   PMB     [ 511:0];
 
     `define PMB_LINE(PMBA,PATTERN_Y)            { PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b0} ], PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b1} ] }
     // -------------------------
 
-    // Nametable                    https://arcade.ucsbieee.org/guides/gpu/#Nametable
+    // Nametable                    https://mapache64.ucsbieee.org/guides/gpu/#Nametable
     reg [7:0]   NTBL    [1023:0];
 
     `define NTBL_COLORS                         NTBL[960]

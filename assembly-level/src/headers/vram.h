@@ -1,7 +1,7 @@
 
 // Declare all types and variables associated with modifying VRAM
 
-// For more details, see: https://arcade.ucsbieee.org/guides/gpu/
+// For more details, see: https://mapache64.ucsbieee.org/guides/gpu/
 #ifndef __VRAM_H
 #define __VRAM_H
 

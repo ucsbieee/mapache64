@@ -1,6 +1,6 @@
 CAPI=2:
-name: ucsbieee:arcade:top:1.0.0
-description: Arcade FPGA, gpu + firmware + address bus
+name: ucsbieee:mapache64:top:1.0.0
+description: Mapache 64 gpu + firmware + address bus + misc
 
 filesets:
   # default
@@ -8,10 +8,10 @@ filesets:
     files:
       - rtl/top.sv:                               {file_type: systemVerilogSource}
     depend:
-      - ucsbieee:arcade:gpu
-      - ucsbieee:arcade:firmware
-      - ucsbieee:arcade:address_bus
-      - ucsbieee:arcade:controller_interface
+      - ucsbieee:mapache64:gpu
+      - ucsbieee:mapache64:firmware
+      - ucsbieee:mapache64:address_bus
+      - ucsbieee:mapache64:controller_interface
 
   # synth
   vivado:
@@ -23,8 +23,8 @@ filesets:
     files:
       - sim/top.tb.v:                             {file_type: verilogSource}
     depend:
-      - ucsbieee:arcade:timing
-      - ucsbieee:arcade:clk_divider
+      - ucsbieee:mapache64:timing
+      - ucsbieee:mapache64:clk_divider
 
   # hardware
   nexys_a7:
@@ -33,7 +33,7 @@ filesets:
       - synth/boards/nexys_a7/clk_mmcm_m.xci:     {file_type: xci}
       - synth/boards/nexys_a7/nexys_a7.xdc:       {file_type: xdc}
     depend:
-      - ucsbieee:arcade:clk_divider
+      - ucsbieee:mapache64:clk_divider
 
   cmod_a7:
     files:
@@ -43,7 +43,7 @@ filesets:
       - synth/boards/cmod_a7/clk_constraints.xdc: {file_type: xdc}
       - synth/boards/cmod_a7/flash.xdc:           {file_type: xdc}
     depend:
-      - ucsbieee:arcade:clk_divider
+      - ucsbieee:mapache64:clk_divider
 
   artix_7:
     files:
@@ -57,7 +57,7 @@ targets:
     filesets:
       - rtl
 
-  sim: # fusesoc run --target sim ucsbieee:arcade:top
+  sim: # fusesoc run --target sim ucsbieee:mapache64:top
     <<: *default
     description: Simulate the design
     toplevel: top_tb_m
@@ -72,7 +72,7 @@ targets:
           - -Wno-timescale
           - -DSIM=1
 
-  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:arcade:top
+  nexys_a7: # fusesoc run --target nexys_a7 ucsbieee:mapache64:top
     <<: *synth
     description: Synthesize on Nexys A7-100T
     toplevel: nexys_a7
@@ -85,7 +85,7 @@ targets:
       vivado:
         part: xc7a100tcsg324-1
 
-  cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:arcade:top
+  cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:mapache64:top
     <<: *synth
     description: Synthesize on Digilent Cmod A7-35T
     toplevel: cmod_a7

@@ -1,5 +1,5 @@
 CAPI=2:
-name: ucsbieee:arcade:firmware:1.0.0
+name: ucsbieee:mapache64:firmware:1.0.0
 description: ROM for firmware
 
 filesets:
@@ -20,7 +20,7 @@ targets:
     filesets:
       - rtl
 
-  sim: # fusesoc run --target sim ucsbieee:arcade:firmware
+  sim: # fusesoc run --target sim ucsbieee:mapache64:firmware
     <<: *default
     description: Simulate the design
     default_tool: icarus

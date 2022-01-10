@@ -3,11 +3,11 @@
 
 # Hardware RTL
 
-Repository: <https://github.com/ucsbieee/arcade/tree/main/hardware-level/rtl/>
+Repository: <https://github.com/ucsbieee/mapache64/tree/main/hardware-level/rtl/>
 
 ## About
 
-This is the RTL for the arcade machine. It consists of the following modules:
+This is the RTL for Mapache 64. It consists of the following modules:
 
 * Address Bus
   * Sets chip enable nets according to the current address value.
@@ -17,7 +17,7 @@ This is the RTL for the arcade machine. It consists of the following modules:
   * The firmware from the assebmly level is stored in RAM.
   * The 65c02 vectors are also stored here.
 * GPU
-  * Implementation of this description: [GPU](https://arcade.ucsbieee.org/guides/gpu/).
+  * Implementation of this description: [GPU](https://mapache64.ucsbieee.org/guides/gpu/).
   * Foreground module and background module.
 
 ## Required tools
