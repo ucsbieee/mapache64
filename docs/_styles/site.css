@@ -162,12 +162,14 @@ header {
     box-shadow: 0 -2rem 1rem 2rem #00000059;
 }
 
-header h1 {
+header * {
     text-align: center;
+    text-shadow: 0 0 .8em white;
+}
+
+header h1 {
     margin: 0;
     padding: 0;
-
-    text-shadow: 0 0 .8em white;
 }
 
 #__MAIN__ {
