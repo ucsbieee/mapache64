@@ -1,0 +1,14 @@
+
+# Define a list of all C and Assemnbly source files
+CXX_SRC = main.c patterns.c person.c
+ASM_SRC =
+
+# List of PNG images used for patterns
+IMAGES =
+
+
+# Where the intermediate-stage Assembly/object files will be saved
+BUILD_DIR = build
+
+# Where the created binaries are stored
+DUMP_DIR = dump

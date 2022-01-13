@@ -1,5 +1,5 @@
 
-// ==================== game.c ==================== //
+// ==================== main.c ==================== //
 // Follow this file template to implement your game //
 // ================================================ //
 
@@ -18,8 +18,11 @@
 #include <screen.h>
 
 
+// run once on startup
 void reset(void) { }
 
+// run 60 times a second
 void do_logic(void) { }
 
+// run after do_logic and once gpu is idle
 void fill_vram(void) { }
