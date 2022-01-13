@@ -1,7 +1,9 @@
 
 # Define a list of all C and Assemnbly source files
-CXX_SRC = game.c
+CXX_SRC = main.c
 ASM_SRC =
+HEADERS =
+
 
 # List of PNG images used for patterns
 IMAGES =
@@ -84,15 +86,13 @@ verify: ${DUMP_DIR}/firmware.bin
 	@diff .firmware_hd_temp/vanilla.hex .firmware_hd_temp/curr.hex && echo "SUCCESS: Firmware matches"
 	@rm -rf .firmware_hd_temp
 
-
 # Run the simulator
 run ${RUN_FILES}: ${OUTPUT} ${DUMP_DIR}/vectors.bin
 	@mkdir -p ${DUMP_DIR}
 	@sh backend/run.sh ${OUTPUT} ${DUMP_DIR}/vectors.bin ${DUMP_DIR}
 
 
-# Hack together the three binaries output by ld65 into one unified memory map
-# understandable by the py65 simulator
+# Combine the three binaries output by ld65 into one unified memory map for py65
 ${OUTPUT}: ${MEMORY_DIR}/
 	@mkdir -p ${DUMP_DIR}
 	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;5000"|bc) status=none
@@ -105,7 +105,7 @@ ${OUTPUT}: ${MEMORY_DIR}/
 	@echo "Created $@"
 
 # Build the three different binaries (ROM, FPGA ROM, IO area)
-${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN} ${HEADERS}
+${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN}
 	@rm -rf $@
 	@mkdir -p build/.temp_memory
 	ld65 -C backend/${MACHINE}.cfg -m ${BUILD_DIR}/build.map \
@@ -118,7 +118,7 @@ ${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN} ${HEADERS}
 
 
 # Override the default/implicit *.c compilation rule to use the cc65/ca65 syntax
-${BUILD_DIR}/%.c.o: %.c
+${BUILD_DIR}/%.c.o: %.c ${HEADERS}
 	@mkdir -p $(dir $@)
 	$(CC) -Oi -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(^:.c=.c.s)
 	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(^:.c=.c.s) -o $@
