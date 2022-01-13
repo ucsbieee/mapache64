@@ -29,7 +29,7 @@ AS = ca65
 ASFLAGS = --cpu 65c02
 
 CC = cc65
-CFLAGS = --cpu 65c02 -t none -O
+CFLAGS = --cpu 65c02 -t none -Oi
 
 PYTHON = python3
 
@@ -120,8 +120,8 @@ ${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN}
 # Override the default/implicit *.c compilation rule to use the cc65/ca65 syntax
 ${BUILD_DIR}/%.c.o: %.c ${HEADERS}
 	@mkdir -p $(dir $@)
-	$(CC) -Oi -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(^:.c=.c.s)
-	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(^:.c=.c.s) -o $@
+	$(CC) -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(<:.c=.c.s)
+	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(<:.c=.c.s) -o $@
 
 # Override the default/implicit *.s assembly rule to use the ca65 syntax
 ${BUILD_DIR}/%.s.o: %.s ${RESOURCES}
