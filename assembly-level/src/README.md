@@ -13,18 +13,24 @@ To build one, cd into `demos` and run `make DEMO=${INSERT_DESIRED_DEMO_DIRECTORY
 
 ## Creating a Game
 
-1. Copy `template` to your desired location and cd into it.
-2. Edit `game_header.txt`, `game.c`, and the top section of the `Makefile`.
-3. Run `make verify` to ensure that your code compiles and does not break the firmware.
-4. Test your code:
+1. Install [cc65](https://cc65.github.io/).
+2. Copy `template` to your desired location and cd into it.
+3. Create your game; (do not modify anything inside `backend/`).
+4. Run `make verify` to ensure that your code compiles and does not break the firmware.
+5. Test your code:
    1. Install ucsbieee/py65mon from <https://github.com/ucsbieee/py65>.
    2. Run `make run` to simulate in ucsbieee/py65. Simulaton will stop once `stp` instruction is read.
    3. Open `dump/vram.bin` in [the VRAM dump viewer](https://mapache64.ucsbieee.org/tools/vram-dump-viewer) to see what was rendered to the screen while `stp` was read.
-5. Flash your code:
-   1. Install DavidGriffith/minipro from <https://gitlab.com/DavidGriffith/minipro>.
-   2. Run `make dump` to generate the `rom.bin` file.
-   3. Connect the [TL866II Plus Programmer](http://www.xgecu.com/en/TL866_main.html) and insert the AT28C256 EEPROM.
-   4. Run `minipro -p AT28C256 -w dump/rom.bin`.
+6. Flash your code:
+   1. Run `make dump/rom.bin`.
+   2. Connect the [TL866II Plus Programmer](http://www.xgecu.com/en/TL866_main.html) and insert an AT28C256 EEPROM.
+   3. Program the AT28C256 EEPROM.
+      * UNIX:
+         1. Install [DavidGriffith/minipro](https://gitlab.com/DavidGriffith/minipro).
+         2. Run `minipro -p AT28C256 -w dump/rom.bin`.
+      * Windows:
+         1. Install [XGecu Pro](http://www.xgecu.com/en/download.html)
+         2. Load dump/rom.bin and run Program.
 
 ## Required Tools
 
