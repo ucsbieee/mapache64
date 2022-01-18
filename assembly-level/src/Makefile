@@ -24,8 +24,11 @@ ASM_BIN = $(addprefix ${BUILD_DIR}/o/${BIN_PREFIX},$(ASM_SRC:.s=.o))
 FOR_TEMPLATE_FILES_IN = $(shell find for_template -type f)
 FOR_TEMPLATE_FILES_OUT = $(subst for_template/, template/, $(FOR_TEMPLATE_FILES_IN))
 
-# Path to a template cc65 linker library
-SUPERVISION_LIB = /usr/share/cc65/lib/supervision.lib
+# Path to cc65 installation directory (change as needed)
+CC65_INSTALL = /usr/share/cc65
+
+# Path to ld65 template library
+SUPERVISION_LIB = ${CC65_INSTALL}/lib/supervision.lib
 
 # Previx name for all flashable binary files
 MACHINE = mapache64
