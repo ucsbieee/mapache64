@@ -1,0 +1,13 @@
+
+# EOL
+*       text=auto
+
+*.png   binary
+
+*.bin   binary
+*.o     binary
+*.lib   binary
+*.sh    text eol=lf
+
+# Language Corrections
+*.h     linguist-language=C
