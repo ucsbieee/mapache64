@@ -62,15 +62,15 @@ images: ${RESOURCES}
 
 # Split the unified memory map into constituent memory sections
 ${DUMP_DIR}/firmware.bin: ${OUTPUT}
-	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;5000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;2000"|bc) count=1 status=none > $@
+	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;5000"|bc) skip=1 2> /dev/null | dd bs=$(shell echo "ibase=16;2000"|bc) count=1 2> /dev/null > $@
 	@echo "Created $@"
 
 ${DUMP_DIR}/rom.bin: ${OUTPUT}
-	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;8000"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;8000"|bc) count=1 status=none > $@
+	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;8000"|bc) skip=1 2> /dev/null | dd bs=$(shell echo "ibase=16;8000"|bc) count=1 2> /dev/null > $@
 	@echo "Created $@"
 
 ${DUMP_DIR}/vectors.bin: ${OUTPUT}
-	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;FFFA"|bc) skip=1 status=none | dd bs=$(shell echo "ibase=16;6"|bc) count=1 status=none > $@
+	@dd if=${OUTPUT} bs=$(shell echo "ibase=16;FFFA"|bc) skip=1 2> /dev/null | dd bs=$(shell echo "ibase=16;6"|bc) count=1 2> /dev/null > $@
 	@echo "Created $@"
 
 ${RESOURCE_DIR}/%.pat: %.png
@@ -89,19 +89,20 @@ verify: ${DUMP_DIR}/firmware.bin
 # Run the simulator
 run ${RUN_FILES}: ${OUTPUT} ${DUMP_DIR}/vectors.bin
 	@mkdir -p ${DUMP_DIR}
-	@sh backend/run.sh ${OUTPUT} ${DUMP_DIR}/vectors.bin ${DUMP_DIR}
+	@dos2unix backend/run.sh >/dev/null 2>&1
+	./backend/run.sh ${OUTPUT} ${DUMP_DIR}/vectors.bin ${DUMP_DIR}
 
 
 # Combine the three binaries output by ld65 into one unified memory map for py65
 ${OUTPUT}: ${MEMORY_DIR}/
 	@mkdir -p ${DUMP_DIR}
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;5000"|bc) status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;5000"|bc) 2> /dev/null
 	@cat ${MEMORY_DIR}/${MACHINE}_fw.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;7000"|bc) status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;7000"|bc) 2> /dev/null
 	@cat ${MEMORY_DIR}/${MACHINE}_io.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;8000"|bc) status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;8000"|bc) 2> /dev/null
 	@cat ${MEMORY_DIR}/${MACHINE}_rom.bin >> $@
-	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;10000"|bc) status=none
+	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;10000"|bc) 2> /dev/null
 	@echo "Created $@"
 
 # Build the three different binaries (ROM, FPGA ROM, IO area)
