@@ -54,8 +54,8 @@ module background_m (
     `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
     // -------------------------
 
-    wire [11:0] pmb_address = vram_address - 12'h200;
-    wire [11:0] ntbl_address = vram_address - 12'h400;
+    wire [8:0] pmb_address = 9'(vram_address - 12'h200);
+    wire [9:0] ntbl_address = 10'(vram_address - 12'h400);
 
     // read from vram
     assign data_out =

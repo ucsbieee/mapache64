@@ -111,7 +111,7 @@ module top_m #(
 
 
 
-    wire [11:0] vram_address = ( cpu_address - 16'h4000 );
+    wire [11:0] vram_address = 12'( cpu_address - 16'h4000 );
     gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
         gpu_clk, cpu_clk, rst,
         r,g,b, hsync, vsync, controller_start_fetch,

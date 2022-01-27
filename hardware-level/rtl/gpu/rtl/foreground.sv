@@ -56,8 +56,8 @@ module foreground_m #(
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
-    wire [11:0] pmf_address = vram_address - 12'h000;
-    wire [11:0] obm_address = vram_address - 12'h800;
+    wire [8:0] pmf_address = 9'(vram_address - 12'h000);
+    wire [7:0] obm_address = 8'(vram_address - 12'h800);
 
     // read from vram
     assign data_out =
@@ -115,7 +115,7 @@ module foreground_m #(
 
 
     // index of the object that is currently being loaded to the scanline array
-    wire [6:0] parsing_object = ( current_x < NUM_OBJECTS ) ? ( (NUM_OBJECTS-1) - current_x ) : {7{1'bx}};
+    wire [6:0] parsing_object = ( current_x < 9'(NUM_OBJECTS) ) ? 7'( 9'(NUM_OBJECTS-1) - current_x ) : {7{1'bx}};
 
     // selected scanline is for the next line
     reg this_is_next;
@@ -128,10 +128,10 @@ module foreground_m #(
     wire [4:0] parsing_object_pmfa = `OBM_OBJECT_PMFA(parsing_object);
     wire parsing_object_hflip = `OBM_OBJECT_HFLIP(parsing_object);
     wire parsing_object_vflip = `OBM_OBJECT_VFLIP(parsing_object);
-    wire [8:0] parsing_object_x = `OBM_OBJECT_X(parsing_object);
-    wire [8:0] parsing_object_y = `OBM_OBJECT_Y(parsing_object);
+    wire [7:0] parsing_object_x = `OBM_OBJECT_X(parsing_object);
+    wire [7:0] parsing_object_y = `OBM_OBJECT_Y(parsing_object);
     wire [2:0] parsing_object_color = `OBM_OBJECT_COLOR(parsing_object);
-    wire [8:0] next_y = (current_y == MAX_Y) ? 0 : current_y+1;
+    wire [8:0] next_y = (current_y == 9'(MAX_Y)) ? 0 : current_y+1;
     wire [2:0] in_parsing_object_y = 3'(next_y - parsing_object_y);
     wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
     wire [15:0] parsing_object_unflipped_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
@@ -140,7 +140,8 @@ module foreground_m #(
         assign parsing_object_line[{3'(i),1'b0}+:2] = parsing_object_hflip ? parsing_object_unflipped_line[{3'h7-3'(i),1'b0}+:2] : parsing_object_unflipped_line[{3'(i),1'b0}+:2];
     end endgenerate
 
-    reg [$clog2(LINE_REPEAT)-1:0] repeat_counter;
+    typedef reg [$clog2(LINE_REPEAT)-1:0] repeat_counter_t;
+    repeat_counter_t repeat_counter;
 
     // procedural block for writing to scanline memory
     always_ff @ ( posedge gpu_clk ) begin
@@ -170,7 +171,7 @@ module foreground_m #(
             this_is_next <= 0;
             if (
                 // if just before top scanline and the object is at the top
-                (parsing_object_y == 0 && current_y == MAX_Y)
+                (parsing_object_y == 0 && current_y == 9'(MAX_Y))
                 || ( // or if Y overlaps the parsing object
                     (current_y < 239) &&
                     ({1'b0,parsing_object_y} <= (current_y+9'd1)) &&
@@ -211,7 +212,7 @@ module foreground_m #(
             reg incremented_repeat_counter = 0;
             initial begin
                 repeat_counter = 0;
-                incremented_repeat_counter = LINE_REPEAT-1;
+                incremented_repeat_counter = 0;
             end
             always_ff @ ( posedge gpu_clk ) begin
                 // increment counter
@@ -219,10 +220,10 @@ module foreground_m #(
                     incremented_repeat_counter <= 0;
                 end
                 else if ((!incremented_repeat_counter) && (hsync)) begin
-                    if (current_y == MAX_Y-1) begin
+                    if (current_y == 9'(MAX_Y-1)) begin
                         repeat_counter <= 0;
-                    end else if ((repeat_counter == 0) || (current_y == MAX_Y)) begin
-                        repeat_counter <= LINE_REPEAT-1;
+                    end else if ((repeat_counter == 0) || (current_y == 9'(MAX_Y))) begin
+                        repeat_counter <= repeat_counter_t'(LINE_REPEAT-1);
                     end else begin
                         repeat_counter <= repeat_counter-1;
                     end
