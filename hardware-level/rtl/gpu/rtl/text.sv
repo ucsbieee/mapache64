@@ -51,7 +51,7 @@ module text_m (
     `define PMC_VALID(PMCA,PATTERN_X,PATTERN_Y) PMC[ {$unsigned(7'(PMCA)), $unsigned(3'(PATTERN_Y))} ][3'h7-$unsigned(3'(PATTERN_X))]
     // -------------------------
 
-    wire [11:0] txbl_address = vram_address - 12'h900;
+    wire [9:0] txbl_address = 10'(vram_address - 12'h900);
 
     // read from vram
     assign data_out =

@@ -97,3 +97,11 @@ targets:
     tools:
       vivado:
         part: xc7a35tcpg236-1
+
+  lint: # fusesoc run --target lint ucsbieee:mapache64:top
+    <<: *default
+    toplevel: top_m
+    default_tool: verilator
+    tools:
+      verilator:
+        mode: lint-only
