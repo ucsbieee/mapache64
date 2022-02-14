@@ -69,6 +69,7 @@ module gpu_m #(
 
 
     wire [8:0] current_x, current_y;
+    wire [8:0] next_x, next_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
 
@@ -87,6 +88,8 @@ module gpu_m #(
 
     assign current_x = hcounter[8:0] - 9'd32;
     assign current_y = vcounter[9:1];
+    assign next_x = (current_x == 511) ? (0) : (current_x+1);
+    assign next_y = (current_y == 262) ? (0) : (current_y+1);
 
     video_timing_m video_timing (
         gpu_clk, rst,
@@ -113,7 +116,9 @@ module gpu_m #(
         .NUM_ROWS(523)
     ) foreground (
         gpu_clk, cpu_clk, rst,
-        current_x, current_y, hsync,
+        current_x, current_y,
+        next_x, next_y,
+        hsync,
         foreground_r, foreground_g, foreground_b,
         foreground_valid,
         data_in, foreground_data_out, vram_address, vram_write_enable,
@@ -123,6 +128,7 @@ module gpu_m #(
     background_m background (
         gpu_clk, cpu_clk, rst,
         current_x[7:0], current_y[7:0],
+        next_x, next_y,
         background_r, background_g, background_b,
         data_in, background_data_out, vram_address, vram_write_enable,
         SELECT_pmb, SELECT_ntbl

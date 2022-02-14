@@ -22,6 +22,7 @@ module foreground_m #(
 
     // video timing input
     input                     [8:0] current_x, current_y,
+    input                     [8:0] next_x, next_y,
     input                           hsync,
 
     // video output
@@ -131,7 +132,6 @@ module foreground_m #(
     wire [7:0] parsing_object_x = `OBM_OBJECT_X(parsing_object);
     wire [7:0] parsing_object_y = `OBM_OBJECT_Y(parsing_object);
     wire [2:0] parsing_object_color = `OBM_OBJECT_COLOR(parsing_object);
-    wire [8:0] next_y = (current_y == 9'(MAX_Y)) ? 0 : current_y+1;
     wire [2:0] in_parsing_object_y = 3'(next_y - parsing_object_y);
     wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
     wire [15:0] parsing_object_unflipped_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
@@ -143,21 +143,8 @@ module foreground_m #(
     typedef reg [$clog2(LINE_REPEAT)-1:0] repeat_counter_t;
     repeat_counter_t repeat_counter;
 
-    // procedural block for writing to scanline memory
+    // invert scanline_select
     always_ff @ ( posedge gpu_clk ) begin
-        // reset previous pixel if no more line repeats left
-        if (repeat_counter == 0) begin
-            if (scanline_select)
-                SCANLINE_1[current_x] <= 5'b0;
-            else
-                SCANLINE_0[current_x] <= 5'b0;
-        end else begin
-            if (scanline_select)
-                SCANLINE_1[current_x] <= SCANLINE_1[current_x];
-            else
-                SCANLINE_0[current_x] <= SCANLINE_0[current_x];
-        end
-
         // if scanline arrays need to be swapped
         if (transfer_next_to_this) begin
             // make next scanline this scanline
@@ -165,54 +152,74 @@ module foreground_m #(
             // wait until hsync before transferring again
             this_is_next <= 1;
         end
-        // for current_x=[0 ... NUM_OBJECTS-1], parsing_object = current_x
-        else if ( current_x < NUM_OBJECTS ) begin
+        else if ( next_x == 0 ) begin
             // selected scanline is currently being drawn
             this_is_next <= 0;
-            if (
-                // if just before top scanline and the object is at the top
-                (parsing_object_y == 0 && current_y == 9'(MAX_Y))
-                || ( // or if Y overlaps the parsing object
-                    (current_y < 239) &&
-                    ({1'b0,parsing_object_y} <= (current_y+9'd1)) &&
-                    (({1'b0,parsing_object_y}+9'd6) >= current_y)
-                )
-            ) begin
-                // $display("y:%d -- %h: %b [Time=%0t]", next_y, parsing_object, parsing_object_line, $realtime);
-                for (integer unsigned i = 0; i < 8; i=i+1) begin
-                    // $display(" pixel: %b", get_object_pixel(i));
-                    if (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) begin
-                        if (scanline_select)
-                            SCANLINE_0[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
-                        else
-                            SCANLINE_1[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
-                    end else begin
-                        if (scanline_select)
-                            SCANLINE_0[ parsing_object_x + 9'(i) ] <= SCANLINE_0[ parsing_object_x + 9'(i) ];
-                        else
-                            SCANLINE_1[ parsing_object_x + 9'(i) ] <= SCANLINE_1[ parsing_object_x + 9'(i) ];
-                    end
-                end
-            end
-
         end
     end
 
 
 
+    // whether parsing_object should be loaded to the next scanline
+    wire to_fill_scanline =
+        ( repeat_counter == 0 ) &&
+        ( current_x < NUM_OBJECTS ) &&
+        ( next_y <= 239 ) &&
+        // ( parsing_object_y <= next_y ) &&
+        ( (parsing_object_y+9'd7) >= next_y );
 
-    // calculate transfer_next_to_this
+
+
+    // procedural blocks for writing to scanline memory
+    always_ff @ ( posedge gpu_clk ) begin
+        // reset previous pixel
+        if ( (~scanline_select) && (repeat_counter == 0) )
+            SCANLINE_0[current_x] <= 5'b0;
+        // load 8 px of parsing_object_line
+        for (integer unsigned i = 0; i < 8; i=i+1) begin
+            // load pattern
+            if ( (scanline_select) && (to_fill_scanline) && (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) )
+                SCANLINE_0[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
+            // fix hazard if (parsing_object_x + 9'(i)) == current_x)
+            else if ( (~scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x) )
+                SCANLINE_0[ parsing_object_x + 9'(i) ] <= 5'b0;
+            // else do nothing
+            else
+                SCANLINE_0[ parsing_object_x + 9'(i) ] <= SCANLINE_0[ parsing_object_x + 9'(i) ];
+        end
+    end
+    always_ff @ ( posedge gpu_clk ) begin
+        // reset previous pixel
+        if ( (scanline_select) && (repeat_counter == 0) )
+            SCANLINE_1[current_x] <= 5'b0;
+        // load 8 px of parsing_object_line
+        for (integer unsigned i = 0; i < 8; i=i+1) begin
+            // load pattern
+            if ( (~scanline_select) && (to_fill_scanline) && (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) )
+                SCANLINE_1[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
+            // fix hazard if (parsing_object_x + 9'(i)) == current_x)
+            else if ( (scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x) )
+                SCANLINE_1[ parsing_object_x + 9'(i) ] <= 5'b0;
+            // else do nothing
+            else
+                SCANLINE_1[ parsing_object_x + 9'(i) ] <= SCANLINE_1[ parsing_object_x + 9'(i) ];
+        end
+    end
+
+
+
+    // implement repeat_counter and calculate transfer_next_to_this
     generate
         if (LINE_REPEAT == 1) begin
             initial $error("LINE_REPEAT of 1 not supported.");
             // assign transfer_next_to_this = (!this_is_next) && (~hsync);
         end else begin
-            // make a counter with period LINE_REPEAT
+            // make repeat_counter a counter with period LINE_REPEAT
             // when counter == 0, transfer_next_to_this <= 1
             reg incremented_repeat_counter = 0;
             initial begin
                 repeat_counter = 0;
-                incremented_repeat_counter = 0;
+                incremented_repeat_counter = LINE_REPEAT-1;
             end
             always_ff @ ( posedge gpu_clk ) begin
                 // increment counter
@@ -220,13 +227,12 @@ module foreground_m #(
                     incremented_repeat_counter <= 0;
                 end
                 else if ((!incremented_repeat_counter) && (hsync)) begin
-                    if (current_y == 9'(MAX_Y-1)) begin
+                    if (next_y == MAX_Y)
                         repeat_counter <= 0;
-                    end else if ((repeat_counter == 0) || (current_y == 9'(MAX_Y))) begin
-                        repeat_counter <= repeat_counter_t'(LINE_REPEAT-1);
-                    end else begin
+                    else if (repeat_counter == 0)
+                        repeat_counter <= LINE_REPEAT-1;
+                    else
                         repeat_counter <= repeat_counter-1;
-                    end
                     incremented_repeat_counter <= 1;
                 end
             end
@@ -236,10 +242,7 @@ module foreground_m #(
 
 
 
-
-    // given calculated scanline, find the current pixel value
-
-    // colors of current pixel
+    // get color of current pixel
     wire [4:0] current_pixel = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
     assign r = current_pixel[4:3] & {2{current_pixel[2]}};
     assign g = current_pixel[4:3] & {2{current_pixel[1]}};
