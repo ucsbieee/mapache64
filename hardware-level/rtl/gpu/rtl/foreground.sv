@@ -165,8 +165,8 @@ module foreground_m #(
         ( repeat_counter == 0 ) &&
         ( current_x < NUM_OBJECTS ) &&
         ( next_y <= 239 ) &&
-        // ( parsing_object_y <= next_y ) &&
-        ( (parsing_object_y+9'd7) >= next_y );
+        ( next_y >= parsing_object_y ) &&
+        ( next_y <= (parsing_object_y+9'd7) );
 
 
 
