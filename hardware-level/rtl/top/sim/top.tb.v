@@ -115,24 +115,6 @@ rst = 0;
 write_enable_B = 0;
 @(posedge clk_1);
 
-// txbl
-cpu_address = 16'h4900;
-write_data = 8'b0;
-@(posedge clk_1);
-cpu_address = 16'h4901;
-write_data = 8'b0;
-@(posedge clk_1);
-
-write_enable_B = 1;
-@(posedge clk_1);
-
-cpu_address = 16'h4900;
-@(posedge clk_1);
-cpu_address = 16'h4901;
-@(posedge clk_1);
-
-write_enable_B = 0;
-
 
 
 
