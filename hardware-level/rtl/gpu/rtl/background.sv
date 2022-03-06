@@ -17,6 +17,7 @@ module background_m (
 
     // video timing input
     input                     [7:0] current_x, current_y,
+    input                     [8:0] next_x, next_y,
 
     // video output
     output wire               [1:0] r, g, b,
