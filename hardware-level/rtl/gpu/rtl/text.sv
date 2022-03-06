@@ -73,6 +73,7 @@ module text_m (
 
     //======================================\\
     `ifdef SIM
+    initial for (integer i = 0; i < 1024; i=i+1)  TXBL[i] = 0;
     generate
         for ( genvar txbl_r_GEN = 0; txbl_r_GEN < 30; txbl_r_GEN = txbl_r_GEN+1 ) begin : txbl_row
             for ( genvar txbl_c_GEN = 0; txbl_c_GEN < 32; txbl_c_GEN = txbl_c_GEN+1 ) begin : txbl_column
