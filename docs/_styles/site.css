@@ -114,7 +114,7 @@ a.blue {
     margin-left: auto !important;
     margin-right: auto !important;
 }
-.center:not( img ) {
+.center:not( img, iframe ) {
     width: fit-content;
 }
 .center-text {
@@ -140,10 +140,11 @@ a.blue {
     left: 0;
     width: 100%;
     height: 100%;
-  }
+}
 
-
-
+.center iframe {
+    padding-top: 1em;
+}
 
 .big {
     font-size: 1.5rem;
