@@ -1,0 +1,6 @@
+CAPI=2:
+name: ucsbieee:mapache64:power_on_rst:1.0.0
+description: Set reset on restart
+
+filesets : {f : {files: [power_on_rst.v : {file_type : verilogSource}]}}
+targets: {default: {filesets : [f]}}

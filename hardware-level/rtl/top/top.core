@@ -44,6 +44,7 @@ filesets:
       - synth/boards/cmod_a7/flash.xdc:           {file_type: xdc}
     depend:
       - ucsbieee:mapache64:clk_divider
+      - ucsbieee:mapache64:power_on_rst
 
   artix_7:
     files:

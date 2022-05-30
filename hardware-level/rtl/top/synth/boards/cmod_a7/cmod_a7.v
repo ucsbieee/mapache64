@@ -3,6 +3,7 @@
     `include "hardware-level/rtl/top/rtl/top.sv"
     `include "hardware-level/rtl/top/synth/boards/cmod_a7/clk_mmcm.vh"
     `include "hardware-level/rtl/misc/clk_divider.v"
+    `include "hardware-level/rtl/misc/power_on_rst.v"
 `endif
 
 module cmod_a7 (
@@ -14,6 +15,7 @@ module cmod_a7 (
     inout
                 pio14,                  pio17,  pio18,
         pio19,  pio20,  pio21,  pio22,  pio23,
+                pio26,
     input
                 pio02,  pio03,
                                         pio29,  pio30,
@@ -24,7 +26,7 @@ module cmod_a7 (
         pio01,                  pio04,  pio05,  pio06,
         pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
         pio13,
-                pio26,  pio27,  pio28,
+                        pio27,  pio28,
                                 pio46,  pio47,  pio48
 
     //     pio01,  pio02,  pio03,  pio04,  pio05,  pio06,
@@ -43,6 +45,7 @@ module cmod_a7 (
     wire cpu_clk;
     wire gpu_clk;
     wire fpga_data_enable;
+    wire por_rst;
 
     wire controller_clk_in, controller_clk_out_enable;
 
@@ -50,6 +53,10 @@ module cmod_a7 (
     // inout
     wire [7:0] data, data_in, data_out;
     assign data = fpga_data_enable ? data_out : data_in;
+    assign pio26 = // rstn (pull-up resistor)
+        (btn[0])    ? 0 :
+        (por_rst)   ? 0 :
+        1'bz;
 
 
     // input
@@ -60,7 +67,7 @@ module cmod_a7 (
     wire        controller_1_data_in_B;
     wire        controller_2_data_in_B;
 
-    assign  rst             = btn[0];
+    assign  rst             = ~pio26;
     assign  cpu_address     = {pio30,pio31,pio32,pio33,pio34,pio35,pio36,pio37,pio38,pio39,pio40,pio41,pio42,pio43,pio44,pio45};
     assign  data_in         = {pio14,pio17,pio18,pio19,pio20,pio21,pio22,pio23};
     assign  write_enable_B  = pio29;
@@ -106,7 +113,6 @@ module cmod_a7 (
     assign pio07 = hsync;
     assign pio06 = vsync;
 
-    assign pio26 = ~rst;
     assign pio27 = cpu_clk;
 
     assign pio04 = controller_latch;
@@ -161,6 +167,8 @@ module cmod_a7 (
         clk_8, rst,
         controller_clk_in
     );
+
+    power_on_rst por (sysclk, por_rst);
 
     assign gpu_clk = clk_12_5875;
 
