@@ -1,0 +1,87 @@
+CAPI=2:
+name: ucsbieee:mapache64:top:1.0.0
+description: Mapache 64 gpu + firmware + address bus + misc
+
+filesets:
+  # default
+  rtl:
+    files:
+      - rom/build/pmc.mem:                  {file_type: user, copyto: pmc.mem}
+      - rom/build/firmware.mem:             {file_type: user, copyto: firmware.mem}
+      - rom/build/vectors.mem:              {file_type: user, copyto: vectors.mem}
+      - rtl/address_bus.v
+      - rtl/controller_interface.sv
+      - rtl/firmware.v
+      - rtl/gpu/vram_parameters.v
+      - rtl/gpu/background.sv
+      - rtl/gpu/foreground.sv
+      - rtl/gpu/text.sv
+      - rtl/gpu/video-timing.v
+      - rtl/gpu/gpu.v
+      - rtl/top.sv
+    file_type: systemVerilogSource
+
+  # synth
+  cmod_a7:
+    files:
+      - synth/clk_divider.v
+      - synth/cmod_a7/a7_config.xdc:        {file_type: xdc}
+      - synth/cmod_a7/clk_constraints.xdc:  {file_type: xdc}
+      - synth/cmod_a7/clk_mmcm.vh
+      - synth/cmod_a7/clk_mmcm_m.xci:       {file_type: xci}
+      - synth/cmod_a7/cmod_a7.xdc:          {file_type: xdc}
+      - synth/cmod_a7/flash.xdc:            {file_type: xdc}
+      - synth/cmod_a7/project_config.tcl:   {file_type: tclSource}
+      - synth/cmod_a7/cmod_a7.v
+    file_type: systemVerilogSource
+
+  # simulation
+  sim:
+    files:
+      - sim/timing.v:                       {file_type: verilogSource}
+      - sim/controller.sv:                  {file_type: verilogSource}
+      - sim/top_tb.v:                       {file_type: verilogSource}
+
+
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+  synth: &synth
+    filesets:
+      - rtl
+
+  sim: # fusesoc run --target sim ucsbieee:mapache64:top
+    <<: *default
+    description: Simulate the design
+    toplevel: top_tb_m
+    default_tool: icarus
+    filesets_append:
+      - sim
+    tools:
+      icarus:
+        iverilog_options:
+          - -g2012 # Use SystemVerilog-2012
+          - -Wall
+          - -Wno-timescale
+          - -DSIM=1
+
+  cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:mapache64:top
+    <<: *synth
+    description: Synthesize on Digilent Cmod A7-35T
+    toplevel: cmod_a7
+    filesets_append:
+      - cmod_a7
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7a35tcpg236-1
+
+  lint: # fusesoc run --target lint ucsbieee:mapache64:top
+    <<: *default
+    toplevel: top_m
+    default_tool: verilator
+    tools:
+      verilator:
+        mode: lint-only
