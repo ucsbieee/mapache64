@@ -1,9 +1,5 @@
 
-`ifndef __UCSBIEEE__CONTROLLER_INTERFACE__RTL__CONTROLLER_INTERFACE_V
-`define __UCSBIEEE__CONTROLLER_INTERFACE__RTL__CONTROLLER_INTERFACE_V
-
-
-module controller_interface_m #(
+module controller_interface #(
     parameter NUM_CONTROLLERS = 2
 ) (
     input                                   clk_in,
@@ -100,5 +96,3 @@ module controller_interface_m #(
 
 
 endmodule
-
-`endif

@@ -1,10 +1,5 @@
 
-
-`ifndef __UCSBIEEE__CONTROLLER_INTERFACE__SIM__CONTROLLER_SV
-`define __UCSBIEEE__CONTROLLER_INTERFACE__SIM__CONTROLLER_SV
-
-
-module controller_m #(
+module controller #(
     parameter SYNC_LATCH = 1'b0
 ) (
     input [7:0] buttons_B,
@@ -17,7 +12,7 @@ module controller_m #(
 
     generate if ( SYNC_LATCH ) begin
 
-        always_ff @ ( posedge clk_in ) begin
+        always_ff @(posedge clk_in) begin
             if ( latch )
                 register <= buttons_B;
             else
@@ -33,7 +28,7 @@ module controller_m #(
                 register = buttons_B;
         end
 
-        always_ff @ ( posedge clk_in ) begin
+        always_ff @(posedge clk_in) begin
             if ( !latch )
                 register = {register[6:0], 1'b0};
         end
@@ -43,6 +38,3 @@ module controller_m #(
     end endgenerate
 
 endmodule
-
-
-`endif

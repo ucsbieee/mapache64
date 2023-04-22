@@ -1,16 +1,7 @@
 
 /* background.v */
 
-`ifndef __UCSBIEEE__GPU__RTL__BACKGROUND_SV
-`define __UCSBIEEE__GPU__RTL__BACKGROUND_SV
-
-
-`ifdef LINTER
-    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
-`endif
-
-
-module background_m (
+module background (
     input                           gpu_clk,
     input                           cpu_clk,
     input                           rst,
@@ -25,7 +16,7 @@ module background_m (
     // VRAM interface
     input                     [7:0] data_in,
     output wire               [7:0] data_out,
-    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
+    input [mapache64::VramAddrWidth-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_pmb, SELECT_ntbl
 );
@@ -131,6 +122,3 @@ module background_m (
 
 
 endmodule
-
-
-`endif

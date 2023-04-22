@@ -9,15 +9,15 @@ filesets:
       - rom/build/pmc.mem:                  {file_type: user, copyto: pmc.mem}
       - rom/build/firmware.mem:             {file_type: user, copyto: firmware.mem}
       - rom/build/vectors.mem:              {file_type: user, copyto: vectors.mem}
-      - rtl/address_bus.v
+      - rtl/mapache64_pkg.sv
+      - rtl/address_bus.sv
       - rtl/controller_interface.sv
-      - rtl/firmware.v
-      - rtl/gpu/vram_parameters.v
+      - rtl/firmware.sv
       - rtl/gpu/background.sv
       - rtl/gpu/foreground.sv
       - rtl/gpu/text.sv
-      - rtl/gpu/video-timing.v
-      - rtl/gpu/gpu.v
+      - rtl/gpu/video_timing.sv
+      - rtl/gpu/gpu.sv
       - rtl/top.sv
     file_type: systemVerilogSource
 
@@ -38,9 +38,9 @@ filesets:
   # simulation
   sim:
     files:
-      - sim/timing.v:                       {file_type: verilogSource}
-      - sim/controller.sv:                  {file_type: verilogSource}
-      - sim/top_tb.v:                       {file_type: verilogSource}
+      - sim/controller.sv
+      - sim/top_tb.sv
+    file_type: systemVerilogSource
 
 
 
@@ -55,17 +55,32 @@ targets:
   sim: # fusesoc run --target sim ucsbieee:mapache64:top
     <<: *default
     description: Simulate the design
-    toplevel: top_tb_m
+    toplevel: top_tb
     default_tool: icarus
     filesets_append:
       - sim
     tools:
       icarus:
+        timescale: 1s/1fs
         iverilog_options:
           - -g2012 # Use SystemVerilog-2012
           - -Wall
           - -Wno-timescale
           - -DSIM=1
+      verilator:
+        verilator_options:
+          - --binary
+          - -j 0
+          - --trace-fst
+          - --x-assign unique
+          - --x-initial unique
+          - --unroll-count 10000
+          - --unroll-stmts 1000000
+          - -Wno-fatal
+          - -DSIM=1
+          - --timescale-override 1s/1fs
+        run_options:
+          - +verilator+rand+reset+2
 
   cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:mapache64:top
     <<: *synth
@@ -80,8 +95,10 @@ targets:
 
   lint: # fusesoc run --target lint ucsbieee:mapache64:top
     <<: *default
-    toplevel: top_m
+    toplevel: top
     default_tool: verilator
     tools:
       verilator:
         mode: lint-only
+        verilator_options:
+          - -Wall

@@ -1,6 +1,6 @@
 
 // https://www.desmos.com/calculator/6ogzgfkshu
-module clk_divider_m #(
+module clk_divider #(
     parameter IN_FREQ   = 1.0,
     parameter OUT_FREQ  = 1.0
 ) (
@@ -24,7 +24,7 @@ module clk_divider_m #(
 
         initial counter = 0;
 
-        always @ ( posedge clk_in ) begin
+        always_ff @(posedge clk_in) begin
             if ( rst  || counter == (COUNTER_RESET-1) )
                 counter <= 0;
             else

@@ -34,5 +34,7 @@ cd fpga
 ./rom/get_firmware.sh
 ./rom/get_font.sh
 fusesoc library add ucsbieee_mapache64_top . --sync-type=local
-fusesoc run --target sim ucsbieee:mapache64:top
+fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
+fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
+fusesoc run --target cmod_a7 ucsbieee:mapache64:top
 ```

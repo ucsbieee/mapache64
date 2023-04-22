@@ -1,11 +1,7 @@
 
-`ifndef __UCSBIEEE__ADDRESS_BUS__RTL__ADDRESS_BUS_V
-`define __UCSBIEEE__ADDRESS_BUS__RTL__ADDRESS_BUS_V
-
-
 `define __INCBOUND(LEFT,SRC,RIGHT)   ( LEFT <= SRC && SRC <= RIGHT )
 
-module address_bus_m (
+module address_bus (
     input [15:0] cpu_address,
 
     output wire SELECT_ram,
@@ -60,6 +56,4 @@ module address_bus_m (
 
 endmodule
 
-
 `undef __INCBOUND
-`endif

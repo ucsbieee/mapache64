@@ -1,17 +1,7 @@
 
 /* foreground.v */
 
-`ifndef __UCSBIEEE__GPU__RTL__FOREGROUND_SV
-`define __UCSBIEEE__GPU__RTL__FOREGROUND_SV
-
-
-`ifdef LINTER
-    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
-    `include "hardware-level/rtl/misc/ffs.vh"
-`endif
-
-
-module foreground_m #(
+module foreground #(
     parameter NUM_OBJECTS   = 64,
     parameter LINE_REPEAT   = 2,
     parameter NUM_ROWS      = 523
@@ -32,7 +22,7 @@ module foreground_m #(
     // VRAM interface
     input                     [7:0] data_in,
     output wire               [7:0] data_out,
-    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
+    input [mapache64::VramAddrWidth-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_pmf, SELECT_obm
 );
@@ -269,6 +259,3 @@ module foreground_m #(
     //======================================\\
 
 endmodule
-
-
-`endif

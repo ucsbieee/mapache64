@@ -1,10 +1,4 @@
 
-`ifdef LINTER
-    `include "hardware-level/rtl/top/rtl/top.sv"
-    `include "hardware-level/rtl/top/synth/boards/cmod_a7/clk_mmcm.vh"
-    `include "hardware-level/rtl/misc/clk_divider.v"
-`endif
-
 module cmod_a7 (
     input               sysclk,
     input         [1:0] btn,
@@ -119,7 +113,7 @@ module cmod_a7 (
     wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     // module
-    top_m top (
+    top top (
         clk_12_5875, cpu_clk, rst,
         cpu_address,
         data_in,
@@ -152,12 +146,12 @@ module cmod_a7 (
         sysclk
     );
 
-    clk_divider_m #(8,4) cpu_clk_divider (
+    clk_divider #(8,4) cpu_clk_divider (
         clk_8, rst,
         cpu_clk
     );
 
-    clk_divider_m #(8,0.5) controller_clk_divider (
+    clk_divider #(8,0.5) controller_clk_divider (
         clk_8, rst,
         controller_clk_in
     );

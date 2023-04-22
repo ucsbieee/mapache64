@@ -1,27 +1,15 @@
 
-`ifndef __UCSBIEEE__TOP__SIM__TOP_TB_V
-`define __UCSBIEEE__TOP__SIM__TOP_TB_V
-
-
 `ifndef SIM
     `ERROR__SIM_undefined
     exit
 `endif
 
-`ifdef LINTER
-    `include "hardware-level/rtl/top/rtl/top.sv"
-    `include "hardware-level/rtl/misc/timing.v"
-    `include "hardware-level/rtl/controller_interface/rtl/controller.sv"
-`endif
-
-`timescale `TIMESCALE
-
-module top_tb_m ();
+module top_tb ();
 
 reg clk_12_5875 = 1;
-always #( `GPU_CLK_PERIOD / 2 ) clk_12_5875 = ~clk_12_5875;
+always #( mapache64::ClkGpuPeriod / 2 ) clk_12_5875 = ~clk_12_5875;
 reg clk_1 = 1;
-always #( `CPU_CLK_PERIOD / 2 ) clk_1 = ~clk_1;
+always #( mapache64::ClkCpuPeriod / 2 ) clk_1 = ~clk_1;
 
 wire            cpu_clk_enable;
 reg             rst;
@@ -53,7 +41,7 @@ reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
 
-top_m top (
+top top (
     clk_12_5875, clk_1, rst,
 
     cpu_address,
@@ -83,14 +71,14 @@ top_m top (
 
 reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
 
-controller_m #(1'b1) controller_1 (
+controller #(1'b1) controller_1 (
     ~controller_1_buttons_in,
     controller_clk_in,
     controller_latch,
     controller_1_data_in_B
 );
 
-controller_m controller_2 (
+controller controller_2 (
     ~controller_2_buttons_in,
     controller_clk_in,
     controller_latch,
@@ -106,7 +94,7 @@ $timeformat( -3, 6, "ms", 0);
 //\\ =========================== \\//
 
 rst = 1;
-#( 2*`CPU_CLK_PERIOD );
+#( 2*mapache64::ClkCpuPeriod );
 rst = 0;
 
 @(negedge vsync);
@@ -174,6 +162,3 @@ $finish ;
 end
 
 endmodule
-
-
-`endif
