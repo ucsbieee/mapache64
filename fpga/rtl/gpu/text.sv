@@ -1,16 +1,5 @@
 
-/* background.v */
-
-`ifndef __UCSBIEEE__GPU__RTL__TEXT_SV
-`define __UCSBIEEE__GPU__RTL__TEXT_SV
-
-
-`ifdef LINTER
-    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
-`endif
-
-
-module text_m (
+module text (
     input                           gpu_clk,
     input                           cpu_clk,
 
@@ -24,7 +13,7 @@ module text_m (
     // VRAM interface
     input                     [7:0] data_in,
     output wire               [7:0] data_out,
-    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
+    input [mapache64::VramAddrWidth-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_txbl
 );
@@ -87,6 +76,3 @@ module text_m (
 
 
 endmodule
-
-
-`endif

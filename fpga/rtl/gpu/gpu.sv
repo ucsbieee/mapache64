@@ -1,20 +1,5 @@
 
-/* gpu.v */
-
-`ifndef __UCSBIEEE__GPU__RTL__GPU_V
-`define __UCSBIEEE__GPU__RTL__GPU_V
-
-
-`ifdef LINTER
-    `include "hardware-level/rtl/gpu/rtl/video-timing.v"
-    `include "hardware-level/rtl/gpu/rtl/text.sv"
-    `include "hardware-level/rtl/gpu/rtl/foreground.sv"
-    `include "hardware-level/rtl/gpu/rtl/background.sv"
-    `include "hardware-level/rtl/gpu/rtl/vram_parameters.v"
-`endif
-
-
-module gpu_m #(
+module gpu #(
         parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
     input                           gpu_clk,
@@ -29,7 +14,7 @@ module gpu_m #(
     // VRAM interface
     input                     [7:0] data_in,
     output                    [7:0] data_out,
-    input    [`VRAM_ADDR_WIDTH-1:0] vram_address,
+    input [mapache64::VramAddrWidth-1:0] vram_address,
     input                           write_enable,
     input                           SELECT_vram,
     input                           SELECT_pmf,
@@ -59,7 +44,7 @@ module gpu_m #(
     reg writable_prev;
     initial writable_prev = 0;
 
-    always @ ( posedge gpu_clk ) begin
+    always_ff @(posedge gpu_clk) begin
         if ( write_enable && SELECT_clr_vblank_irq )
             vblank_irq <= 0;
         else if ( rst || (writable_prev != writable) )
@@ -91,7 +76,7 @@ module gpu_m #(
     assign next_x = (current_x == 511) ? (0) : (current_x+1);
     assign next_y = (current_y == 262) ? (0) : (current_y+1);
 
-    video_timing_m video_timing (
+    video_timing video_timing (
         gpu_clk, rst,
         hsync, vsync,
         hcounter, vcounter,
@@ -103,14 +88,14 @@ module gpu_m #(
 
     wire vram_write_enable = write_enable; // should be anding with "writable", but oh well!
 
-    text_m text (
+    text text (
         gpu_clk, cpu_clk,
         current_x[7:0], current_y[7:0],
         text_color, text_valid,
         data_in, text_data_out, vram_address, vram_write_enable, SELECT_txbl
     );
 
-    foreground_m #(
+    foreground #(
         .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS),
         .LINE_REPEAT(2),
         .NUM_ROWS(523)
@@ -125,7 +110,7 @@ module gpu_m #(
         SELECT_pmf, SELECT_obm
     );
 
-    background_m background (
+    background background (
         gpu_clk, cpu_clk, rst,
         current_x[7:0], current_y[7:0],
         next_x, next_y,
@@ -135,6 +120,3 @@ module gpu_m #(
     );
 
 endmodule
-
-
-`endif

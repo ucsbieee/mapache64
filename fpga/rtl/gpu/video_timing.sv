@@ -1,11 +1,7 @@
 
 /* video-timing.v */
 
-`ifndef __UCSBIEEE__GPU__RTL__VIDEO_TIMING_V
-`define __UCSBIEEE__GPU__RTL__VIDEO_TIMING_V
-
-
-module video_timing_m (
+module video_timing (
     input               clk_12_5875,
     input               rst,
 
@@ -46,7 +42,7 @@ module video_timing_m (
     assign writable = ~vvisible;
 
 
-    always @ ( posedge clk_12_5875 ) begin
+    always_ff @(posedge clk_12_5875) begin
         if ( rst ) begin
             hcounter <= 10'b0;
             vcounter <= 10'b0;
@@ -64,6 +60,3 @@ module video_timing_m (
     end
 
 endmodule
-
-
-`endif

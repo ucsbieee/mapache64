@@ -1,16 +1,5 @@
 
-`ifndef __UCSBIEEE__TOP__RTL__TOP_V
-`define __UCSBIEEE__TOP__RTL__TOP_V
-
-
-`ifdef LINTER
-    `include "hardware-level/rtl/address_bus/rtl/address_bus.v"
-    `include "hardware-level/rtl/firmware/rtl/firmware.v"
-    `include "hardware-level/rtl/gpu/rtl/gpu.v"
-    `include "hardware-level/rtl/controller_interface/rtl/controller_interface.sv"
-`endif
-
-module top_m #(
+module top #(
     parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
     input               gpu_clk,
@@ -69,7 +58,7 @@ module top_m #(
     );
 
 
-    address_bus_m address_bus (
+    address_bus address_bus (
         cpu_address,
         SELECT_ram,
 
@@ -105,14 +94,14 @@ module top_m #(
         {8{1'bz}};
 
 
-    firmware_m firmware (
+    firmware firmware (
         13'(cpu_address-16'h5000), firmware_data_out, SELECT_firmware, SELECT_vectors
     );
 
 
 
     wire [11:0] vram_address = 12'( cpu_address - 16'h4000 );
-    gpu_m #(FOREGROUND_NUM_OBJECTS) gpu (
+    gpu #(mapache64::GpuForegroundNumObjects) gpu (
         gpu_clk, cpu_clk, rst,
         r,g,b, hsync, vsync, controller_start_fetch,
         data_in, gpu_data_out, vram_address, write_enable,
@@ -120,7 +109,7 @@ module top_m #(
         SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
     );
 
-    controller_interface_m #(2) controller_interface (
+    controller_interface #(2) controller_interface (
         controller_clk_in, rst,
         controller_start_fetch,
 
@@ -133,6 +122,3 @@ module top_m #(
     );
 
 endmodule
-
-
-`endif
