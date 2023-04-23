@@ -2,52 +2,52 @@
 module top #(
     parameter FOREGROUND_NUM_OBJECTS = 64
 ) (
-    input               gpu_clk,
-    input               cpu_clk,
-    input               rst,
+    input   logic                   gpu_clk,
+    input   logic                   cpu_clk,
+    input   logic                   rst,
 
-    input        [15:0] cpu_address,
-    input         [7:0] data_in,
-    output wire   [7:0] data_out,
-    output wire         fpga_data_enable,
-    input               write_enable_B,
+    input   mapache64::address_t    cpu_address_i,
+    input   mapache64::data_t       data_i,
+    output  mapache64::data_t       data_o,
+    output  logic                   fpga_data_en_o,
+    input   logic                   wen_ni,
 
-    output wire         SELECT_ram_B,
-    output wire         ram_OE_B,
-    output wire         SELECT_rom_B,
+    output  logic                   SELECT_ram_no,
+    output  logic                   ram_OE_no,
+    output  logic                   SELECT_rom_no,
 
-    output wire         vblank_irq_B,
+    output  logic                   vblank_irq_no,
 
-    output wire   [1:0] r, g, b,
-    output wire         hsync, vsync,
+    output  logic [1:0]             r_o, g_o, b_o,
+    output  logic                   hsync_o, vsync_o,
 
-    input               controller_clk_in,
-    output wire         controller_clk_out_enable,
-    output wire         controller_latch,
-    input               controller_1_data_in_B,
-    input               controller_2_data_in_B,
-    output wire   [7:0] controller_1_buttons_out,
-    output wire   [7:0] controller_2_buttons_out
+    input   logic                   controller_clk,
+    output  logic                   controller_clk_en_o,
+    output  logic                   controller_latch_o,
+    input   logic                   controller_1_serial_ni,
+    input   logic                   controller_2_serial_ni,
+    output  mapache64::data_t       controller_1_data_o,
+    output  mapache64::data_t       controller_2_data_o
 );
 
     // internal
-    wire SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl;
-    wire SELECT_firmware, SELECT_vectors;
-    wire SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
+    logic SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl;
+    logic SELECT_firmware, SELECT_vectors;
+    logic SELECT_in_vblank, SELECT_clr_vblank_irq, SELECT_controller_1, SELECT_controller_2, controller_start_fetch;
 
     // inputs
-    wire write_enable = ~write_enable_B;
+    wire wen = ~wen_ni;
 
     // outputs
-    wire SELECT_ram;
-    wire SELECT_rom;
-    wire vblank_irq;
-    assign SELECT_ram_B = ~SELECT_ram;
-    assign SELECT_rom_B = ~SELECT_rom;
-    assign vblank_irq_B = ~vblank_irq;
+    logic SELECT_ram;
+    logic SELECT_rom;
+    logic vblank_irq;
+    assign SELECT_ram_no = ~SELECT_ram;
+    assign SELECT_rom_no = ~SELECT_rom;
+    assign vblank_irq_no = ~vblank_irq;
 
-    assign ram_OE_B = ~( !write_enable && SELECT_ram );
-    assign fpga_data_enable = !write_enable && (
+    assign ram_OE_no = ~( !wen && SELECT_ram );
+    assign fpga_data_en_o = !wen && (
         SELECT_firmware         ||
         SELECT_vram             ||
         SELECT_vectors          ||
@@ -59,66 +59,95 @@ module top #(
 
 
     address_bus address_bus (
-        cpu_address,
-        SELECT_ram,
+        .cpu_address_i(cpu_address_i),
+        .SELECT_ram_o(SELECT_ram),
 
-        SELECT_vram,
-        SELECT_pmf,
-        SELECT_pmb,
-        SELECT_ntbl,
-        SELECT_obm,
-        SELECT_txbl,
+        .SELECT_vram_o(SELECT_vram),
+        .SELECT_pmf_o(SELECT_pmf),
+        .SELECT_pmb_o(SELECT_pmb),
+        .SELECT_ntbl_o(SELECT_ntbl),
+        .SELECT_obm_o(SELECT_obm),
+        .SELECT_txbl_o(SELECT_txbl),
 
-        SELECT_firmware,
-        SELECT_rom,
-        SELECT_vectors,
+        .SELECT_firmware_o(SELECT_firmware),
+        .SELECT_rom_o(SELECT_rom),
+        .SELECT_vectors_o(SELECT_vectors),
 
-        SELECT_in_vblank,
-        SELECT_clr_vblank_irq,
-        SELECT_controller_1,
-        SELECT_controller_2
+        .SELECT_in_vblank_o(SELECT_in_vblank),
+        .SELECT_clr_vblank_irq_o(SELECT_clr_vblank_irq),
+        .SELECT_controller_1_o(SELECT_controller_1),
+        .SELECT_controller_2_o(SELECT_controller_2)
     );
 
 
 
-    wire [7:0] firmware_data_out, gpu_data_out;
-    // wire [7:0] controller_2_buttons_out, controller_1_buttons_out;
+    mapache64::data_t firmware_data, gpu_data;
 
-    assign data_out =
-        SELECT_firmware         ? firmware_data_out         :
-        SELECT_vectors          ? firmware_data_out         :
-        SELECT_vram             ? gpu_data_out              :
-        SELECT_in_vblank        ? gpu_data_out              :
-        SELECT_controller_1     ? controller_1_buttons_out  :
-        SELECT_controller_2     ? controller_2_buttons_out  :
+    assign data_o =
+        SELECT_firmware     ? firmware_data         :
+        SELECT_vectors      ? firmware_data         :
+        SELECT_vram         ? gpu_data              :
+        SELECT_in_vblank    ? gpu_data              :
+        SELECT_controller_1 ? controller_1_data_o   :
+        SELECT_controller_2 ? controller_2_data_o   :
         {8{1'bz}};
 
 
+    mapache64::firmware_address_t firmware_address; assign firmware_address = 13'(cpu_address_i-16'h5000);
+
     firmware firmware (
-        13'(cpu_address-16'h5000), firmware_data_out, SELECT_firmware, SELECT_vectors
+        .address_i(firmware_address),
+        .data_o(firmware_data),
+        .SELECT_firmware_i(SELECT_firmware),
+        .SELECT_vectors_i(SELECT_vectors)
     );
 
 
+    mapache64::vram_address_t vram_address; assign vram_address = 12'( cpu_address_i - 16'h4000 );
 
-    wire [11:0] vram_address = 12'( cpu_address - 16'h4000 );
-    gpu #(mapache64::GpuForegroundNumObjects) gpu (
-        gpu_clk, cpu_clk, rst,
-        r,g,b, hsync, vsync, controller_start_fetch,
-        data_in, gpu_data_out, vram_address, write_enable,
-        SELECT_vram, SELECT_pmf, SELECT_pmb, SELECT_ntbl, SELECT_obm, SELECT_txbl,
-        SELECT_in_vblank, SELECT_clr_vblank_irq, vblank_irq
+    gpu #(
+        .FOREGROUND_NUM_OBJECTS(FOREGROUND_NUM_OBJECTS)
+    ) gpu (
+        .gpu_clk(gpu_clk),
+        .cpu_clk(cpu_clk),
+        .rst(rst),
+
+        .r_o(r_o),
+        .g_o(g_o),
+        .b_o(b_o),
+        .hsync_o(hsync_o),
+        .vsync_o(vsync_o),
+        .controller_start_fetch_o(controller_start_fetch),
+
+        .data_i(data_i),
+        .data_o(gpu_data),
+        .vram_address_i(vram_address),
+        .wen_i(wen),
+        .SELECT_vram_i(SELECT_vram),
+        .SELECT_pmf_i(SELECT_pmf),
+        .SELECT_pmb_i(SELECT_pmb),
+        .SELECT_ntbl_i(SELECT_ntbl),
+        .SELECT_obm_i(SELECT_obm),
+        .SELECT_txbl_i(SELECT_txbl),
+
+        .SELECT_in_vblank_i(SELECT_in_vblank),
+        .SELECT_clr_vblank_irq_i(SELECT_clr_vblank_irq),
+        .vblank_irq_o(vblank_irq)
     );
 
-    controller_interface #(2) controller_interface (
-        controller_clk_in, rst,
-        controller_start_fetch,
+    controller_interface #(
+        .NUM_CONTROLLERS(2)
+    ) controller_interface (
+        .clk(controller_clk),
+        .rst(rst),
+        .start_fetch_i(controller_start_fetch),
 
-        controller_clk_out_enable,
-        controller_latch,
+        .clk_en_o(controller_clk_en_o),
+        .latch_o(controller_latch_o),
 
-        {controller_2_data_in_B,controller_1_data_in_B},
+        .serial_LIST_ni({controller_2_serial_ni,controller_1_serial_ni}),
 
-        {controller_2_buttons_out,controller_1_buttons_out}
+        .data_LIST_o({controller_2_data_o,controller_1_data_o})
     );
 
 endmodule

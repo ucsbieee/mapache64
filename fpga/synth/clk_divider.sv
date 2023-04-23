@@ -4,35 +4,35 @@ module clk_divider #(
     parameter IN_FREQ   = 1.0,
     parameter OUT_FREQ  = 1.0
 ) (
-    input       clk_in, rst,
-    output wire clk_out
+    input   wire    clk_i, rst,
+    output  wire    clk_o
 );
 
     localparam COUNTER_RESET = $rtoi( 1.0 * IN_FREQ / OUT_FREQ );
     localparam ACTUAL_FREQ_MHz = IN_FREQ / COUNTER_RESET;
 
-    generate
-    if ( IN_FREQ == ACTUAL_FREQ_MHz ) begin
+    generate if ( IN_FREQ == ACTUAL_FREQ_MHz ) begin
 
-        assign clk_out = clk_in;
+        assign clk_o = clk_i;
 
     end else begin
 
-        reg [$clog2(COUNTER_RESET):0] counter;
+        typedef logic [$clog2(COUNTER_RESET):0] counter_t;
+        counter_t counter_d, counter_q;
 
-        assign clk_out = ( counter < $rtoi( COUNTER_RESET / 2.0 ) );
+        assign counter_d = (counter_q == counter_t'(COUNTER_RESET-1)) ? ('0) : (counter_q+1);
+        initial counter_q = '0;
 
-        initial counter = 0;
-
-        always_ff @(posedge clk_in) begin
-            if ( rst  || counter == (COUNTER_RESET-1) )
-                counter <= 0;
-            else
-                counter <= counter + 1;
+        always_ff @(posedge clk_i) begin
+            if (rst) begin
+                counter_q <= '0;
+            end else begin
+                counter_q <= counter_d;
+            end
         end
 
-    end
-    endgenerate
+        assign clk_o = ( counter_q < counter_t'($rtoi( COUNTER_RESET / 2.0 ) ));
 
+    end endgenerate
 
 endmodule

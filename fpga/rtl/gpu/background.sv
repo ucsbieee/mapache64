@@ -2,39 +2,36 @@
 /* background.v */
 
 module background (
-    input                           gpu_clk,
-    input                           cpu_clk,
-    input                           rst,
+    input   logic                       cpu_clk,
 
     // video timing input
-    input                     [7:0] current_x, current_y,
-    input                     [8:0] next_x, next_y,
+    input   logic [7:0]                 current_x_i, current_y_i,
 
     // video output
-    output wire               [1:0] r, g, b,
+    output  logic [1:0]                 r_o, g_o, b_o,
 
     // VRAM interface
-    input                     [7:0] data_in,
-    output wire               [7:0] data_out,
-    input [mapache64::VramAddrWidth-1:0] vram_address,
-    input                           write_enable,
-    input                           SELECT_pmb, SELECT_ntbl
+    input   mapache64::data_t           data_i,
+    output  mapache64::data_t           data_o,
+    input   mapache64::vram_address_t   vram_address_i,
+    input   logic                       wen_i,
+    input   logic                       SELECT_pmb_i, SELECT_ntbl_i
 );
 
-    wire [4:0] ntbl_r       = current_y[7:3];
-    wire [2:0] in_tile_x    = current_x[2:0];
-    wire [4:0] ntbl_c       = current_x[7:3];
-    wire [2:0] in_tile_y    = current_y[2:0];
+    wire [4:0] ntbl_r       = current_y_i[7:3];
+    wire [2:0] in_tile_x    = current_x_i[2:0];
+    wire [4:0] ntbl_c       = current_x_i[7:3];
+    wire [2:0] in_tile_y    = current_y_i[2:0];
 
 
     // Pattern Memory Background    https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory
-    reg [7:0]   PMB     [ 511:0];
+    mapache64::data_t PMB [ 511:0];
 
     `define PMB_LINE(PMBA,PATTERN_Y)            { PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b0} ], PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b1} ] }
     // -------------------------
 
     // Nametable                    https://mapache64.ucsbieee.org/guides/gpu/#Nametable
-    reg [7:0]   NTBL    [1023:0];
+    mapache64::data_t NTBL [1023:0];
 
     `define NTBL_COLORS                         NTBL[960]
     `define NTBL_COLOR_0                        `NTBL_COLORS[2:0]
@@ -46,22 +43,22 @@ module background (
     `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
     // -------------------------
 
-    wire [8:0] pmb_address = 9'(vram_address - 12'h200);
-    wire [9:0] ntbl_address = 10'(vram_address - 12'h400);
+    wire [8:0] pmb_address = 9'(vram_address_i - 12'h200);
+    wire [9:0] ntbl_address = 10'(vram_address_i - 12'h400);
 
     // read from vram
-    assign data_out =
-        SELECT_pmb  ? PMB[ pmb_address ]    :
-        SELECT_ntbl ? NTBL[ ntbl_address ]  :
+    assign data_o =
+        SELECT_pmb_i  ? PMB[ pmb_address ]    :
+        SELECT_ntbl_i ? NTBL[ ntbl_address ]  :
         {8{1'bz}};
 
     // write to vram
-    always_ff @ ( negedge cpu_clk ) begin : write_to_vram
-        if ( write_enable ) begin
-            if ( SELECT_pmb )
-                PMB[ pmb_address ] <= data_in;
-            if ( SELECT_ntbl )
-                NTBL[ ntbl_address ] <= data_in;
+    always_ff @(negedge cpu_clk) begin : write_to_vram
+        if ( wen_i ) begin
+            if ( SELECT_pmb_i )
+                PMB[ pmb_address ] <= data_i;
+            if ( SELECT_ntbl_i )
+                NTBL[ ntbl_address ] <= data_i;
         end
     end
 
@@ -90,9 +87,9 @@ module background (
     wire [15:0] line = `PMB_LINE( pmba, in_pattern_y );
 
     wire [1:0] current_pixel = line[ {(3'h7-in_pattern_x),1'b0} +: 2 ];
-    assign r = current_pixel & {2{color[2]}};
-    assign g = current_pixel & {2{color[1]}};
-    assign b = current_pixel & {2{color[0]}};
+    assign r_o = current_pixel & {2{color[2]}};
+    assign g_o = current_pixel & {2{color[1]}};
+    assign b_o = current_pixel & {2{color[0]}};
 
 
     //======================================\\

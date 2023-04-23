@@ -1,32 +1,31 @@
 
 module text (
-    input                           gpu_clk,
-    input                           cpu_clk,
+    input   logic                       cpu_clk,
 
     // video timing input
-    input                     [7:0] current_x, current_y,
+    input   logic [7:0]                 current_x_i, current_y_i,
 
     // video output
-    output wire                     color,
-    output wire                     valid,
+    output  logic                       color_o,
+    output  logic                       valid_o,
 
     // VRAM interface
-    input                     [7:0] data_in,
-    output wire               [7:0] data_out,
-    input [mapache64::VramAddrWidth-1:0] vram_address,
-    input                           write_enable,
-    input                           SELECT_txbl
+    input   mapache64::data_t           data_i,
+    output  mapache64::data_t           data_o,
+    input   mapache64::vram_address_t   vram_address_i,
+    input   logic                       wen_i,
+    input   logic                       SELECT_txbl_i
 );
 
-    wire [4:0] txbl_r       = current_y[7:3];
-    wire [2:0] in_tile_x    = current_x[2:0];
-    wire [4:0] txbl_c       = current_x[7:3];
-    wire [2:0] in_tile_y    = current_y[2:0];
+    wire [4:0] txbl_r       = current_y_i[7:3];
+    wire [2:0] in_tile_x    = current_x_i[2:0];
+    wire [4:0] txbl_c       = current_x_i[7:3];
+    wire [2:0] in_tile_y    = current_y_i[2:0];
 
 
 
     // Text Table
-    reg [7:0]   TXBL    [1023:0];
+    mapache64::data_t TXBL [1023:0];
 
     `define TXBL_TILE(R,C)                      TXBL[ {$unsigned(5'(R)), $unsigned(5'(C))} ]
     `define TXBL_TILE_COLORSELECT(R,C)          `TXBL_TILE(R,C)[7]
@@ -34,30 +33,30 @@ module text (
     // -------------------------
 
     // Character Pattern Memory
-    reg [7:0]  PMC      [1023:0];
+    mapache64::data_t PMC [1023:0];
     initial $readmemb( "pmc.mem", PMC, 0, 1023 );
 
     `define PMC_VALID(PMCA,PATTERN_X,PATTERN_Y) PMC[ {$unsigned(7'(PMCA)), $unsigned(3'(PATTERN_Y))} ][3'h7-$unsigned(3'(PATTERN_X))]
     // -------------------------
 
-    wire [9:0] txbl_address = 10'(vram_address - 12'h900);
+    wire [9:0] txbl_address = 10'(vram_address_i - 12'h900);
 
     // read from vram
-    assign data_out =
-        SELECT_txbl ? TXBL[ txbl_address ]  :
+    assign data_o =
+        SELECT_txbl_i ? TXBL[ txbl_address ]  :
         {8{1'bz}};
 
     // write to vram
-    always_ff @ ( negedge cpu_clk ) begin : write_to_vram
-        if ( write_enable && SELECT_txbl ) begin
-            TXBL[ txbl_address ] <= data_in;
+    always_ff @(negedge cpu_clk) begin : write_to_vram
+        if ( wen_i && SELECT_txbl_i ) begin
+            TXBL[ txbl_address ] <= data_i;
         end
     end
 
     wire [6:0] pmca = `TXBL_TILE_PMCA(txbl_r, txbl_c);
 
-    assign color = `TXBL_TILE_COLORSELECT(txbl_r, txbl_c);
-    assign valid = `PMC_VALID(pmca, in_tile_x, in_tile_y);
+    assign color_o = `TXBL_TILE_COLORSELECT(txbl_r, txbl_c);
+    assign valid_o = `PMC_VALID(pmca, in_tile_x, in_tile_y);
 
 
     //======================================\\

@@ -2,71 +2,70 @@
 module controller_interface #(
     parameter NUM_CONTROLLERS = 2
 ) (
-    input                                   clk_in,
-    input                                   rst,
-    input                                   start_fetch,    // synchronous, must be held for less than 10 clk cycles
+    input   logic                           clk,
+    input   logic                           rst,
+    input   logic                           start_fetch_i,  // synchronous, must be held for less than 10 clk cycles
 
-    output wire                             clk_out_enable,
-    output reg                              latch,
+    output  logic                           clk_en_o,
+    output  logic                           latch_o,
 
-    input             [NUM_CONTROLLERS-1:0] data_B_LIST,
+    input   logic [NUM_CONTROLLERS-1:0]     serial_LIST_ni,
 
-    output reg    [(8*NUM_CONTROLLERS)-1:0] buttons_out_LIST
+    output  logic [(8*NUM_CONTROLLERS)-1:0] data_LIST_o
 );
 
-    `define CONTROLLER_DATA_B(CONTROLLER)       data_B_LIST[(CONTROLLER)]
-    `define CONTROLLER_BUTTONS_OUT(CONTROLLER)  buttons_out_LIST[(8*(CONTROLLER))+:8]
+    `define CONTROLLER_SERIAL_N(CONTROLLER) serial_LIST_ni[(CONTROLLER)]
+    `define CONTROLLER_DATA(CONTROLLER)     data_LIST_o[(8*(CONTROLLER))+:8]
 
-    reg [1:0] state;
-    `define STATE_WAIT          2'h0
-    `define STATE_LATCH         2'h1
-    `define STATE_LATCH_DONE    2'h2
-    `define STATE_READ          2'h3
-    initial state = `STATE_WAIT;
+    typedef enum logic [1:0] {
+        WAIT,
+        LATCH,
+        LATCH_DONE,
+        READ
+    } state_t;
+    state_t state;
 
 
-    reg [3:0] num_bits_left;
-    initial num_bits_left = 4'b0;
-    wire has_bits_left = (num_bits_left != 4'b0);
+    logic [3:0] num_bits_left;
+    wire has_bits_left = (num_bits_left != '0);
 
-    assign clk_out_enable = (has_bits_left || latch);
+    assign clk_en_o = (has_bits_left || latch_o);
 
-    reg latch_timer;
-    initial latch_timer = 0;
+    logic latch_timer;
 
     // state machine, latch timing
-    always_ff @ ( negedge clk_in ) begin
+    always_ff @(negedge clk) begin
         if ( rst ) begin
-            latch <= 1'b0;
-            state <= `STATE_WAIT;
+            latch_o <= 1'b0;
+            state <= WAIT;
             num_bits_left <= 4'b0;
             latch_timer <= 0;
         end else begin
             case ( state )
-                `STATE_WAIT: begin
-                    if ( start_fetch ) begin
-                        latch <= 1'b1;
-                        state <= `STATE_LATCH;
-                        latch_timer <= ~0;
+                WAIT: begin
+                    if ( start_fetch_i ) begin
+                        latch_o <= 1'b1;
+                        state <= LATCH;
+                        latch_timer <= 1;
                     end
                 end
-                `STATE_LATCH: begin
+                LATCH: begin
                     if ( latch_timer == 0 ) begin
-                        state <= `STATE_LATCH_DONE;
-                        latch <= 1'b0;
+                        state <= LATCH_DONE;
+                        latch_o <= 0;
                     end else begin
                         latch_timer <= latch_timer - 1;
                     end
                 end
-                `STATE_LATCH_DONE: begin
+                LATCH_DONE: begin
                     num_bits_left <= 4'd8;
-                    state <= `STATE_READ;
+                    state <= READ;
                 end
-                `STATE_READ: begin
+                READ: begin
                     if ( has_bits_left ) begin
                         num_bits_left <= num_bits_left-4'b1;
                     end else begin
-                        state <= `STATE_WAIT;
+                        state <= WAIT;
                     end
                 end
             endcase
@@ -76,23 +75,25 @@ module controller_interface #(
 
     // controller-specific updates
     generate for ( genvar controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
-    reg [7:0] register;
-    always_ff @ ( posedge clk_in ) begin
+    mapache64::data_t shift_register;
+    always_ff @(posedge clk) begin
         if ( rst ) begin
-            register <= 8'b0;
+            shift_register <= 8'b0;
         end
-        else if ( state == `STATE_WAIT ) begin
-            `CONTROLLER_BUTTONS_OUT(controller_GEN-1) <= register;
+        else if ( state == WAIT ) begin
+            `CONTROLLER_DATA(controller_GEN-1) <= shift_register;
         end
         else if ( has_bits_left ) begin
-            register <= {register[6:0], ~`CONTROLLER_DATA_B(controller_GEN-1)};
+            shift_register <= {shift_register[6:0], ~`CONTROLLER_SERIAL_N(controller_GEN-1)};
         end
     end
     `ifdef SIM
-    wire        controller_data_B       = `CONTROLLER_DATA_B(controller_GEN-1);
-    wire  [7:0] controller_buttons_out  = `CONTROLLER_BUTTONS_OUT(controller_GEN-1);
+    logic controller_serial_n; assign controller_serial_n = `CONTROLLER_SERIAL_N(controller_GEN-1);
+    mapache64::data_t controller_data; assign controller_data = `CONTROLLER_DATA(controller_GEN-1);
     `endif
     end endgenerate
 
+    `undef CONTROLLER_SERIAL_N
+    `undef CONTROLLER_DATA
 
 endmodule
