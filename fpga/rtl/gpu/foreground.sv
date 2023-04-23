@@ -6,37 +6,37 @@ module foreground #(
     parameter LINE_REPEAT   = 2,
     parameter NUM_ROWS      = 523
 ) (
-    input                           gpu_clk,
-    input                           cpu_clk,
-    input                           rst,
+    input   logic                       gpu_clk,
+    input   logic                       cpu_clk,
+    input   logic                       rst,
 
     // video timing input
-    input                     [8:0] current_x, current_y,
-    input                     [8:0] next_x, next_y,
-    input                           hsync,
+    input   logic [8:0]                 current_x_i, current_y_i,
+    input   logic [8:0]                 next_x_i, next_y_i,
+    input   logic                       hsync_i,
 
     // video output
-    output wire               [1:0] r, g, b,
-    output wire                     valid,
+    output  logic [1:0]                 r_o, g_o, b_o,
+    output  logic                       valid_o,
 
     // VRAM interface
-    input                     [7:0] data_in,
-    output wire               [7:0] data_out,
-    input [mapache64::VramAddrWidth-1:0] vram_address,
-    input                           write_enable,
-    input                           SELECT_pmf, SELECT_obm
+    input   mapache64::data_t           data_i,
+    output  mapache64::data_t           data_o,
+    input   mapache64::vram_address_t   vram_address_i,
+    input   logic                       wen_i,
+    input   logic                       SELECT_pmf_i, SELECT_obm_i
 );
 
     localparam MAX_Y = $rtoi($ceil((1.0 * NUM_ROWS)/LINE_REPEAT));
 
     // Pattern Memory Foreground    https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory
-    reg [7:0]   PMF     [ 511:0];
+    mapache64::data_t PMF [511:0];
 
     `define PMF_LINE(PMFA,PATTERN_Y)            { PMF[ {$unsigned(5'(PMFA)), $unsigned(3'(PATTERN_Y)), 1'b0} ], PMF[ {$unsigned(5'(PMFA)), $unsigned(3'(PATTERN_Y)), 1'b1} ] }
     // -------------------------
 
     // Object Memory                https://mapache64.ucsbieee.org/guides/gpu/#Object-Memory
-    reg [7:0]   OBM     [ 255:0];
+    mapache64::data_t OBM [255:0];
 
     `define OBM_OBJECT(OBMA)                    { OBM[ {$unsigned(6'(OBMA)), 2'd0} ], OBM[ {$unsigned(6'(OBMA)), 2'd1} ], OBM[ {$unsigned(6'(OBMA)), 2'd2} ], OBM[ {$unsigned(6'(OBMA)), 2'd3} ] }
     `define OBM_OBJECT_X(OBMA)                  OBM[ {$unsigned(6'(OBMA)), 2'd0} ]
@@ -47,22 +47,22 @@ module foreground #(
     `define OBM_OBJECT_COLOR(OBMA)              OBM[ {$unsigned(6'(OBMA)), 2'd3} ][2:0]
     // -------------------------
 
-    wire [8:0] pmf_address = 9'(vram_address - 12'h000);
-    wire [7:0] obm_address = 8'(vram_address - 12'h800);
+    wire [8:0] pmf_address = 9'(vram_address_i - 12'h000);
+    wire [7:0] obm_address = 8'(vram_address_i - 12'h800);
 
     // read from vram
-    assign data_out =
-        SELECT_pmf  ? PMF[ pmf_address ]    :
-        SELECT_obm  ? OBM[ obm_address ]    :
+    assign data_o =
+        SELECT_pmf_i  ? PMF[ pmf_address ]    :
+        SELECT_obm_i  ? OBM[ obm_address ]    :
         {8{1'bz}};
 
     // write to vram
-    always_ff @ ( negedge cpu_clk ) begin : write_to_vram
-        if ( write_enable ) begin
-            if ( SELECT_pmf )
-                PMF[ pmf_address ] <= data_in;
-            if ( SELECT_obm )
-                OBM[ obm_address ] <= data_in;
+    always_ff @(negedge cpu_clk) begin : write_to_vram
+        if ( wen_i ) begin
+            if ( SELECT_pmf_i )
+                PMF[ pmf_address ] <= data_i;
+            if ( SELECT_obm_i )
+                OBM[ obm_address ] <= data_i;
         end
     end
 
@@ -106,7 +106,7 @@ module foreground #(
 
 
     // index of the object that is currently being loaded to the scanline array
-    wire [6:0] parsing_object = ( current_x < 9'(NUM_OBJECTS) ) ? 7'( 9'(NUM_OBJECTS-1) - current_x ) : {7{1'bx}};
+    wire [5:0] parsing_object = ( current_x_i < 9'(NUM_OBJECTS) ) ? 6'( 9'(NUM_OBJECTS-1) - current_x_i ) : {6{1'bx}};
 
     // selected scanline is for the next line
     reg this_is_next;
@@ -122,7 +122,7 @@ module foreground #(
     wire [7:0] parsing_object_x = `OBM_OBJECT_X(parsing_object);
     wire [7:0] parsing_object_y = `OBM_OBJECT_Y(parsing_object);
     wire [2:0] parsing_object_color = `OBM_OBJECT_COLOR(parsing_object);
-    wire [2:0] in_parsing_object_y = 3'(next_y - parsing_object_y);
+    wire [2:0] in_parsing_object_y = 3'(next_y_i - parsing_object_y);
     wire [2:0] in_parsing_object_pattern_y = parsing_object_vflip ? (3'd7-in_parsing_object_y) : in_parsing_object_y;
     wire [15:0] parsing_object_unflipped_line = `PMF_LINE(parsing_object_pmfa,in_parsing_object_pattern_y);
     wire [15:0] parsing_object_line;
@@ -134,15 +134,18 @@ module foreground #(
     repeat_counter_t repeat_counter;
 
     // invert scanline_select
-    always_ff @ ( posedge gpu_clk ) begin
-        // if scanline arrays need to be swapped
-        if (transfer_next_to_this) begin
+    always_ff @(posedge gpu_clk) begin
+        if (rst) begin
+            scanline_select <= 0;
+            this_is_next <= 0;
+        end else if (transfer_next_to_this) begin
+            // if scanline arrays need to be swapped
             // make next scanline this scanline
             scanline_select <= ~scanline_select;
             // wait until hsync before transferring again
             this_is_next <= 1;
         end
-        else if ( next_x == 0 ) begin
+        else if ( next_x_i == 0 ) begin
             // selected scanline is currently being drawn
             this_is_next <= 0;
         end
@@ -153,42 +156,42 @@ module foreground #(
     // whether parsing_object should be loaded to the next scanline
     wire to_fill_scanline =
         ( repeat_counter == 0 ) &&
-        ( current_x < NUM_OBJECTS ) &&
-        ( next_y <= 239 ) &&
-        ( next_y >= parsing_object_y ) &&
-        ( next_y <= (parsing_object_y+9'd7) );
+        ( current_x_i < NUM_OBJECTS ) &&
+        ( next_y_i <= 239 ) &&
+        ( next_y_i >= 9'(parsing_object_y) ) &&
+        ( next_y_i <= (9'(parsing_object_y)+9'd7) );
 
 
 
     // procedural blocks for writing to scanline memory
-    always_ff @ ( posedge gpu_clk ) begin
+    always_ff @(posedge gpu_clk) begin
         // reset previous pixel
         if ( (~scanline_select) && (repeat_counter == 0) )
-            SCANLINE_0[current_x] <= 5'b0;
+            SCANLINE_0[current_x_i] <= 5'b0;
         // load 8 px of parsing_object_line
         for (integer unsigned i = 0; i < 8; i=i+1) begin
             // load pattern
             if ( (scanline_select) && (to_fill_scanline) && (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) )
                 SCANLINE_0[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
-            // fix hazard if (parsing_object_x + 9'(i)) == current_x)
-            else if ( (~scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x) )
+            // fix hazard if (parsing_object_x + 9'(i)) == current_x_i)
+            else if ( (~scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x_i) )
                 SCANLINE_0[ parsing_object_x + 9'(i) ] <= 5'b0;
             // else do nothing
             else
                 SCANLINE_0[ parsing_object_x + 9'(i) ] <= SCANLINE_0[ parsing_object_x + 9'(i) ];
         end
     end
-    always_ff @ ( posedge gpu_clk ) begin
+    always_ff @(posedge gpu_clk) begin
         // reset previous pixel
         if ( (scanline_select) && (repeat_counter == 0) )
-            SCANLINE_1[current_x] <= 5'b0;
+            SCANLINE_1[current_x_i] <= 5'b0;
         // load 8 px of parsing_object_line
         for (integer unsigned i = 0; i < 8; i=i+1) begin
             // load pattern
             if ( (~scanline_select) && (to_fill_scanline) && (parsing_object_line[{3'h7-3'(i),1'b0}+:2] != 2'b0) )
                 SCANLINE_1[ parsing_object_x + 9'(i) ] <= {parsing_object_line[{3'h7-3'(i),1'b0}+:2],parsing_object_color};
-            // fix hazard if (parsing_object_x + 9'(i)) == current_x)
-            else if ( (scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x) )
+            // fix hazard if (parsing_object_x + 9'(i)) == current_x_i)
+            else if ( (scanline_select) && (repeat_counter == 0) && ((parsing_object_x + 9'(i)) == current_x_i) )
                 SCANLINE_1[ parsing_object_x + 9'(i) ] <= 5'b0;
             // else do nothing
             else
@@ -202,43 +205,43 @@ module foreground #(
     generate
         if (LINE_REPEAT == 1) begin
             initial $error("LINE_REPEAT of 1 not supported.");
-            // assign transfer_next_to_this = (!this_is_next) && (~hsync);
+            // assign transfer_next_to_this = (!this_is_next) && (~hsync_i);
         end else begin
             // make repeat_counter a counter with period LINE_REPEAT
             // when counter == 0, transfer_next_to_this <= 1
             reg incremented_repeat_counter = 0;
             initial begin
-                repeat_counter = 0;
-                incremented_repeat_counter = LINE_REPEAT-1;
+                repeat_counter = repeat_counter_t'(LINE_REPEAT-1);
+                incremented_repeat_counter = 0;
             end
-            always_ff @ ( posedge gpu_clk ) begin
+            always_ff @(posedge gpu_clk) begin
                 // increment counter
-                if (~hsync) begin
+                if (~hsync_i) begin
                     incremented_repeat_counter <= 0;
                 end
-                else if ((!incremented_repeat_counter) && (hsync)) begin
-                    if (next_y == MAX_Y)
+                else if ((!incremented_repeat_counter) && (hsync_i)) begin
+                    if (next_y_i == 9'(MAX_Y))
                         repeat_counter <= 0;
                     else if (repeat_counter == 0)
-                        repeat_counter <= LINE_REPEAT-1;
+                        repeat_counter <= repeat_counter_t'(LINE_REPEAT-1);
                     else
                         repeat_counter <= repeat_counter-1;
                     incremented_repeat_counter <= 1;
                 end
             end
-            assign transfer_next_to_this = (!this_is_next) && (~hsync) && (repeat_counter == 0);
+            assign transfer_next_to_this = (!this_is_next) && (~hsync_i) && (repeat_counter == 0);
         end
     endgenerate
 
 
 
     // get color of current pixel
-    wire [4:0] current_pixel = scanline_select ? SCANLINE_1[current_x] : SCANLINE_0[current_x];
-    assign r = current_pixel[4:3] & {2{current_pixel[2]}};
-    assign g = current_pixel[4:3] & {2{current_pixel[1]}};
-    assign b = current_pixel[4:3] & {2{current_pixel[0]}};
+    wire [4:0] current_pixel = scanline_select ? SCANLINE_1[current_x_i] : SCANLINE_0[current_x_i];
+    assign r_o = current_pixel[4:3] & {2{current_pixel[2]}};
+    assign g_o = current_pixel[4:3] & {2{current_pixel[1]}};
+    assign b_o = current_pixel[4:3] & {2{current_pixel[0]}};
 
-    assign valid = (current_pixel[4:3] != 2'b0);
+    assign valid_o = (current_pixel[4:3] != 2'b0);
 
 
 

@@ -11,44 +11,44 @@ always #( mapache64::ClkGpuPeriod / 2 ) clk_12_5875 = ~clk_12_5875;
 reg clk_1 = 1;
 always #( mapache64::ClkCpuPeriod / 2 ) clk_1 = ~clk_1;
 
-wire            cpu_clk_enable;
-reg             rst;
-reg      [15:0] cpu_address;
-wire      [7:0] data, data_in, data_out;
-wire            fpga_data_enable;
-reg             write_enable_B;
+wire                cpu_clk_enable;
+reg                 rst;
+mapache64::address_t cpu_address;
+mapache64::data_t   data, data_in, data_out;
+wire                fpga_data_enable;
+reg                 wen_n;
 
-wire            SELECT_ram_B;
-wire            ram_OE_B;
-wire            SELECT_rom_B;
-wire            SELECT_controller_1;
-wire            SELECT_controller_2;
+wire                SELECT_ram_B;
+wire                ram_OE_B;
+wire                SELECT_rom_B;
+wire                SELECT_controller_1;
+wire                SELECT_controller_2;
 
-wire            vblank_irq_B;
+wire                vblank_irq_B;
 
-wire      [1:0] r, g, b;
-wire            hsync, vsync;
+wire [1:0]          r, g, b;
+wire                hsync, vsync;
 
-wire            controller_clk_in;
-wire            controller_clk_out_enable;
-wire            controller_latch;
-wire            controller_1_data_in_B;
-wire            controller_2_data_in_B;
-wire      [7:0] controller_1_buttons_out;
-wire      [7:0] controller_2_buttons_out;
+wire                controller_clk_in;
+wire                controller_clk_out_enable;
+wire                controller_latch;
+wire                controller_1_data_in_B;
+wire                controller_2_data_in_B;
+mapache64::data_t   controller_1_buttons_out;
+mapache64::data_t   controller_2_buttons_out;
 
 reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
 
-top top (
+top #(mapache64::GpuForegroundNumObjects) top (
     clk_12_5875, clk_1, rst,
 
     cpu_address,
     data_in,
     data_out,
     fpga_data_enable,
-    write_enable_B,
+    wen_n,
 
     SELECT_ram_B,
     ram_OE_B,
@@ -69,7 +69,7 @@ top top (
 );
 
 
-reg [7:0] controller_1_buttons_in, controller_2_buttons_in;
+mapache64::data_t controller_1_buttons_in, controller_2_buttons_in;
 
 controller #(1'b1) controller_1 (
     ~controller_1_buttons_in,
@@ -78,7 +78,7 @@ controller #(1'b1) controller_1 (
     controller_1_data_in_B
 );
 
-controller controller_2 (
+controller #(1'b1) controller_2 (
     ~controller_2_buttons_in,
     controller_clk_in,
     controller_latch,
@@ -100,7 +100,7 @@ rst = 0;
 @(negedge vsync);
 
 @(posedge clk_1);
-write_enable_B = 0;
+wen_n = 0;
 @(posedge clk_1);
 
 
@@ -148,7 +148,7 @@ cpu_address = 16'h4813;
 write_data = 8'b111;
 @(posedge clk_1);
 
-write_enable_B = 1;
+wen_n = 1;
 @(posedge clk_1);
 
 cpu_address = 16'h4810;

@@ -8,9 +8,11 @@
     },
 
     // verilog
-    "verilog.linting.iverilog.runAtFileLocation": false,
-    "verilog.linting.iverilog.arguments": "-Wall -g2012 -DLINTER=1 -DSIM=1",
-    "verilog.linting.linter": "iverilog",
+    "verilog.linting.iverilog.arguments": "-Wall -g2012 -DSIM=1 -Y .sv fpga/rtl/mapache64_pkg.sv",
+    "verilog.linting.iverilog.includePath": ["fpga/rtl/*"],
+    "verilog.linting.verilator.arguments": "-Wall fpga/rtl/mapache64_pkg.sv",
+    "verilog.linting.verilator.includePath": ["fpga/rtl", "fpga/rtl/gpu"],
+    "verilog.linting.linter": "verilator",
 
     // Auto Formatting
     "files.trimTrailingWhitespace": true,
