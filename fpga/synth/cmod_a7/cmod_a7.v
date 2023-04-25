@@ -38,7 +38,7 @@ module cmod_a7 (
     wire gpu_clk;
     wire fpga_data_enable;
 
-    wire controller_clk_in, controller_clk_out_enable;
+    wire controller_clk_in, controller_clk_out;
 
 
     // inout
@@ -104,7 +104,7 @@ module cmod_a7 (
     assign pio27 = cpu_clk;
 
     assign pio04 = controller_latch;
-    assign pio05 = controller_clk_out_enable & controller_clk_in;
+    assign pio05 = controller_clk_out;
 
     assign pio01 = fpga_data_enable;
 
@@ -131,7 +131,7 @@ module cmod_a7 (
         hsync, vsync,
 
         controller_clk_in,
-        controller_clk_out_enable,
+        controller_clk_out,
         controller_latch,
         controller_1_data_in_B,
         controller_2_data_in_B,

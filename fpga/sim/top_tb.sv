@@ -30,7 +30,7 @@ wire [1:0]          r, g, b;
 wire                hsync, vsync;
 
 wire                controller_clk_in;
-wire                controller_clk_out_enable;
+wire                controller_clk_out;
 wire                controller_latch;
 wire                controller_1_data_in_B;
 wire                controller_2_data_in_B;
@@ -62,7 +62,7 @@ top #(mapache64::GpuForegroundNumObjects) top (
     hsync, vsync,
 
     controller_clk_in,
-    controller_clk_out_enable,
+    controller_clk_out,
     controller_latch,
     controller_1_data_in_B,
     controller_2_data_in_B,
@@ -75,14 +75,14 @@ mapache64::data_t controller_1_buttons_in, controller_2_buttons_in;
 
 controller #(1'b1) controller_1 (
     ~controller_1_buttons_in,
-    (controller_clk_in&controller_clk_out_enable),
+    controller_clk_out,
     controller_latch,
     controller_1_data_in_B
 );
 
 controller #(1'b1) controller_2 (
     ~controller_2_buttons_in,
-    (controller_clk_in&controller_clk_out_enable),
+    controller_clk_out,
     controller_latch,
     controller_2_data_in_B
 );

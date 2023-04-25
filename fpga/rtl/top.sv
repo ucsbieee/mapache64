@@ -22,7 +22,7 @@ module top #(
     output  logic                   hsync_o, vsync_o,
 
     input   logic                   controller_clk,
-    output  logic                   controller_clk_en_o,
+    output  logic                   controller_clk_o,
     output  logic                   controller_latch_o,
     input   logic                   controller_1_serial_ni,
     input   logic                   controller_2_serial_ni,
@@ -142,7 +142,7 @@ module top #(
         .rst(rst),
         .start_fetch_i(controller_start_fetch),
 
-        .clk_en_o(controller_clk_en_o),
+        .clk_o(controller_clk_o),
         .latch_o(controller_latch_o),
 
         .serial_LIST_ni({controller_2_serial_ni,controller_1_serial_ni}),

@@ -101,5 +101,5 @@ targets:
         mode: lint-only
         verilator_options:
           - -Wall
-          - +1364-2001ext+v
+          - +1364-2005ext+v
           - +1800-2012ext+sv
