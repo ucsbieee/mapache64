@@ -10,7 +10,7 @@
     // verilog
     "verilog.linting.iverilog.arguments": "-Wall -g2012 -DSIM=1 -Y .sv fpga/rtl/mapache64_pkg.sv",
     "verilog.linting.iverilog.includePath": ["fpga/rtl/*"],
-    "verilog.linting.verilator.arguments": "-Wall --binary fpga/rtl/mapache64_pkg.sv",
+    "verilog.linting.verilator.arguments": "-Wall --binary +1364-2001ext+v +1800-2012ext+sv fpga/rtl/mapache64_pkg.sv",
     "verilog.linting.verilator.includePath": ["fpga/rtl", "fpga/rtl/gpu", "fpga/sim"],
     "verilog.linting.linter": "verilator",
 

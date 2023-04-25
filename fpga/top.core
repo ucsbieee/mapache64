@@ -11,7 +11,7 @@ filesets:
       - rom/build/vectors.mem:              {file_type: user, copyto: vectors.mem}
       - rtl/mapache64_pkg.sv
       - rtl/address_bus.sv
-      - rtl/controller_interface.sv
+      - rtl/controller_interface.v
       - rtl/firmware.sv
       - rtl/gpu/background.sv
       - rtl/gpu/foreground.sv
@@ -101,3 +101,5 @@ targets:
         mode: lint-only
         verilator_options:
           - -Wall
+          - +1364-2001ext+v
+          - +1800-2012ext+sv

@@ -9,7 +9,8 @@ module controller #(
     output  wire        serial_no
 );
 
-    reg [7:0] shift_register_d, shift_register_q;
+    wire [7:0] shift_register_d;
+    reg [7:0] shift_register_q;
 
 
     // The NES controller's CD4021BC shift register allows for async loads
