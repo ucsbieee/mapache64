@@ -7,9 +7,9 @@
 module top_tb ();
 
 reg clk_12_5875 = 1;
-always #( mapache64::ClkGpuPeriod / 2 ) clk_12_5875 = ~clk_12_5875;
+always #( mapache64::ClkGpuPeriod / 2 ) clk_12_5875 <= ~clk_12_5875;
 reg clk_1 = 1;
-always #( mapache64::ClkCpuPeriod / 2 ) clk_1 = ~clk_1;
+always #( mapache64::ClkCpuPeriod / 2 ) clk_1 <= ~clk_1;
 
 wire                cpu_clk_enable;
 reg                 rst;
@@ -40,6 +40,8 @@ mapache64::data_t   controller_2_buttons_out;
 reg       [7:0] write_data;
 assign data_in = write_data;
 assign data = fpga_data_enable ? data_out : data_in;
+
+assign controller_clk_in = clk_1;
 
 top #(mapache64::GpuForegroundNumObjects) top (
     clk_12_5875, clk_1, rst,
@@ -73,14 +75,14 @@ mapache64::data_t controller_1_buttons_in, controller_2_buttons_in;
 
 controller #(1'b1) controller_1 (
     ~controller_1_buttons_in,
-    controller_clk_in,
+    (controller_clk_in&controller_clk_out_enable),
     controller_latch,
     controller_1_data_in_B
 );
 
 controller #(1'b1) controller_2 (
     ~controller_2_buttons_in,
-    controller_clk_in,
+    (controller_clk_in&controller_clk_out_enable),
     controller_latch,
     controller_2_data_in_B
 );
@@ -96,6 +98,9 @@ $timeformat( -3, 6, "ms", 0);
 rst = 1;
 #( 2*mapache64::ClkCpuPeriod );
 rst = 0;
+
+controller_1_buttons_in = 8'b01111111;
+controller_2_buttons_in = 8'b11111110;
 
 @(negedge vsync);
 
