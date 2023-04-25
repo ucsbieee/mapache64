@@ -2,38 +2,36 @@
 module controller_interface #(
     parameter NUM_CONTROLLERS = 2
 ) (
-    input   logic                               clk,
-    input   logic                               rst,
-    input   logic                               start_fetch_i,  // synchronous, must be held for less than 10 clk cycles
+    input   wire                            clk,
+    input   wire                            rst,
+    input   wire                            start_fetch_i,  // synchronous, must be held for less than 10 clk cycles
 
-    output  logic                               clk_en_o,
-    output  logic                               latch_o,
+    output  wire                            clk_en_o,
+    output  wire                            latch_o,
 
-    input   logic [NUM_CONTROLLERS-1:0]         serial_LIST_ni,
+    input   wire  [NUM_CONTROLLERS-1:0]     serial_LIST_ni,
 
-    output  logic [NUM_CONTROLLERS-1:0][7:0]    data_LIST_o
+    output  wire  [8*NUM_CONTROLLERS-1:0]   data_LIST_o
 );
 
-    typedef enum logic [1:0] {
-        WAIT,
-        LATCH,
-        LATCH_DONE,
-        READ
-    } state_t;
 
-    state_t                             state_d,            state_q;
-    logic                               latch_d,            latch_q;
-    logic [NUM_CONTROLLERS-1:0][7:0]    data_LIST_d,        data_LIST_q;
-    logic [3:0]                         num_bits_left_d,    num_bits_left_q;
-    logic                               latch_timer_d,      latch_timer_q;
+    // Latch Timing State Machine
+
+    localparam WAIT         = 2'b00;
+    localparam LATCH        = 2'b01;
+    localparam LATCH_DONE   = 2'b10;
+    localparam READ         = 2'b11;
+
+    reg [1:0]   state_d,                            state_q;
+    reg         latch_d,                            latch_q;
+    reg [3:0]   num_bits_left_d,                    num_bits_left_q;
+    reg         latch_timer_d,                      latch_timer_q;
 
     wire has_bits_left = (num_bits_left_q != '0);
     assign latch_o =  latch_q;
-    assign data_LIST_o = data_LIST_q;
     assign clk_en_o = (has_bits_left || latch_o);
 
-    // state machine, latch timing
-    always_comb begin
+    always @* begin
         num_bits_left_d = num_bits_left_q;
         latch_d = latch_q;
         state_d = state_q;
@@ -68,7 +66,7 @@ module controller_interface #(
         endcase
     end
 
-    always_ff @(negedge clk) begin
+    always @(negedge clk) begin
         if ( rst ) begin
             num_bits_left_q <= 4'b0;
             latch_q <= 1'b0;
@@ -82,31 +80,44 @@ module controller_interface #(
         end
     end
 
-    // controller-specific updates
-    generate for ( genvar controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
-    logic [7:0] shift_register_d, shift_register_q;
-    always_comb begin
-        data_LIST_d[controller_GEN-1] = data_LIST_q[controller_GEN-1];
+
+
+    // Individual Controller Logic
+
+    genvar controller_GEN;
+    generate for (controller_GEN = 1; controller_GEN <= NUM_CONTROLLERS; controller_GEN = controller_GEN+1 ) begin : controller
+
+    reg [7:0] data_d, data_q;
+    assign data_LIST_o[8*(controller_GEN-1)+:8] = data_q;
+
+    reg [7:0] shift_register_d, shift_register_q;
+
+    always @* begin
         shift_register_d = shift_register_q;
-        if ( state_q == WAIT ) begin
-            data_LIST_d[controller_GEN-1] = shift_register_q;
-        end else if ( has_bits_left ) begin
+        data_d = data_q;
+        if ( num_bits_left_q != '0 ) begin
             shift_register_d = {shift_register_q[6:0], ~serial_LIST_ni[controller_GEN-1]};
+            if ( num_bits_left_d == '0 ) begin
+                data_d = shift_register_d;
+            end
         end
     end
-    always_ff @(posedge clk) begin
+
+    always @(posedge clk) begin
         if ( rst ) begin
             shift_register_q <= 8'b0;
-            data_LIST_q[controller_GEN-1] <= '0;
+            data_q <= '0;
         end else begin
             shift_register_q <= shift_register_d;
-            data_LIST_q[controller_GEN-1] <= data_LIST_d[controller_GEN-1];
+            data_q <= data_d;
         end
     end
+
     `ifdef SIM
-    logic controller_serial_n; assign controller_serial_n = serial_LIST_ni[controller_GEN-1];
-    logic [7:0] controller_data; assign controller_data = data_LIST_q[controller_GEN-1];
+    wire serial_n = serial_LIST_ni[controller_GEN-1];
+    wire [7:0] data = data_q;
     `endif
+
     end endgenerate
 
 endmodule
