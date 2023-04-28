@@ -90,7 +90,7 @@ module top #(
         SELECT_in_vblank    ? gpu_data              :
         SELECT_controller_1 ? controller_1_data_o   :
         SELECT_controller_2 ? controller_2_data_o   :
-        {8{1'bz}};
+        'x;
 
 
     mapache64::firmware_address_t firmware_address; assign firmware_address = 13'(cpu_address_i-16'h5000);

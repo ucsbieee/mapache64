@@ -14,7 +14,7 @@ module firmware (
     assign data_o =
         SELECT_firmware_i   ? firmware_mem[address_i]       :
         SELECT_vectors_i    ? vector_mem[vector_address]    :
-        {8{1'bz}};
+        'x;
 
     initial $readmemh( "firmware.mem", firmware_mem, 0, mapache64::FirmwareSize-1 );
     initial $readmemh( "vectors.mem", vector_mem, 0, 5 );

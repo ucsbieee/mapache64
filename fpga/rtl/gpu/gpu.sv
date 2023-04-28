@@ -38,7 +38,7 @@ module gpu #(
         (SELECT_txbl_i)                 ? text_data         :
         (SELECT_pmf_i||SELECT_obm_i)    ? foreground_data   :
         (SELECT_pmb_i||SELECT_ntbl_i)   ? background_data   :
-        {8{1'bz}};
+        'x;
 
     // for vblank irw
     reg writable_prev;
@@ -97,16 +97,16 @@ module gpu #(
     text text (
         .cpu_clk(cpu_clk),
 
-        .current_x_i(current_x[7:0]),
-        .current_y_i(current_y[7:0]),
+        .display_x_i(current_x[7:0]),
+        .display_y_i(current_y[7:0]),
 
-        .color_o(text_color),
-        .valid_o(text_valid),
+        .display_color_o(text_color),
+        .display_valid_o(text_valid),
 
-        .data_i(data_i),
-        .data_o(text_data),
+        .vram_wdata_i(data_i),
+        .vram_rdata_o(text_data),
         .vram_address_i(vram_address_i),
-        .wen_i(vram_wen),
+        .vram_wen_i(vram_wen),
         .SELECT_txbl_i(SELECT_txbl_i)
     );
 
@@ -141,17 +141,17 @@ module gpu #(
     background background (
         .cpu_clk(cpu_clk),
 
-        .current_x_i(current_x[7:0]),
-        .current_y_i(current_y[7:0]),
+        .display_x_i(current_x[7:0]),
+        .display_y_i(current_y[7:0]),
 
         .r_o(background_r),
         .g_o(background_g),
         .b_o(background_b),
 
-        .data_i(data_i),
-        .data_o(background_data),
+        .vram_wdata_i(data_i),
+        .vram_rdata_o(background_data),
         .vram_address_i(vram_address_i),
-        .wen_i(vram_wen),
+        .vram_wen_i(vram_wen),
         .SELECT_pmb_i(SELECT_pmb_i),
         .SELECT_ntbl_i(SELECT_ntbl_i)
     );

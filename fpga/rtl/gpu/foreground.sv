@@ -54,7 +54,7 @@ module foreground #(
     assign data_o =
         SELECT_pmf_i  ? PMF[ pmf_address ]    :
         SELECT_obm_i  ? OBM[ obm_address ]    :
-        {8{1'bz}};
+        'x;
 
     // write to vram
     always_ff @(negedge cpu_clk) begin : write_to_vram
@@ -106,7 +106,7 @@ module foreground #(
 
 
     // index of the object that is currently being loaded to the scanline array
-    wire [5:0] parsing_object = ( current_x_i < 9'(NUM_OBJECTS) ) ? 6'( 9'(NUM_OBJECTS-1) - current_x_i ) : {6{1'bx}};
+    wire [5:0] parsing_object = ( current_x_i < 9'(NUM_OBJECTS) ) ? 6'( 9'(NUM_OBJECTS-1) - current_x_i ) : 'x;
 
     // selected scanline is for the next line
     reg this_is_next;
