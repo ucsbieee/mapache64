@@ -113,7 +113,9 @@ module cmod_a7 (
     wire [7:0] controller_1_buttons_out, controller_2_buttons_out;
 
     // module
-    top top (
+    top #(
+        .FOREGROUND_NUM_OBJECTS(mapache64::GpuForegroundNumObjects)
+    ) top (
         clk_12_5875, cpu_clk, rst,
         cpu_address,
         data_in,
@@ -139,7 +141,7 @@ module cmod_a7 (
         controller_2_buttons_out
     );
 
-    clk_mmcm_m clk_src (
+    clk_mmcm clk_src (
         clk_12_5875,
         clk_8,
         rst,

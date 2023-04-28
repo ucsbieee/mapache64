@@ -23,20 +23,20 @@ module address_bus (
 
 
     // memory
-    assign SELECT_ram_o         = mapache64::in_bounds(16'h0000,cpu_address_i,16'h3fff);
+    assign SELECT_ram_o         = mapache64::in_bounds16(16'h0000,cpu_address_i,16'h3fff);
 
-    assign SELECT_vram_o        = mapache64::in_bounds(16'h4000,cpu_address_i,16'h4fff);
-    assign SELECT_pmf_o         = mapache64::in_bounds(16'h4000,cpu_address_i,16'h41ff);
-    assign SELECT_pmb_o         = mapache64::in_bounds(16'h4200,cpu_address_i,16'h43ff);
-    assign SELECT_ntbl_o        = mapache64::in_bounds(16'h4400,cpu_address_i,16'h47ff);
-    assign SELECT_obm_o         = mapache64::in_bounds(16'h4800,cpu_address_i,16'h48ff);
-    assign SELECT_txbl_o        = mapache64::in_bounds(16'h4900,cpu_address_i,16'h4cff);
+    assign SELECT_vram_o        = mapache64::in_bounds16(16'h4000,cpu_address_i,16'h4fff);
+    assign SELECT_pmf_o         = mapache64::in_bounds16(16'h4000,cpu_address_i,16'h41ff);
+    assign SELECT_pmb_o         = mapache64::in_bounds16(16'h4200,cpu_address_i,16'h43ff);
+    assign SELECT_ntbl_o        = mapache64::in_bounds16(16'h4400,cpu_address_i,16'h47ff);
+    assign SELECT_obm_o         = mapache64::in_bounds16(16'h4800,cpu_address_i,16'h48ff);
+    assign SELECT_txbl_o        = mapache64::in_bounds16(16'h4900,cpu_address_i,16'h4cff);
 
-    assign SELECT_firmware_o    = mapache64::in_bounds(16'h5000,cpu_address_i,16'h6fff);
+    assign SELECT_firmware_o    = mapache64::in_bounds16(16'h5000,cpu_address_i,16'h6fff);
 
-    assign SELECT_rom_o         = mapache64::in_bounds(16'h8000,cpu_address_i,16'hfff9);
+    assign SELECT_rom_o         = mapache64::in_bounds16(16'h8000,cpu_address_i,16'hfff9);
 
-    assign SELECT_vectors_o     = mapache64::in_bounds(16'hfffa,cpu_address_i,16'hffff);
+    assign SELECT_vectors_o     = mapache64::in_bounds16(16'hfffa,cpu_address_i,16'hffff);
 
 
     // IO
