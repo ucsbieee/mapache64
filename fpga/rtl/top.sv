@@ -136,7 +136,8 @@ module top #(
     );
 
     controller_interface #(
-        .NUM_CONTROLLERS(2)
+        .NUM_CONTROLLERS(2),
+        .LATCH_PULSE_WIDTH(2)
     ) controller_interface (
         .clk(controller_clk),
         .rst(rst),
