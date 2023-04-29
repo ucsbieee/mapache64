@@ -31,7 +31,7 @@ module background (
     endfunction
 
     // Nametable (https://mapache64.ucsbieee.org/guides/gpu/#Nametable)
-    mapache64::ntbl_tile_t NTBL[1024];
+    mapache64::data_t NTBL[1024];
 
     function automatic mapache64::ntbl_tile_t ntbl_tile(logic [4:0] r, c);
         return NTBL[ {r, c} ];
@@ -72,30 +72,31 @@ module background (
     wire [4:0] display_col  = display_x_i[7:3];
     wire [2:0] display_intx = display_x_i[2:0];
 
-    // Send Nametable+PMB to BSM
+    // Read from NTBL
+    mapache64::ntbl_tile_t display_tile;
+    assign display_tile = ntbl_tile(display_row, display_col);
+
+    // Find color
     wire [2:0] ntbl_color0;
     wire [2:0] ntbl_color1;
     // assign {ntbl_color1,ntbl_color0} = ntbl_colors(); // as of 4/29/23, icarus does not support argument-less functions
     assign {ntbl_color1,ntbl_color0} = 6'(NTBL[960]);
-
-    // Read from VRAM
-    mapache64::ntbl_tile_t display_tile;
-    assign display_tile = ntbl_tile(display_row, display_col);
-
-    // find BSM color
     wire [2:0] display_color = display_tile.colorselect ? ntbl_color1 : ntbl_color0;
 
-    // get vflipped address
+    // get (flipped) addresses into pattern
     wire [2:0] display_pattern_y = display_tile.vflip ? (3'h7-display_inty) : display_inty;
     wire [2:0] display_pattern_x = display_tile.hflip ? (3'h7-display_intx) : display_intx;
 
-    // get flipped line of pixels to draw
+    // Read from PMB
     wire [15:0] display_line = pmb_line( display_tile.pmba, display_pattern_y );
 
-    wire [1:0] display_pixel = display_line[ {(3'h7-display_pattern_x),1'b0} +: 2 ];
-    assign r_o = display_pixel & {2{display_color[2]}};
-    assign g_o = display_pixel & {2{display_color[1]}};
-    assign b_o = display_pixel & {2{display_color[0]}};
+    // Find lightness
+    wire [1:0] display_lightness = display_line[ {(3'h7-display_pattern_x),1'b0} +: 2 ];
+
+    // Display rgb
+    assign r_o = display_lightness & {2{display_color[2]}};
+    assign g_o = display_lightness & {2{display_color[1]}};
+    assign b_o = display_lightness & {2{display_color[0]}};
 
 
 
