@@ -41,5 +41,12 @@ package mapache64;
         logic [6:0] pmca;
     } txbl_tile_t;
 
+    typedef struct packed {
+        logic       colorselect;
+        logic       hflip;
+        logic       vflip;
+        logic [4:0] pmba;
+    } ntbl_tile_t;
+
 endpackage
 /* verilator lint_restore */

@@ -21,21 +21,24 @@ module background (
     // ======== VRAM ======== \\
 
     // Background Pattern Memory (https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory)
-    mapache64::data_t PMB [511:0];
+    mapache64::data_t PMB[512];
 
-    `define PMB_LINE(PMBA,PATTERN_Y)            { PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b0} ], PMB[ {$unsigned(5'(PMBA)), $unsigned(3'(PATTERN_Y)), 1'b1} ] }
+    function automatic logic [15:0] pmb_line(logic [4:0] pmba, logic [2:0] y);
+        logic [7:0] left, right;
+        left = PMB[ {pmba, y, 1'b0} ];
+        right = PMB[ {pmba, y, 1'b1} ];
+        return {left, right};
+    endfunction
 
-    // Nametable                    https://mapache64.ucsbieee.org/guides/gpu/#Nametable
-    mapache64::data_t NTBL [1023:0];
+    // Nametable (https://mapache64.ucsbieee.org/guides/gpu/#Nametable)
+    mapache64::ntbl_tile_t NTBL[1024];
 
-    `define NTBL_COLORS                         NTBL[960]
-    `define NTBL_COLOR_0                        `NTBL_COLORS[2:0]
-    `define NTBL_COLOR_1                        `NTBL_COLORS[5:3]
-    `define NTBL_TILE(R,C)                      NTBL[ {$unsigned(5'(R)), $unsigned(5'(C))} ]
-    `define NTBL_TILE_COLORSELECT(R,C)          `NTBL_TILE(R,C)[7]
-    `define NTBL_TILE_HFLIP(R,C)                `NTBL_TILE(R,C)[6]
-    `define NTBL_TILE_VFLIP(R,C)                `NTBL_TILE(R,C)[5]
-    `define NTBL_TILE_PMBA(R,C)                 `NTBL_TILE(R,C)[4:0]
+    function automatic mapache64::ntbl_tile_t ntbl_tile(logic [4:0] r, c);
+        return NTBL[ {r, c} ];
+    endfunction
+    function automatic logic[5:0] ntbl_colors;
+        return 6'(NTBL[ 960 ]);
+    endfunction
 
 
 
@@ -70,31 +73,29 @@ module background (
     wire [2:0] display_intx = display_x_i[2:0];
 
     // Send Nametable+PMB to BSM
-    wire [2:0] ntbl_color0 = `NTBL_COLOR_0;
-    wire [2:0] ntbl_color1 = `NTBL_COLOR_1;
+    wire [2:0] ntbl_color0;
+    wire [2:0] ntbl_color1;
+    // assign {ntbl_color1,ntbl_color0} = ntbl_colors(); // as of 4/29/23, icarus does not support argument-less functions
+    assign {ntbl_color1,ntbl_color0} = 6'(NTBL[960]);
+
+    // Read from VRAM
+    mapache64::ntbl_tile_t display_tile;
+    assign display_tile = ntbl_tile(display_row, display_col);
 
     // find BSM color
-    wire color_select = `NTBL_TILE_COLORSELECT(display_row,display_col);
-    wire [2:0] color = color_select ? ntbl_color1 : ntbl_color0;
-
-    // PMB address
-    wire [4:0] pmba = `NTBL_TILE_PMBA(display_row,display_col);
-
-    // get flip states
-    wire hflip = `NTBL_TILE_HFLIP(display_row,display_col);
-    wire vflip = `NTBL_TILE_VFLIP(display_row,display_col);
+    wire [2:0] display_color = display_tile.colorselect ? ntbl_color1 : ntbl_color0;
 
     // get vflipped address
-    wire [2:0] in_pattern_y = vflip ? (3'h7-display_inty) : display_inty;
-    wire [2:0] in_pattern_x = hflip ? (3'h7-display_intx) : display_intx;
+    wire [2:0] display_pattern_y = display_tile.vflip ? (3'h7-display_inty) : display_inty;
+    wire [2:0] display_pattern_x = display_tile.hflip ? (3'h7-display_intx) : display_intx;
 
     // get flipped line of pixels to draw
-    wire [15:0] line = `PMB_LINE( pmba, in_pattern_y );
+    wire [15:0] display_line = pmb_line( display_tile.pmba, display_pattern_y );
 
-    wire [1:0] display_pixel = line[ {(3'h7-in_pattern_x),1'b0} +: 2 ];
-    assign r_o = display_pixel & {2{color[2]}};
-    assign g_o = display_pixel & {2{color[1]}};
-    assign b_o = display_pixel & {2{color[0]}};
+    wire [1:0] display_pixel = display_line[ {(3'h7-display_pattern_x),1'b0} +: 2 ];
+    assign r_o = display_pixel & {2{display_color[2]}};
+    assign g_o = display_pixel & {2{display_color[1]}};
+    assign b_o = display_pixel & {2{display_color[0]}};
 
 
 
@@ -102,24 +103,22 @@ module background (
 
     `ifdef SIM
     generate
-        for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN = ntbl_r_GEN+1 ) begin : ntbl_row
-            for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN = ntbl_c_GEN+1 ) begin : ntbl_column
-                wire colorselect = `NTBL_TILE_COLORSELECT(ntbl_r_GEN,ntbl_c_GEN);
-                wire hflip = `NTBL_TILE_HFLIP(ntbl_r_GEN,ntbl_c_GEN);
-                wire vflip = `NTBL_TILE_VFLIP(ntbl_r_GEN,ntbl_c_GEN);
-                wire [4:0] pmba = `NTBL_TILE_PMBA(ntbl_r_GEN,ntbl_c_GEN);
+        for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN++ ) begin : ntbl_row
+            for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN++ ) begin : ntbl_column
+                mapache64::ntbl_tile_t tile;
+                assign title = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
             end
         end
     endgenerate
-    generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN = pattern_GEN+1 ) begin : pattern
-        wire [15:0] line0 = `PMB_LINE(pattern_GEN,3'd0);
-        wire [15:0] line1 = `PMB_LINE(pattern_GEN,3'd1);
-        wire [15:0] line2 = `PMB_LINE(pattern_GEN,3'd2);
-        wire [15:0] line3 = `PMB_LINE(pattern_GEN,3'd3);
-        wire [15:0] line4 = `PMB_LINE(pattern_GEN,3'd4);
-        wire [15:0] line5 = `PMB_LINE(pattern_GEN,3'd5);
-        wire [15:0] line6 = `PMB_LINE(pattern_GEN,3'd6);
-        wire [15:0] line7 = `PMB_LINE(pattern_GEN,3'd7);
+    generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN++ ) begin : pattern
+        wire [15:0] line0 = pmb_line(pattern_GEN,3'd0);
+        wire [15:0] line1 = pmb_line(pattern_GEN,3'd1);
+        wire [15:0] line2 = pmb_line(pattern_GEN,3'd2);
+        wire [15:0] line3 = pmb_line(pattern_GEN,3'd3);
+        wire [15:0] line4 = pmb_line(pattern_GEN,3'd4);
+        wire [15:0] line5 = pmb_line(pattern_GEN,3'd5);
+        wire [15:0] line6 = pmb_line(pattern_GEN,3'd6);
+        wire [15:0] line7 = pmb_line(pattern_GEN,3'd7);
     end endgenerate
     `endif
 

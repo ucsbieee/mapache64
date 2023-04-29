@@ -27,7 +27,7 @@ module text (
     endfunction
 
     // Character Pattern Memory
-    mapache64::data_t PMC [1024];
+    mapache64::data_t PMC[1024];
     initial $readmemb( "pmc.mem", PMC, 0, 1023 );
 
     function automatic logic pmc_valid(logic [6:0] pmca, logic [2:0] y, logic [2:0] x);
@@ -77,9 +77,8 @@ module text (
     generate
         for ( genvar txbl_row_GEN = 0; txbl_row_GEN < 30; txbl_row_GEN = txbl_row_GEN+1 ) begin : txbl_row
             for ( genvar txbl_col_GEN = 0; txbl_col_GEN < 32; txbl_col_GEN = txbl_col_GEN+1 ) begin : txbl_column
-                mapache64::txbl_tile_t tile = txbl_tile(txbl_row_GEN,txbl_col_GEN);
-                wire colorselect = tile.colorselect;
-                wire [4:0] pmca = tile.pmca;
+                mapache64::txbl_tile_t tile;
+                assign tile = txbl_tile(txbl_row_GEN, txbl_col_GEN);
             end
         end
     endgenerate
