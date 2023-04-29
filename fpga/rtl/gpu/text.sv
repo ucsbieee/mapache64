@@ -20,7 +20,7 @@ module text (
     // ======== VRAM ======== \\
 
     // Text Table (https://mapache64.ucsbieee.org/guides/gpu/#Text-Table)
-    mapache64::txbl_tile_t TXBL[1024];
+    mapache64::data_t TXBL[1024];
 
     function automatic mapache64::txbl_tile_t txbl_tile(logic [4:0] r, c);
         return TXBL[ {r, c} ];
