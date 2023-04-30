@@ -9,10 +9,10 @@
 
     // verilog
     "verilog.linting.iverilog.arguments": "-Wall -g2012 -DSIM=1 -Y .sv fpga/rtl/mapache64_pkg.sv",
-    "verilog.linting.iverilog.includePath": ["fpga/rtl/*", "fpga/fusesoc_libraries/nes_controller_interface/rtl"],
+    "verilog.linting.iverilog.includePath": ["fpga/*"],
     "verilog.linting.verilator.arguments": "-Wall --binary +1364-2005ext+v +1800-2012ext+sv fpga/rtl/mapache64_pkg.sv",
-    "verilog.linting.verilator.includePath": ["fpga/rtl", "fpga/rtl/gpu", "fpga/sim", "fpga/synth", "fpga/synth/cmod_a7", "fpga/fusesoc_libraries/nes_controller_interface/rtl"],
-    "verilog.linting.linter": "verilator",
+    "verilog.linting.verilator.includePath": ["fpga/rtl", "fpga/rtl/gpu", "fpga/sim", "fpga/synth/common", "fpga/synth/cmod_a7", "fpga/fusesoc_libraries/nes_controller_interface/rtl"],
+    "verilog.linting.linter": "iverilog",
 
     // Auto Formatting
     "files.trimTrailingWhitespace": true,
