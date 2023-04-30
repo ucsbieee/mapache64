@@ -5,11 +5,8 @@
 tools/pattern-gen/*.out
 tools/pattern-gen/**/*.out
 
-# vasm output
-assembly-level/old/src/dump/*
-
 # py65 output
-assembly-level/**/dump/
+firmware/**/dump/
 
 # python
 __pycache__/
