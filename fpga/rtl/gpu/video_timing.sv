@@ -39,7 +39,7 @@ module video_timing (
 
     assign vcounter_d =
         ( hcounter_q != 10'd399 ) ? vcounter_q  :
-        ( vcounter_q == 10'd524 ) ? 10'd0     :
+        ( vcounter_q == 10'd524 ) ? 10'd0       :
         vcounter_q + 10'd1;
 
 

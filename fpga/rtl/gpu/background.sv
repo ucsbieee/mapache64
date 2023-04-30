@@ -107,7 +107,7 @@ module background (
         for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN++ ) begin : ntbl_row
             for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN++ ) begin : ntbl_column
                 mapache64::ntbl_tile_t tile;
-                assign title = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
+                assign tile = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
             end
         end
     endgenerate

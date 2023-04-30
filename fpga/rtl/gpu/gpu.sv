@@ -54,9 +54,24 @@ module gpu #(
 
 
     wire [8:0] current_x, current_y;
-    wire [8:0] next_x, next_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
+
+    logic prefetch_start;
+    logic [7:0] prefetch_y;
+    always_comb begin
+        prefetch_start = 0;
+        prefetch_y = 'x;
+        if (hcounter==32) begin
+            if (vcounter==523) begin
+                prefetch_start = 1;
+                prefetch_y = 0;
+            end else if (vcounter < 10'd478 && vcounter[0]==1) begin
+                prefetch_start = 1;
+                prefetch_y = vcounter[8:1]+1;
+            end
+        end
+    end
 
     wire text_color, text_valid;
     wire [1:0] foreground_r, foreground_g, foreground_b;
@@ -73,8 +88,6 @@ module gpu #(
 
     assign current_x = hcounter[8:0] - 9'd32;
     assign current_y = vcounter[9:1];
-    assign next_x = (current_x == 511) ? (0) : (current_x+1);
-    assign next_y = (current_y == 262) ? (0) : (current_y+1);
 
     video_timing video_timing (
         .clk_12_5875(gpu_clk),
@@ -97,8 +110,8 @@ module gpu #(
     text text (
         .cpu_clk(cpu_clk),
 
-        .display_x_i(current_x[7:0]),
-        .display_y_i(current_y[7:0]),
+        .display_x_i(8'(current_x)),
+        .display_y_i(8'(current_y)),
 
         .display_color_o(text_color),
         .display_valid_o(text_valid),
@@ -112,28 +125,27 @@ module gpu #(
 
     foreground #(
         .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS),
-        .LINE_REPEAT(2),
-        .NUM_ROWS(523)
+        .PREFETCH_SCANLINES(1)
     ) foreground (
         .gpu_clk(gpu_clk),
         .cpu_clk(cpu_clk),
         .rst(rst),
 
-        .current_x_i(current_x),
-        .current_y_i(current_y),
-        .next_x_i(next_x),
-        .next_y_i(next_y),
-        .hsync_i(hsync_o),
+        .prefetch_start_i(prefetch_start),
+        .prefetch_y_i(prefetch_y),
+
+        .display_x_i(8'(current_x)),
+        .display_y_i(8'(current_y)),
 
         .r_o(foreground_r),
         .g_o(foreground_g),
         .b_o(foreground_b),
         .valid_o(foreground_valid),
 
-        .data_i(data_i),
-        .data_o(foreground_data),
+        .vram_wdata_i(data_i),
+        .vram_rdata_o(foreground_data),
         .vram_address_i(vram_address_i),
-        .wen_i(vram_wen),
+        .vram_wen_i(vram_wen),
         .SELECT_pmf_i(SELECT_pmf_i),
         .SELECT_obm_i(SELECT_obm_i)
     );

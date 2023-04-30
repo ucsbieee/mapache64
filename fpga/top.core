@@ -13,6 +13,7 @@ filesets:
       - rtl/address_bus.sv
       - rtl/controller_interface.v
       - rtl/firmware.sv
+      - rtl/gpu/object_scanline.sv
       - rtl/gpu/background.sv
       - rtl/gpu/foreground.sv
       - rtl/gpu/text.sv
