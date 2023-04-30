@@ -36,7 +36,7 @@ module background (
     function automatic mapache64::ntbl_tile_t ntbl_tile(logic [4:0] r, c);
         return NTBL[ {r, c} ];
     endfunction
-    function automatic logic[5:0] ntbl_colors;
+    function automatic logic [5:0] ntbl_colors;
         return 6'(NTBL[ 960 ]);
     endfunction
 
