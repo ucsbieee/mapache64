@@ -1,0 +1,108 @@
+CAPI=2:
+name: ucsbieee:mapache64:top:1.0.0
+description: Mapache 64 gpu + firmware + address bus + misc
+
+filesets:
+  # default
+  rtl:
+    files:
+      - rom/build/pmc.mem:                  {file_type: user, copyto: pmc.mem}
+      - rom/build/firmware.mem:             {file_type: user, copyto: firmware.mem}
+      - rom/build/vectors.mem:              {file_type: user, copyto: vectors.mem}
+      - rtl/mapache64_pkg.sv
+      - rtl/address_bus.sv
+      - rtl/firmware.sv
+      - rtl/gpu/object_scanline.sv
+      - rtl/gpu/background.sv
+      - rtl/gpu/foreground.sv
+      - rtl/gpu/text.sv
+      - rtl/gpu/video_timing.sv
+      - rtl/gpu/gpu.sv
+      - rtl/top.sv
+    file_type: systemVerilogSource
+    depend:
+      - sifferman::nes_controller_interface
+
+
+  # synth
+  cmod_a7:
+    files:
+      - synth/clk_divider.sv
+      - synth/cmod_a7/a7_config.xdc:        {file_type: xdc}
+      - synth/cmod_a7/clk_constraints.xdc:  {file_type: xdc}
+      - synth/cmod_a7/clk_mmcm.xci:         {file_type: xci}
+      - synth/cmod_a7/cmod_a7.xdc:          {file_type: xdc}
+      - synth/cmod_a7/flash.xdc:            {file_type: xdc}
+      - synth/cmod_a7/project_config.tcl:   {file_type: tclSource}
+      - synth/cmod_a7/cmod_a7.sv
+    file_type: systemVerilogSource
+
+  # simulation
+  sim:
+    files:
+      - sim/top_tb.sv
+    file_type: systemVerilogSource
+    depend:
+      - sifferman::nes_controller_interface
+
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+  synth: &synth
+    filesets:
+      - rtl
+
+  sim: # fusesoc run --target sim ucsbieee:mapache64:top
+    <<: *default
+    description: Simulate the design
+    toplevel: top_tb
+    default_tool: icarus
+    filesets_append:
+      - sim
+    tools:
+      icarus:
+        timescale: 1s/1fs
+        iverilog_options:
+          - -g2012 # Use SystemVerilog-2012
+          - -Wall
+          - -Wno-timescale
+          - -DSIM=1
+      verilator:
+        verilator_options:
+          - --binary
+          - -j 0
+          - --trace-fst
+          - --x-assign unique
+          - --x-initial unique
+          - --unroll-count 10000
+          - --unroll-stmts 1000000
+          - -Wno-fatal
+          - -DSIM=1
+          - --timescale-override 1s/1fs
+        run_options:
+          - +verilator+rand+reset+2
+
+  cmod_a7: # fusesoc run --target cmod_a7 ucsbieee:mapache64:top
+    <<: *synth
+    description: Synthesize on Digilent Cmod A7-35T
+    toplevel: cmod_a7
+    filesets_append:
+      - cmod_a7
+    default_tool: vivado
+    tools:
+      vivado:
+        part: xc7a35tcpg236-1
+
+  lint: # fusesoc run --target lint ucsbieee:mapache64:top
+    <<: *default
+    toplevel: top
+    default_tool: verilator
+    tools:
+      verilator:
+        mode: lint-only
+        verilator_options:
+          - -Wall
+          - +1364-2005ext+v
+          - +1800-2012ext+sv
