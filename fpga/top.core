@@ -11,7 +11,6 @@ filesets:
       - rom/build/vectors.mem:              {file_type: user, copyto: vectors.mem}
       - rtl/mapache64_pkg.sv
       - rtl/address_bus.sv
-      - rtl/controller_interface.v
       - rtl/firmware.sv
       - rtl/gpu/object_scanline.sv
       - rtl/gpu/background.sv
@@ -21,6 +20,9 @@ filesets:
       - rtl/gpu/gpu.sv
       - rtl/top.sv
     file_type: systemVerilogSource
+    depend:
+      - sifferman::nes_controller_interface
+
 
   # synth
   cmod_a7:
@@ -38,10 +40,10 @@ filesets:
   # simulation
   sim:
     files:
-      - sim/controller.v
       - sim/top_tb.sv
     file_type: systemVerilogSource
-
+    depend:
+      - sifferman::nes_controller_interface
 
 
 targets:

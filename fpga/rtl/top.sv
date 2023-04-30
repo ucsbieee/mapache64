@@ -135,18 +135,18 @@ module top #(
         .vblank_irq_o(vblank_irq)
     );
 
-    controller_interface #(
+    nes_controller_interface #(
         .NUM_CONTROLLERS(2),
         .LATCH_PULSE_WIDTH(2)
     ) controller_interface (
         .clk(controller_clk),
         .rst(rst),
         .start_fetch_i(controller_start_fetch),
+        .valid_o(),
 
-        .clk_o(controller_clk_o),
-        .latch_o(controller_latch_o),
-
-        .serial_LIST_ni({controller_2_serial_ni,controller_1_serial_ni}),
+        .controller_clk_o(controller_clk_o),
+        .controller_latch_o(controller_latch_o),
+        .controller_serial_LIST_ni({controller_2_serial_ni,controller_1_serial_ni}),
 
         .data_LIST_o({controller_2_data_o,controller_1_data_o})
     );
