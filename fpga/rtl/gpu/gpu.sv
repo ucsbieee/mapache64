@@ -53,7 +53,7 @@ module gpu #(
     end
 
 
-    wire [8:0] current_x, current_y;
+    wire [8:0] next_x, next_y;
     wire [9:0] hcounter, vcounter;
     wire visible, foreground_valid;
 
@@ -62,11 +62,11 @@ module gpu #(
     always_comb begin
         prefetch_start = 0;
         prefetch_y = 'x;
-        if (hcounter==32) begin
+        if (hcounter==0) begin
             if (vcounter==523) begin
                 prefetch_start = 1;
                 prefetch_y = 0;
-            end else if (vcounter < 10'd478 && vcounter[0]==1) begin
+            end else if (vcounter < 10'd478 && vcounter[0]==0) begin
                 prefetch_start = 1;
                 prefetch_y = vcounter[8:1]+1;
             end
@@ -77,17 +77,27 @@ module gpu #(
     wire [1:0] foreground_r, foreground_g, foreground_b;
     wire [1:0] background_r, background_g, background_b;
 
-    wire drawing = visible && (current_x < 256) && (current_y < 240);
+    wire drawing = visible && (next_x < 256) && (next_y < 240);
 
-    assign {r_o,g_o,b_o} =
-        !drawing            ? 6'b0                                      :
+   logic [1:0] r_d, r_q, g_d, g_q, b_d, b_q;
+   assign r_o = r_q;
+   assign g_o = g_q;
+   assign b_o = b_q;
+
+    assign {r_d, g_d, b_d} =
+        !drawing            ? '0                                        :
         text_valid          ? {6{text_color}}                           :
         foreground_valid    ? {foreground_r,foreground_g,foreground_b}  :
         {background_r,background_g,background_b};
 
+    always @(posedge gpu_clk) begin
+        r_q <= r_d;
+        g_q <= g_d;
+        b_q <= b_d;
+    end
 
-    assign current_x = hcounter[8:0] - 9'd32;
-    assign current_y = vcounter[9:1];
+    assign next_x = hcounter[8:0] - 9'd31;
+    assign next_y = vcounter[9:1];
 
     video_timing video_timing (
         .clk_12_5875(gpu_clk),
@@ -110,8 +120,8 @@ module gpu #(
     text text (
         .cpu_clk(cpu_clk),
 
-        .display_x_i(8'(current_x)),
-        .display_y_i(8'(current_y)),
+        .display_x_i(8'(next_x)),
+        .display_y_i(8'(next_y)),
 
         .display_color_o(text_color),
         .display_valid_o(text_valid),
@@ -134,8 +144,8 @@ module gpu #(
         .prefetch_start_i(prefetch_start),
         .prefetch_y_i(prefetch_y),
 
-        .display_x_i(8'(current_x)),
-        .display_y_i(8'(current_y)),
+        .display_x_i(8'(next_x)),
+        .display_y_i(8'(next_y)),
 
         .r_o(foreground_r),
         .g_o(foreground_g),
@@ -153,8 +163,8 @@ module gpu #(
     background background (
         .cpu_clk(cpu_clk),
 
-        .display_x_i(current_x[7:0]),
-        .display_y_i(current_y[7:0]),
+        .display_x_i(8'(next_x)),
+        .display_y_i(8'(next_y)),
 
         .r_o(background_r),
         .g_o(background_g),

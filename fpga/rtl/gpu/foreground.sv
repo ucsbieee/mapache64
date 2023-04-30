@@ -40,7 +40,7 @@ module foreground #(
     endfunction
 
     // Object Memory (https://mapache64.ucsbieee.org/guides/gpu/#Object-Memory)
-    mapache64::data_t OBM [255:0];
+    mapache64::data_t OBM[256];
 
     function automatic mapache64::obm_object_t obm_object(logic [5:0] obma);
         logic [7:0] x, y, conf, color;
@@ -90,7 +90,7 @@ module foreground #(
     logic [$clog2(NUM_OBJECTS)-1:0] object_load_counter_d, object_load_counter_q;
 
     mapache64::pixel_t obs_pixels[PREFETCH_SCANLINES+1];
-    logic obs_ready[PREFETCH_SCANLINES+1];
+    logic [PREFETCH_SCANLINES:0] obs_ready;
     logic [PREFETCH_SCANLINES:0] obs_clear_start;
     logic [PREFETCH_SCANLINES:0] obs_load_start;
 
@@ -114,10 +114,6 @@ module foreground #(
                     // begin clear
                     state_d = CLEAR;
                     obs_clear_start[scanline_to_replace_d] = 1;
-                    // debug
-                    `ifdef SIM
-                    if (obs_ready[scanline_to_replace_d]==0) $warning("Next scanline not ready. Undefined behavior");
-                    `endif
                 end
             end
             CLEAR: begin
@@ -214,6 +210,10 @@ module foreground #(
         mapache64::obm_object_t object;
         assign object = obm_object(6'(i));
     end endgenerate
+    always @(negedge gpu_clk) begin
+        if (prefetch_start_i && state_q!=DONE)
+            $warning("Failed to prefetch of y=%d because prefetch unit is busy", prefetch_y_i);
+    end
     `endif
 
 endmodule
