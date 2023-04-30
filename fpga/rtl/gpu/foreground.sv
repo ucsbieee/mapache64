@@ -2,8 +2,7 @@
 /* foreground.v */
 
 module foreground #(
-    parameter NUM_OBJECTS = 64,
-    parameter PREFETCH_SCANLINES = 1
+    parameter NUM_OBJECTS = 64
 ) (
     input   logic                       gpu_clk,
     input   logic                       cpu_clk,
@@ -86,13 +85,15 @@ module foreground #(
 
     state_t state_d, state_q;
 
-    logic [$clog2(PREFETCH_SCANLINES+1)-1:0] scanline_to_replace_d, scanline_to_replace_q;
+    localparam NUM_OBS = 2;
+
+    logic [$clog2(NUM_OBS)-1:0] scanline_to_replace_d, scanline_to_replace_q;
     logic [$clog2(NUM_OBJECTS)-1:0] object_load_counter_d, object_load_counter_q;
 
-    mapache64::pixel_t obs_pixels[PREFETCH_SCANLINES+1];
-    logic [PREFETCH_SCANLINES:0] obs_ready;
-    logic [PREFETCH_SCANLINES:0] obs_clear_start;
-    logic [PREFETCH_SCANLINES:0] obs_load_start;
+    mapache64::pixel_t obs_pixels[NUM_OBS];
+    logic [NUM_OBS-1:0] obs_ready;
+    logic [NUM_OBS-1:0] obs_clear_start;
+    logic [NUM_OBS-1:0] obs_load_start;
 
     mapache64::obm_object_t obs_load_object;
     assign obs_load_object = obm_object(object_load_counter_q);
@@ -110,7 +111,7 @@ module foreground #(
             DONE: begin
                 if (prefetch_start_i) begin
                     // increment scanline and y
-                    scanline_to_replace_d = (scanline_to_replace_q==PREFETCH_SCANLINES) ? '0 : scanline_to_replace_q+1;
+                    scanline_to_replace_d = (scanline_to_replace_q==(NUM_OBS-1)) ? '0 : scanline_to_replace_q+1;
                     // begin clear
                     state_d = CLEAR;
                     obs_clear_start[scanline_to_replace_d] = 1;
@@ -149,8 +150,8 @@ module foreground #(
         end
     end
 
-    logic [2:0] obs_load_intx[PREFETCH_SCANLINES+1];
-    logic [2:0] obs_load_inty[PREFETCH_SCANLINES+1];
+    logic [2:0] obs_load_intx[NUM_OBS];
+    logic [2:0] obs_load_inty[NUM_OBS];
     logic [1:0] obs_load_lightness;
 
     // Get (flipped) addresses into pattern
@@ -163,7 +164,7 @@ module foreground #(
     // Find lightness
     assign obs_load_lightness = obs_pmf_line[ {(3'h7-obs_pattern_intx),1'b0} +: 2 ];
 
-    generate for (genvar scanline_GEN = 0; scanline_GEN < PREFETCH_SCANLINES+1; scanline_GEN++) begin : scanline
+    generate for (genvar scanline_GEN = 0; scanline_GEN < NUM_OBS; scanline_GEN++) begin : scanline
         object_scanline obs (
             .gpu_clk(gpu_clk),
             .ready_o(obs_ready[scanline_GEN]),
@@ -189,7 +190,7 @@ module foreground #(
         r_o = 'x;
         g_o = 'x;
         b_o = 'x;
-        for (integer i = 0; i < PREFETCH_SCANLINES+1; i++) begin : display
+        for (integer i = 0; i < NUM_OBS; i++) begin : display
             if (obs_pixels[i][4:3] != 0) begin
                 valid_o = 1;
                 r_o = obs_pixels[i][4:3] & {2{obs_pixels[i][2]}};
