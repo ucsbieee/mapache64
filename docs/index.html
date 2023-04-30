@@ -27,39 +27,13 @@
     </header>
 
     <div id="__MAIN__">
+
         <h1>Description</h1>
         <p>
-            UCSB IEEE is working on a large project titled &ldquo;Mapache 64&rdquo; where we are building an arcade machine based on a 6502 microprocessor. I.E. <ins>no microcontrollers!</ins> Only the 6502 microprocessor, ROM and RAM ICs, and an FPGA implementing a custom GPU.
+            Mapache 64 is is a custom video game console based around the 6502 microprocessor. This console uses a custom graphics processing unit (GPU) written in SystemVerilog and runs on a <a href="https://digilent.com/reference/programmable-logic/cmod-a7/" target="_blank" rel="noopener noreferrer">Cmod A7-35T</a>. The firmware and games are programmed using C, and can be compiled with a custom linker script and <a href="https://cc65.github.io" target="_blank" rel="noopener noreferrer">cc65</a>, an open-source C to 6502 assembly compiler. This project was developed by <a href="https://ucsbieee.org/" target="_blank" rel="noopener noreferrer">UC Santa Barbara's IEEE chapter</a>, lead by <a href="https://github.com/sifferman" target="_blank" rel="noopener noreferrer">Ethan Sifferman</a>.
         </p>
 
-        <h1>Current State</h1>
         <div class="clickable external-link center"><a href="https://github.com/ucsbieee/mapache64" target="_blank" rel="noopener noreferrer">Code </a></div>
-        <p>
-            The hardware prototype has been finished on breadboards. It works with the <a href="https://digilent.com/reference/programmable-logic/cmod-a7/start" target="_blank" rel="noopener noreferrer">Cmod A7-35T</a> <a href="https://www.xilinx.com/products/silicon-devices/fpga/artix-7.html" target="_blank" rel="noopener noreferrer">Artix-7</a> development board. All peripherals (GPU, ROM, RAM, VGA port, controller ports) work. Our next step is writing the games creating a custom PCB.
-        </p>
-        <p>
-            For the software, we have configured a custom <a href="https://cc65.github.io/" target="_blank" rel="noopener noreferrer">cc65</a> linker so that we can simply write the games in C instead of 6502 assembly.
-        </p>
-        <div class="center-text">
-            <img src="/_media/physical/picture.jpg" alt="picture">
-            Video screen
-        </div>
-        <br>
-        <div class="center-text">
-            <img src="/_media/physical/cmod.jpg" alt="cmod">
-            The breadboard circuit with a Cmod A7.
-        </div>
-
-
-        <h1>More</h1>
-        <ul>
-            <li class="clickable external-link"><a href="games/game-demo">
-                Game Demo
-            </a></li>
-            <li class="clickable external-link"><a href="https://www.youtube.com/watch?v=LnzuMJLZRdU&list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH" target="_blank" rel="noopener noreferrer">
-                Ben Eater 6502 Computer Video Series
-            </a></li>
-        </ul>
 
     </div>
 </body>
