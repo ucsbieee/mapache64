@@ -27,12 +27,10 @@ filesets:
   # synth
   cmod_a7:
     files:
-      - synth/clk_divider.sv
+      - synth/common/clk_divider.sv
       - synth/cmod_a7/a7_config.xdc:        {file_type: xdc}
-      - synth/cmod_a7/clk_constraints.xdc:  {file_type: xdc}
+      - synth/cmod_a7/constraints.xdc:      {file_type: xdc}
       - synth/cmod_a7/clk_mmcm.xci:         {file_type: xci}
-      - synth/cmod_a7/cmod_a7.xdc:          {file_type: xdc}
-      - synth/cmod_a7/flash.xdc:            {file_type: xdc}
       - synth/cmod_a7/project_config.tcl:   {file_type: tclSource}
       - synth/cmod_a7/cmod_a7.sv
     file_type: systemVerilogSource
