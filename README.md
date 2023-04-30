@@ -24,6 +24,7 @@ Breadboard circuit:
 * [Asteroids](https://github.com/sifferman/m64-a2teroids) (2-player asteroids)
 * [Flappy Bird](https://github.com/mfletcher2/mapache64-flappybird)
 * [Snake](https://github.com/GDW1/m64-snake)
+* [Pong](https://github.com/GDW1/m64-pong)
 * [Tetris](https://github.com/ucsbieee/m64-tetris)
 * [Frogger](https://github.com/ucsbieee/m64-frogger)
 
