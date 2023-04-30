@@ -6,8 +6,8 @@ module firmware (
     input   logic                           SELECT_vectors_i
 );
 
-    mapache64::data_t firmware_mem [mapache64::FirmwareSize-1:0];
-    mapache64::data_t vector_mem [5:0];
+    mapache64::data_t firmware_mem[mapache64::FirmwareSize];
+    mapache64::data_t vector_mem[6];
 
     wire [2:0] vector_address = ( 3'(address_i) - 3'h2 );
 

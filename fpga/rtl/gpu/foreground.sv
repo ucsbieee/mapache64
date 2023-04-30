@@ -150,6 +150,7 @@ module foreground #(
         end
     end
 
+    // Load lightness from obs_load_object, intx, inty
     logic [2:0] obs_load_intx[NUM_OBS];
     logic [2:0] obs_load_inty[NUM_OBS];
     logic [1:0] obs_load_lightness;
