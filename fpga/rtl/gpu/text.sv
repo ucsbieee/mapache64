@@ -73,7 +73,7 @@ module text (
     // ======== Debug ======== \\
 
     `ifdef SIM
-    initial for (integer i = 0; i < 1024; i=i+1)  TXBL[i] = 0;
+    initial for (integer i = 0; i < 1024; i=i+1) TXBL[i] = '0;
     generate
         for ( genvar txbl_row_GEN = 0; txbl_row_GEN < 30; txbl_row_GEN = txbl_row_GEN+1 ) begin : txbl_row
             for ( genvar txbl_col_GEN = 0; txbl_col_GEN < 32; txbl_col_GEN = txbl_col_GEN+1 ) begin : txbl_column

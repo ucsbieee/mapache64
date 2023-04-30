@@ -163,7 +163,7 @@ cpu_address = 16'h4810;
 
 
 //\\ =========================== \\//
-$finish ;
+$finish;
 end
 
 endmodule

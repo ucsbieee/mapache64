@@ -48,5 +48,21 @@ package mapache64;
         logic [4:0] pmba;
     } ntbl_tile_t;
 
+    typedef struct packed {
+        logic [7:0] x;
+        logic [7:0] y;
+        logic       __unused2;
+        logic       hflip;
+        logic       vflip;
+        logic [4:0] pmfa;
+        logic [4:0] __unused3;
+        logic [2:0] color;
+    } obm_object_t;
+
+    typedef struct packed {
+        logic [1:0] lightness;
+        logic [2:0] color;
+    } pixel_t;
+
 endpackage
 /* verilator lint_restore */
