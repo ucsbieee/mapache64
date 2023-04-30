@@ -201,10 +201,10 @@
         <p>
             <strong>The CPU must only touch the VRAM while inside the <code>fill_vram</code> subroutine.</strong> This ensures that the CPU and the GPU are not trying to access the VRAM at the same time. Every time the GPU needs to use the VRAM, it sends an interrupt to the CPU. If the CPU is in <code>fill_vram</code>, it will pause. Once the GPU no longer needs the VRAM, it will send another interrupt to the CPU so that the CPU knows when to continue. Observe this code:
         </p>
-        <div class="clickable external-link center"><a href="https://raw.githubusercontent.com/ucsbieee/mapache64/main/assembly-level/src/backend_src/crt0.s" target="_blank" rel="noopener noreferrer">
+        <div class="clickable external-link center"><a href="https://raw.githubusercontent.com/ucsbieee/mapache64/main/firmware/backend_src/crt0.s" target="_blank" rel="noopener noreferrer">
             interrupts.s
         </a></div>
-        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/mapache64/main/assembly-level/src/backend_src/crt0.s"></textarea>
+        <textarea class="code" mode="gas" src="https://raw.githubusercontent.com/ucsbieee/mapache64/main/firmware/backend_src/crt0.s"></textarea>
 
 
     </div>

@@ -25,7 +25,7 @@ This is the RTL for Mapache 64. It consists of the following modules:
 * [FuseSoC](https://github.com/olofk/fusesoc)
 * [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build)
 * [Vivado ML Enterprise](https://www.xilinx.com/products/design-tools/vivado.html)
-* [CMOD A7-35T](https://store.digilentinc.com/cmod-a7-breadboardable-artix-7-fpga-module/)
+* [Cmod A7-35T](https://store.digilentinc.com/cmod-a7-breadboardable-artix-7-fpga-module/)
 
 ## Usage
 
@@ -43,6 +43,6 @@ fusesoc run --target lint ucsbieee:mapache64:top
 fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
 # Simulate with Verilator
 fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
-# Synthesize for the CMOD-A7
+# Synthesize for the Cmod-A7
 fusesoc run --target cmod_a7 ucsbieee:mapache64:top
 ```

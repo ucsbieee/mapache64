@@ -3,13 +3,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong</title>
+    <title>Game Demo</title>
 
-    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/mapache64@main/high-level/src/firmware.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/mapache64@main/high-level/src/font.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/mapache64@main/high-level/src/machine.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/mapache64-pong@main/high-level/src/pong.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/gh/ucsbieee/mapache64@main/high-level/src/player.js" defer></script>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -18,6 +14,11 @@
     <link rel="stylesheet" href="/_styles/site.css">
     <link rel="stylesheet" href="/_styles/page.css">
 
+    <script src="/_emulator/firmware.js" defer></script>
+    <script src="/_emulator/font.js" defer></script>
+    <script src="/_emulator/machine.js" defer></script>
+    <script src="/_emulator/examples/game-demo.js" defer></script>
+    <script src="/_emulator/player.js" defer></script>
 
     <script defer src="/_scripts/nav.js"></script>
 
@@ -26,14 +27,21 @@
     <div id="__NAV__"></div>
     <header>
         <a id="Back" class="clickable" href="../" target="_self"><img src="/_media/back.svg" alt="back"></a>
-        <h1>Pong</h1>
+        <h1>Game Demo</h1>
     </header>
     <div id="__MAIN__">
+
         <h1>Description</h1>
         <p>
-            This is a work-in-progress implementation of pong. Here is the repository: <a href="https://github.com/ucsbieee/arcade-pong" target="_blank" rel="noopener noreferrer">ucsbieee/arcade-pong</a>.
+            Press ENTER to reset. Use Z, LEFT, and RIGHT to move.
         </p>
+
         <div id="Game"></div>
+
+        <h3>Game Running on Actual Hardware</h3>
+        <img src="/_media/physical/picture.jpg" alt="picture">
+        <p><a href="https://github.com/ucsbieee/mapache64/tree/main/firmware/demos/game" target="_blank" rel="noopener noreferrer">Link to game code.</a></p>
+
     </div>
 </body>
 </html>
