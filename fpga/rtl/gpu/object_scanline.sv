@@ -22,10 +22,11 @@ module object_scanline (
 
     // ======== Internal VRAM ======== \\
 
+    // Object Scanline Memory
     logic [4:0] OBSM[256];
 
     logic               obsm_wen;
-    logic [8:0]         obsm_waddr;
+    logic [7:0]         obsm_waddr;
     mapache64::pixel_t  obsm_wdata;
 
 
@@ -44,20 +45,21 @@ module object_scanline (
 
     assign load_intx_o = intx_counter_q;
     assign load_inty_o = 3'(obs_y_q - load_object_i.y);
-    assign ready_o = (state_q == WAIT);
 
     always_comb begin
         obs_y_d = obs_y_q;
         state_d = state_q;
-        clear_counter_d = clear_counter_q;
-        intx_counter_d = intx_counter_q;
+        clear_counter_d = '0;
+        intx_counter_d = '0;
 
         obsm_wen = 0;
         obsm_waddr = '0;
         obsm_wdata = '0;
+        ready_o = 0;
 
         case (state_q)
             WAIT: begin
+                ready_o = 1;
                 if (clear_start_i) begin
                     obs_y_d = new_y_i;
                     state_d = CLEAR;
@@ -69,7 +71,7 @@ module object_scanline (
             end
             CLEAR: begin
                 obsm_wen = 1;
-                obsm_waddr = 9'(clear_counter_q);
+                obsm_waddr = 8'(clear_counter_q);
                 obsm_wdata = '0;
                 if (clear_counter_q != 8'hff) begin
                     clear_counter_d = clear_counter_q+1;
@@ -79,13 +81,20 @@ module object_scanline (
             end
             OBJECT_LOAD: begin
                 if (obs_y_q >= load_object_i.y && obs_y_q <= (load_object_i.y+7)) begin
-                    obsm_wen = 1;
-                    obsm_waddr = 9'(load_object_i.x)+9'(intx_counter_q);
+                    obsm_wen = (load_lightness_i != 0); // check for transparency
+                    obsm_waddr = load_object_i.x + 8'(intx_counter_q);
                     obsm_wdata = {load_lightness_i, load_object_i.color};
                     if (intx_counter_q < 7 && obsm_waddr < 255) begin
                         intx_counter_d = intx_counter_q+1;
                     end else begin
                         state_d = WAIT;
+                        ready_o = 1;
+                        if (clear_start_i) begin
+                            obs_y_d = new_y_i;
+                            state_d = CLEAR;
+                        end else if (load_start_i) begin
+                            state_d = OBJECT_LOAD;
+                        end
                     end
                 end else begin
                     state_d = WAIT;
@@ -100,17 +109,18 @@ module object_scanline (
         clear_counter_q <= clear_counter_d;
         intx_counter_q <= intx_counter_d;
         state_q <= state_d;
-        if (obsm_wen)
+        if (obsm_wen) begin
             OBSM[8'(obsm_waddr)] <= obsm_wdata;
+        end
     end
 
 
 
     // ======== Display ======== \\
 
-    wire display_obse_valid = (obs_y_q == display_y_i);
+    wire display_obse_valid = (obs_y_q == display_y_i) && (state_q != CLEAR);
 
-    assign pixel_o = display_obse_valid ? OBSM[display_x_i] : 'x;
+    assign pixel_o = display_obse_valid ? OBSM[display_x_i] : '0;
 
 
 

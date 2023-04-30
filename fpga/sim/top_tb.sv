@@ -153,11 +153,39 @@ cpu_address = 16'h4813;
 write_data = 8'b111;
 @(posedge clk_1);
 
-wen_n = 1;
+wen_n = 0;
 @(posedge clk_1);
 
 cpu_address = 16'h4810;
 @(posedge clk_1);
+
+@(negedge vsync);
+
+@(posedge clk_1);
+for ( integer i = 0; i < 16; i=i+1 ) begin
+    cpu_address = {12'h41f,4'(i)};
+    write_data = '1;
+    @(posedge clk_1);
+end
+
+for (integer i = 0; i < 64; i++) begin
+    // x
+    cpu_address = 16'h4800+i*4;
+    write_data = 8'h7f;
+    @(posedge clk_1);
+    // y
+    cpu_address = 16'h4801+i*4;
+    write_data = 8'h3f;
+    @(posedge clk_1);
+    // pmfa
+    cpu_address = 16'h4802+i*4;
+    write_data = 8'b00011111;
+    @(posedge clk_1);
+    // color
+    cpu_address = 16'h4803+i*4;
+    write_data = 8'b111;
+    @(posedge clk_1);
+end
 
 @(negedge vsync);
 
