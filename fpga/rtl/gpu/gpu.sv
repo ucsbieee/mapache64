@@ -134,8 +134,7 @@ module gpu #(
     );
 
     foreground #(
-        .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS),
-        .PREFETCH_SCANLINES(1)
+        .NUM_OBJECTS(FOREGROUND_NUM_OBJECTS)
     ) foreground (
         .gpu_clk(gpu_clk),
         .cpu_clk(cpu_clk),
