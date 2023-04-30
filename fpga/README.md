@@ -30,12 +30,19 @@ This is the RTL for Mapache 64. It consists of the following modules:
 ## Usage
 
 ```bash
+# setup
 cd fpga
 ./rom/get_firmware.sh
 ./rom/get_font.sh
 fusesoc library add ucsbieee_mapache64_top . --sync-type=local
-fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
-fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
+fusesoc library add nes_controller_interface https://github.com/sifferman/nes_controller_interface --sync-type=git
+
+# Lint with Verilator
 fusesoc run --target lint ucsbieee:mapache64:top
+# Simulate with Icarus
+fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
+# Simulate with Verilator
+fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
+# Synthesize for the CMOD-A7
 fusesoc run --target cmod_a7 ucsbieee:mapache64:top
 ```

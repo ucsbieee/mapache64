@@ -73,14 +73,14 @@ top #(mapache64::GpuForegroundNumObjects) top (
 
 mapache64::data_t controller_1_buttons_in, controller_2_buttons_in;
 
-controller #(1'b1) controller_1 (
+nes_controller #(1'b1) controller_1 (
     ~controller_1_buttons_in,
     controller_clk_out,
     controller_latch,
     controller_1_data_in_B
 );
 
-controller #(1'b1) controller_2 (
+nes_controller #(1'b1) controller_2 (
     ~controller_2_buttons_in,
     controller_clk_out,
     controller_latch,
