@@ -3,7 +3,7 @@
 set -e
 
 MAPACHE64_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." &> /dev/null && pwd )"
-ASSEMBLY_DIR="$( cd  "${MAPACHE64_DIR}/assembly-level/src" &> /dev/null && pwd )"
+ASSEMBLY_DIR="$( cd  "${MAPACHE64_DIR}/firmware" &> /dev/null && pwd )"
 
 # compile to bin files
 cd ${ASSEMBLY_DIR}
