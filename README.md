@@ -48,35 +48,35 @@ Breadboard circuit:
 
 #### RTL Development
 
-* Ethan Sifferman
-* *Jon Balkind (consultant)*
+* Ethan Sifferman ([github](https://github.com/sifferman))
+* *Jon Balkind (consultant)* ([github](https://github.com/jbalkind))
 
 #### PCB Development
 
-* Ethan Sifferman
-* Matthew Tom
-* Kogan Sam
-* Neil Balch
-* *Daniel Van Dalsem (consultant)*
+* Ethan Sifferman ([github](https://github.com/sifferman))
+* Matthew Tom ([github](https://github.com/Matthew-Tom))
+* Kogan Sam ([github](https://github.com/02ks))
+* Neil Balch ([github](https://github.com/neilbalch))
+* *Daniel Van Dalsem (consultant)* [github](https://github.com/aWZHY0yQH81uOYvH)
 
 #### Firmware Development
 
-* Ethan Sifferman
-* Neil Balch
+* Ethan Sifferman ([github](https://github.com/sifferman))
+* Neil Balch ([github](https://github.com/neilbalch))
 
 #### Game Development
 
-* Ethan Sifferman
-* Max Fletcher
-* Guy Wilks
+* Ethan Sifferman ([github](https://github.com/sifferman))
+* Max Fletcher ([github](https://github.com/mfletcher2))
+* Guy Wilks ([github](https://github.com/GDW1))
 
 #### Website Development
 
-* Ethan Sifferman
-* Neil Balch
-* Max Fletcher
-* Xingbu Qin
-* Nicolas Guglielmin
+* Ethan Sifferman ([github](https://github.com/sifferman))
+* Neil Balch ([github](https://github.com/neilbalch))
+* Max Fletcher ([github](https://github.com/mfletcher2))
+* Xingbu Qin ([github](https://github.com/watercannons))
+* Nicolas Guglielmin ([github](https://github.com/nicg6645))
 
 ---
 
