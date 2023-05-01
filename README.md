@@ -57,7 +57,7 @@ Breadboard circuit:
 * Matthew Tom ([github](https://github.com/Matthew-Tom))
 * Kogan Sam ([github](https://github.com/02ks))
 * Neil Balch ([github](https://github.com/neilbalch))
-* *Daniel Van Dalsem (consultant)* [github](https://github.com/aWZHY0yQH81uOYvH)
+* *Daniel Van Dalsem (consultant)* ([github](https://github.com/aWZHY0yQH81uOYvH))
 
 #### Firmware Development
 
