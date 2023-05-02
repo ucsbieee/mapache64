@@ -6,29 +6,14 @@ module cmod_a7 (
     output wire   [2:0] led_rgbB,
 
     inout
-                pio14,                  pio17,  pio18,
+        pio01,  pio02,  pio03,  pio04,  pio05,  pio06,
+        pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
+        pio13,  pio14,                  pio17,  pio18,
         pio19,  pio20,  pio21,  pio22,  pio23,
-    input
-                pio02,  pio03,
-                                        pio29,  pio30,
+                pio26,  pio27,  pio28,  pio29,  pio30,
         pio31,  pio32,  pio33,  pio34,  pio35,  pio36,
         pio37,  pio38,  pio39,  pio40,  pio41,  pio42,
-        pio43,  pio44,  pio45,
-    output wire
-        pio01,                  pio04,  pio05,  pio06,
-        pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
-        pio13,
-                pio26,  pio27,  pio28,
-                                pio46,  pio47,  pio48
-
-    //     pio01,  pio02,  pio03,  pio04,  pio05,  pio06,
-    //     pio07,  pio08,  pio09,  pio10,  pio11,  pio12,
-    //     pio13,  pio14,                  pio17,  pio18,
-    //     pio19,  pio20,  pio21,  pio22,  pio23,
-    //             pio26,  pio27,  pio28,  pio29,  pio30,
-    //     pio31,  pio32,  pio33,  pio34,  pio35,  pio36,
-    //     pio37,  pio38,  pio39,  pio40,  pio41,  pio42,
-    //     pio43,  pio44,  pio45,  pio46,  pio47,  pio48,
+        pio43,  pio44,  pio45,  pio46,  pio47,  pio48
 );
 
     // internal
@@ -55,12 +40,12 @@ module cmod_a7 (
     wire        controller_2_data_in_B;
 
     assign  rst             = btn[0];
-    assign  cpu_address     = {pio30,pio31,pio32,pio33,pio34,pio35,pio36,pio37,pio38,pio39,pio40,pio41,pio42,pio43,pio44,pio45};
-    assign  data_in         = {pio14,pio17,pio18,pio19,pio20,pio21,pio22,pio23};
-    assign  write_enable_B  = pio29;
+    assign  cpu_address     = {pio20,pio21,pio22,pio23,pio35,pio36,pio37,pio38,pio39,pio40,pio41,pio42,pio43,pio44,pio45,pio46};
+    assign  data_in         = {pio19,pio18,pio17,pio14,pio13,pio12,pio11,pio10};
+    assign  write_enable_B  = pio06;
 
     assign  controller_1_data_in_B  = pio03;
-    assign  controller_2_data_in_B  = pio02;
+    assign  controller_2_data_in_B  = pio04;
 
 
     // output
@@ -77,36 +62,36 @@ module cmod_a7 (
 
     wire        controller_latch;
 
-    assign pio23 = fpga_data_enable ? data_out[0] : {1'bz};
-    assign pio22 = fpga_data_enable ? data_out[1] : {1'bz};
-    assign pio21 = fpga_data_enable ? data_out[2] : {1'bz};
-    assign pio20 = fpga_data_enable ? data_out[3] : {1'bz};
-    assign pio19 = fpga_data_enable ? data_out[4] : {1'bz};
-    assign pio18 = fpga_data_enable ? data_out[5] : {1'bz};
-    assign pio17 = fpga_data_enable ? data_out[6] : {1'bz};
-    assign pio14 = fpga_data_enable ? data_out[7] : {1'bz};
+    assign pio10 = fpga_data_enable ? data_out[0] : {1'bz};
+    assign pio11 = fpga_data_enable ? data_out[1] : {1'bz};
+    assign pio12 = fpga_data_enable ? data_out[2] : {1'bz};
+    assign pio13 = fpga_data_enable ? data_out[3] : {1'bz};
+    assign pio14 = fpga_data_enable ? data_out[4] : {1'bz};
+    assign pio17 = fpga_data_enable ? data_out[5] : {1'bz};
+    assign pio18 = fpga_data_enable ? data_out[6] : {1'bz};
+    assign pio19 = fpga_data_enable ? data_out[7] : {1'bz};
 
-    assign pio46 = ram_OE_B;
-    assign pio47 = SELECT_ram_B;
-    assign pio48 = SELECT_rom_B;
-    assign pio28 = vblank_irq_B;
+    assign pio09 = ram_OE_B;
+    assign pio08 = SELECT_ram_B;
+    assign pio47 = SELECT_rom_B;
+    assign pio05 = vblank_irq_B;
 
-    assign pio12 = r[1];
-    assign pio13 = r[0];
-    assign pio10 = g[1];
-    assign pio11 = g[0];
-    assign pio08 = b[1];
-    assign pio09 = b[0];
-    assign pio07 = hsync;
-    assign pio06 = vsync;
+    assign pio28 = r[1];
+    assign pio27 = r[0];
+    assign pio30 = g[1];
+    assign pio29 = g[0];
+    assign pio32 = b[1];
+    assign pio31 = b[0];
+    assign pio33 = hsync;
+    assign pio34 = vsync;
 
-    assign pio26 = ~rst;
-    assign pio27 = cpu_clk;
+    assign pio48 = ~rst;
+    assign pio07 = cpu_clk;
 
-    assign pio04 = controller_latch;
-    assign pio05 = controller_clk_out;
+    assign pio02 = controller_latch;
+    assign pio01 = controller_clk_out;
 
-    assign pio01 = fpga_data_enable;
+    assign pio26 = fpga_data_enable; // select expansion
 
 
     // unused

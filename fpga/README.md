@@ -46,3 +46,5 @@ fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
 # Synthesize for the Cmod-A7
 fusesoc run --target cmod_a7 ucsbieee:mapache64:top
 ```
+
+Cmod-A7 SPI Flash: `mx25l3273f`
