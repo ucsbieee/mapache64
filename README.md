@@ -7,7 +7,7 @@
 
 ## Description
 
-Mapache 64 is is a custom video game console based around the 6502 microprocessor. This console uses a custom graphics processing unit (GPU) written in SystemVerilog and runs on a [Cmod A7-35T](https://digilent.com/reference/programmable-logic/cmod-a7/). The firmware and games are programmed using C, and can be compiled with a custom linker script and [`cc65`](https://cc65.github.io), an open-source C to 6502 assembly compiler. This project was developed by [UC Santa Barbara's IEEE chapter](https://ucsbieee.org/), lead by [Ethan Sifferman](https://github.com/sifferman).
+Mapache 64 is is a custom video game console based around the 6502 microprocessor. This console uses a custom graphics processing unit (GPU) written in SystemVerilog and runs on a [Cmod A7-35T](https://digilent.com/reference/programmable-logic/cmod-a7/). The firmware and games are programmed using C, and can be compiled with a custom linker script and [`cc65`](https://cc65.github.io), an open-source C to 6502 assembly compiler. This project was developed by [UC Santa Barbara's IEEE chapter](https://ucsbieee.org/), led by [Ethan Sifferman](https://github.com/sifferman).
 
 Video screen:
 
