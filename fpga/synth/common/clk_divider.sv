@@ -1,17 +1,17 @@
 
 // https://www.desmos.com/calculator/6ogzgfkshu
 module clk_divider #(
-    parameter IN_FREQ   = 1.0,
-    parameter OUT_FREQ  = 1.0
+    parameter real IN_FREQ  = 1.0,
+    parameter real OUT_FREQ = 1.0
 ) (
-    input   wire    clk_i, rst,
-    output  wire    clk_o
+    input   logic   clk_i, rst,
+    output  logic   clk_o
 );
 
     localparam COUNTER_RESET = $rtoi( 1.0 * IN_FREQ / OUT_FREQ );
     localparam ACTUAL_FREQ_MHz = IN_FREQ / COUNTER_RESET;
 
-    generate if ( IN_FREQ == ACTUAL_FREQ_MHz ) begin
+    generate if ( IN_FREQ <= ACTUAL_FREQ_MHz ) begin
 
         assign clk_o = clk_i;
 
