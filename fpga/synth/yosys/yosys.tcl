@@ -7,7 +7,7 @@ plugin -i systemverilog
 
 yosys -import
 
-read_verilog sv2v.v
+read_verilog ../../sv2v/build/sv2v.v
 
 synth -top top
 write_json synth.json
