@@ -24,6 +24,7 @@ module object_scanline (
 
     // Object Scanline Memory
     logic [4:0] OBSM[256];
+    // 1 1-word read port
 
     logic               obsm_wen;
     logic [7:0]         obsm_waddr;

@@ -21,6 +21,8 @@ module background (
     // ======== VRAM ======== \\
 
     // Background Pattern Memory (https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory)
+    // 1 2-word read port
+    // 1 1-word read port
     mapache64::data_t PMB[512];
 
     function automatic logic [15:0] pmb_line(logic [4:0] pmba, logic [2:0] y);
@@ -32,6 +34,8 @@ module background (
 
     // Nametable (https://mapache64.ucsbieee.org/guides/gpu/#Nametable)
     mapache64::data_t NTBL[1024];
+    // 2 1-word read port
+    // 1 1-word read port (color)
 
     function automatic mapache64::ntbl_tile_t ntbl_tile(logic [4:0] r, c);
         return NTBL[ {r, c} ];

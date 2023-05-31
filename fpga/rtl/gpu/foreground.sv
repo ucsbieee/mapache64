@@ -30,6 +30,8 @@ module foreground #(
 
     // Pattern Memory Foreground (https://mapache64.ucsbieee.org/guides/gpu/#Pattern-Memory)
     mapache64::data_t PMF[512];
+    // 1 2-word read port
+    // 1 1-word read
 
     function automatic logic [15:0] pmf_line(logic [4:0] pmfa, logic [2:0] y);
         logic [7:0] left, right;
@@ -40,6 +42,8 @@ module foreground #(
 
     // Object Memory (https://mapache64.ucsbieee.org/guides/gpu/#Object-Memory)
     mapache64::data_t OBM[256];
+    // 1 4-word read port
+    // 1 1-word read port
 
     function automatic mapache64::obm_object_t obm_object(logic [5:0] obma);
         logic [7:0] x, y, conf, color;

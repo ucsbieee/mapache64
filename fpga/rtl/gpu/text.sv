@@ -21,6 +21,7 @@ module text (
 
     // Text Table (https://mapache64.ucsbieee.org/guides/gpu/#Text-Table)
     mapache64::data_t TXBL[1024];
+    // 2 1-word read port
 
     function automatic mapache64::txbl_tile_t txbl_tile(logic [4:0] r, c);
         return TXBL[ {r, c} ];
@@ -29,6 +30,7 @@ module text (
     // Character Pattern Memory
     mapache64::data_t PMC[1024];
     initial $readmemb( "pmc.mem", PMC, 0, 1023 );
+    // 1 1-word read port
 
     function automatic logic pmc_valid(logic [6:0] pmca, logic [2:0] y, logic [2:0] x);
         mapache64::data_t pmc_line = PMC[ {pmca, y} ];
