@@ -65,10 +65,10 @@ module text (
     wire [2:0] display_intx = display_x_i[2:0];
 
     mapache64::txbl_tile_t display_tile;
-    assign display_tile = txbl_tile(display_row,display_col);
+    always_comb display_tile = txbl_tile(display_row, display_col);
 
     assign display_color_o = display_tile.colorselect;
-    assign display_valid_o = pmc_valid(display_tile.pmca, display_inty, display_intx);
+    always_comb display_valid_o = pmc_valid(display_tile.pmca, display_inty, display_intx);
 
 
 
@@ -80,7 +80,7 @@ module text (
         for ( genvar txbl_row_GEN = 0; txbl_row_GEN < 30; txbl_row_GEN = txbl_row_GEN+1 ) begin : txbl_row
             for ( genvar txbl_col_GEN = 0; txbl_col_GEN < 32; txbl_col_GEN = txbl_col_GEN+1 ) begin : txbl_column
                 mapache64::txbl_tile_t tile;
-                assign tile = txbl_tile(txbl_row_GEN, txbl_col_GEN);
+                always_comb tile = txbl_tile(txbl_row_GEN, txbl_col_GEN);
             end
         end
     endgenerate

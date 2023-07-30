@@ -78,13 +78,11 @@ module background (
 
     // Read from NTBL
     mapache64::ntbl_tile_t display_tile;
-    assign display_tile = ntbl_tile(display_row, display_col);
+    always_comb display_tile = ntbl_tile(display_row, display_col);
 
     // Find color
-    wire [2:0] ntbl_color0;
-    wire [2:0] ntbl_color1;
-    // assign {ntbl_color1,ntbl_color0} = ntbl_colors(); // as of 4/29/23, icarus does not support argument-less functions
-    assign {ntbl_color1,ntbl_color0} = 6'(NTBL[960]);
+    logic [2:0] ntbl_color1, ntbl_color0;
+    always_comb {ntbl_color1,ntbl_color0} = ntbl_colors();
     wire [2:0] display_color = display_tile.colorselect ? ntbl_color1 : ntbl_color0;
 
     // get (flipped) addresses into pattern
@@ -92,7 +90,8 @@ module background (
     wire [2:0] display_pattern_x = display_tile.hflip ? (3'h7-display_intx) : display_intx;
 
     // Read from PMB
-    wire [15:0] display_line = pmb_line( display_tile.pmba, display_pattern_y );
+    logic [15:0] display_line;
+    always_comb display_line = pmb_line( display_tile.pmba, display_pattern_y );
 
     // Find lightness
     wire [1:0] display_lightness = display_line[ {(3'h7-display_pattern_x),1'b0} +: 2 ];
@@ -111,19 +110,19 @@ module background (
         for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN++ ) begin : ntbl_row
             for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN++ ) begin : ntbl_column
                 mapache64::ntbl_tile_t tile;
-                assign tile = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
+                always_comb tile = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
             end
         end
     endgenerate
     generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN++ ) begin : pattern
-        wire [15:0] line0 = pmb_line(pattern_GEN,3'd0);
-        wire [15:0] line1 = pmb_line(pattern_GEN,3'd1);
-        wire [15:0] line2 = pmb_line(pattern_GEN,3'd2);
-        wire [15:0] line3 = pmb_line(pattern_GEN,3'd3);
-        wire [15:0] line4 = pmb_line(pattern_GEN,3'd4);
-        wire [15:0] line5 = pmb_line(pattern_GEN,3'd5);
-        wire [15:0] line6 = pmb_line(pattern_GEN,3'd6);
-        wire [15:0] line7 = pmb_line(pattern_GEN,3'd7);
+        logic [15:0] line0; always_comb line0 = pmb_line(pattern_GEN,3'd0);
+        logic [15:0] line1; always_comb line1 = pmb_line(pattern_GEN,3'd1);
+        logic [15:0] line2; always_comb line2 = pmb_line(pattern_GEN,3'd2);
+        logic [15:0] line3; always_comb line3 = pmb_line(pattern_GEN,3'd3);
+        logic [15:0] line4; always_comb line4 = pmb_line(pattern_GEN,3'd4);
+        logic [15:0] line5; always_comb line5 = pmb_line(pattern_GEN,3'd5);
+        logic [15:0] line6; always_comb line6 = pmb_line(pattern_GEN,3'd6);
+        logic [15:0] line7; always_comb line7 = pmb_line(pattern_GEN,3'd7);
     end endgenerate
     `endif
 

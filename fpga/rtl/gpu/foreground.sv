@@ -100,7 +100,7 @@ module foreground #(
     logic [NUM_OBS-1:0] obs_load_start;
 
     mapache64::obm_object_t obs_load_object;
-    assign obs_load_object = obm_object(object_load_counter_q);
+    always_comb obs_load_object = obm_object(object_load_counter_q);
 
     always_comb begin
 
@@ -164,7 +164,8 @@ module foreground #(
     wire [2:0] obs_pattern_intx = obs_load_object.hflip ? (3'h7-obs_load_intx[scanline_to_replace_q]) : obs_load_intx[scanline_to_replace_q];
 
     // Read from PMF
-    wire [15:0] obs_pmf_line = pmf_line( obs_load_object.pmfa, obs_pattern_inty );
+    logic [15:0] obs_pmf_line;
+    always_comb obs_pmf_line = pmf_line( obs_load_object.pmfa, obs_pattern_inty );
 
     // Find lightness
     assign obs_load_lightness = obs_pmf_line[ {(3'h7-obs_pattern_intx),1'b0} +: 2 ];
@@ -214,7 +215,7 @@ module foreground #(
     generate for ( genvar i = 0; i < NUM_OBJECTS; i++ ) begin : object
         initial OBM[{6'(i),2'b0}+1] = 8'hff;
         mapache64::obm_object_t object;
-        assign object = obm_object(6'(i));
+        always_comb object = obm_object(6'(i));
     end endgenerate
     always @(negedge gpu_clk) begin
         if (prefetch_start_i && state_q!=DONE)
