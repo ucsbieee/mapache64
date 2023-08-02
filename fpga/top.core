@@ -72,6 +72,7 @@ targets:
           - --binary
           - -j 0
           - --trace-fst
+          - --trace-structs
           - --x-assign unique
           - --x-initial unique
           - --unroll-count 10000
