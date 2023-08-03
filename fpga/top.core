@@ -38,10 +38,28 @@ filesets:
   # simulation
   sim:
     files:
-      - sim/top_tb.sv
+      - dv/top_tb.sv
     file_type: systemVerilogSource
     depend:
       - sifferman::nes_controller_interface
+
+  gpu_verify:
+    files:
+      - dv/dpi/lib/lodepng/lodepng.h: {file_type: cSource, is_include_file: true}
+      - dv/dpi/lib/lodepng/lodepng.cpp: {file_type: cSource, copyto: dv/dpi/lib/lodepng/lodepng.c}
+      - dv/dpi/gpugold.c: {file_type: cSource}
+      - dv/gpu/gpu_tb.sv
+      - dv/gpu/gold_images/obs_stress.png: {file_type: user, copyto: gold_images/obs_stress.png}
+      - dv/gpu/gold_images/random_blue_black.png: {file_type: user, copyto: gold_images/random_blue_black.png}
+      - dv/gpu/gold_images/random_green_cyan.png: {file_type: user, copyto: gold_images/random_green_cyan.png}
+      - dv/gpu/gold_images/random_red_magenta.png: {file_type: user, copyto: gold_images/random_red_magenta.png}
+      - dv/gpu/gold_images/random_yellow_white.png: {file_type: user, copyto: gold_images/random_yellow_white.png}
+      - dv/gpu/vram_dumps/obs_stress.bin: {file_type: user, copyto: vram_dumps/obs_stress.bin}
+      - dv/gpu/vram_dumps/random_blue_black.bin: {file_type: user, copyto: vram_dumps/random_blue_black.bin}
+      - dv/gpu/vram_dumps/random_green_cyan.bin: {file_type: user, copyto: vram_dumps/random_green_cyan.bin}
+      - dv/gpu/vram_dumps/random_red_magenta.bin: {file_type: user, copyto: vram_dumps/random_red_magenta.bin}
+      - dv/gpu/vram_dumps/random_yellow_white.bin: {file_type: user, copyto: vram_dumps/random_yellow_white.bin}
+    file_type: systemVerilogSource
 
 
 targets:
@@ -52,7 +70,7 @@ targets:
     filesets:
       - rtl
 
-  sim: # fusesoc run --target sim ucsbieee:mapache64:top
+  sim: &sim # fusesoc run --target sim ucsbieee:mapache64:top
     <<: *default
     description: Simulate the design
     toplevel: top_tb
@@ -94,7 +112,7 @@ targets:
       vivado:
         part: xc7a35tcpg236-1
 
-  lint: # fusesoc run --target lint ucsbieee:mapache64:top
+  lint: &lint # fusesoc run --target lint ucsbieee:mapache64:top
     <<: *default
     toplevel: top
     default_tool: verilator
@@ -103,5 +121,14 @@ targets:
         mode: lint-only
         verilator_options:
           - -Wall
+          - --binary
           - +1364-2005ext+v
           - +1800-2012ext+sv
+
+  gpu_verify: # fusesoc run --target gpu_verify ucsbieee:mapache64:top
+    <<: *sim
+    description: Verify the GPU
+    toplevel: gpu_tb
+    default_tool: verilator
+    filesets_append:
+      - gpu_verify
