@@ -121,6 +121,13 @@ a.blue {
     text-align: center;
 }
 
+/* from https://css-tricks.com/keep-pixelated-images-pixelated-as-they-scale */
+img.pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
 /* from https://stackoverflow.com/a/54924505 */
 .center-within {
     text-align: center;
