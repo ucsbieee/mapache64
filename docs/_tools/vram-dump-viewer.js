@@ -24,10 +24,6 @@ function fill_vram() {
     OBM     = new Uint8Array(read.result, 0x800, OBM.length);
     TXBL    = new Uint8Array(read.result, 0x900, TXBL.length);
 
-
-    NTBL_Color0 = ( NTBL[960] >> 0 ) & 0x7;
-    NTBL_Color1 = ( NTBL[960] >> 3 ) & 0x7;
-
     drawn_file = true;
     console.log("Screen updated.");
 }

@@ -81,8 +81,6 @@ var PMB                 = new Uint8Array( NumTiles * BytesPerTile );
 // Nametable
 const NTBL_Size         = 1024;
 var NTBL                = new Uint8Array( NTBL_Size );
-var NTBL_Color0         = 0b111;
-var NTBL_Color1         = 0b001;
 
 // Object Memory
 const NumObjects        = 64;
@@ -106,6 +104,10 @@ function NTBL_setColor(index,Color) { NTBL[index] &= ~0b10000000; NTBL[index] |=
 function NTBL_setHFlip(index,HFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (HFlip & 0b1) << 6; }
 function NTBL_setVFlip(index,VFlip) { NTBL[index] &= ~0b01000000; NTBL[index] |= (VFlip & 0b1) << 5; }
 function NTBL_setAddr(index,Addr) { NTBL[index] &= ~0b00011111; NTBL[index] |= (Addr & 0x1f); }
+const NTBL_getPalette0 = () => NTBL[960] & 0x7;
+const NTBL_getPalette1 = () => (NTBL[960] >>> 3) & 0x7;
+function NTBL_setPalette0(Palette) { NTBL[960] &= ~0x7; NTBL[960] |= (Palette & 0x7); }
+function NTBL_setPalette1(Palette) { NTBL[960] &= ~0x38; NTBL[960] |= (Palette & 0x7) << 3; }
 
 // Object Memory Methods
 const OBM_getX = (index) => (OBM[4*index]);
@@ -241,7 +243,7 @@ function get_tile_data( x, y ) {
 
 function get_tile_color( x, y ) {
     let index = ((y&0b11111000)<<2) | ((x&0b11111000)>>>3);
-    return NTBL_getColor(index) ? NTBL_Color1 : NTBL_Color0;
+    return NTBL_getColor(index) ? NTBL_getPalette1() : NTBL_getPalette0();
 }
 
 function flip( pattern_scanline ) {
