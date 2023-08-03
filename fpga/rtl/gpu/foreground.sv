@@ -33,26 +33,22 @@ module foreground #(
     // 1 2-word read port
     // 1 1-word read
 
-    function automatic logic [15:0] pmf_line(logic [4:0] pmfa, logic [2:0] y);
-        logic [7:0] left, right;
-        left = PMF[ {pmfa, y, 1'b0} ];
-        right = PMF[ {pmfa, y, 1'b1} ];
-        return {left, right};
-    endfunction
+    `define pmf_line(PMFA, Y) (16'({ \
+        PMF[ {5'(PMFA), 3'(Y), 1'b0} ], \
+        PMF[ {5'(PMFA), 3'(Y), 1'b1} ] \
+    }))
 
     // Object Memory (https://mapache64.ucsbieee.org/guides/gpu/#Object-Memory)
     mapache64::data_t OBM[256];
     // 1 4-word read port
     // 1 1-word read port
 
-    function automatic mapache64::obm_object_t obm_object(logic [5:0] obma);
-        logic [7:0] x, y, conf, color;
-        x = OBM[ {obma, 2'd0} ];
-        y = OBM[ {obma, 2'd1} ];
-        conf = OBM[ {obma, 2'd2} ];
-        color = OBM[ {obma, 2'd3} ];
-        return {x, y, conf, color};
-    endfunction
+    `define obm_object(OBMA) (mapache64::obm_object_t'({ \
+        OBM[ {6'(OBMA), 2'd0} ], \
+        OBM[ {6'(OBMA), 2'd1} ], \
+        OBM[ {6'(OBMA), 2'd2} ], \
+        OBM[ {6'(OBMA), 2'd3} ] \
+    }))
 
 
 
@@ -88,6 +84,7 @@ module foreground #(
     } state_t;
 
     state_t state_d, state_q;
+    initial state_q = DONE;
 
     localparam NUM_OBS = 2;
 
@@ -100,7 +97,7 @@ module foreground #(
     logic [NUM_OBS-1:0] obs_load_start;
 
     mapache64::obm_object_t obs_load_object;
-    always_comb obs_load_object = obm_object(object_load_counter_q);
+    assign obs_load_object = `obm_object(object_load_counter_q);
 
     always_comb begin
 
@@ -115,7 +112,7 @@ module foreground #(
             DONE: begin
                 if (prefetch_start_i) begin
                     // increment scanline and y
-                    scanline_to_replace_d = (scanline_to_replace_q==(NUM_OBS-1)) ? '0 : scanline_to_replace_q+1;
+                    scanline_to_replace_d = (scanline_to_replace_q==(NUM_OBS-1)) ? '0 : (scanline_to_replace_q+1);
                     // begin clear
                     state_d = CLEAR;
                     obs_clear_start[scanline_to_replace_d] = 1;
@@ -165,7 +162,7 @@ module foreground #(
 
     // Read from PMF
     logic [15:0] obs_pmf_line;
-    always_comb obs_pmf_line = pmf_line( obs_load_object.pmfa, obs_pattern_inty );
+    assign obs_pmf_line = `pmf_line( obs_load_object.pmfa, obs_pattern_inty );
 
     // Find lightness
     assign obs_load_lightness = obs_pmf_line[ {(3'h7-obs_pattern_intx),1'b0} +: 2 ];
@@ -215,11 +212,11 @@ module foreground #(
     generate for ( genvar i = 0; i < NUM_OBJECTS; i++ ) begin : object
         initial OBM[{6'(i),2'b0}+1] = 8'hff;
         mapache64::obm_object_t object;
-        always_comb object = obm_object(6'(i));
+        always_comb object = `obm_object(6'(i));
     end endgenerate
     always @(negedge gpu_clk) begin
-        if (prefetch_start_i && state_q!=DONE)
-            $warning("Failed to prefetch of y=%d because prefetch unit is busy", prefetch_y_i);
+        if (!rst && prefetch_start_i && state_q!=DONE)
+            $warning("Failed to prefetch y=%0d because prefetch unit is busy. %0t", prefetch_y_i, $time);
     end
     `endif
 

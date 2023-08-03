@@ -57,7 +57,7 @@ module video_timing (
 
         `ifdef SIM
         if ( vcounter_q != 10'd0 && vcounter_d == 10'd0 ) begin
-            $display( "Next frame: [Time=%0t]", $realtime );
+            $display( "Starting new frame: [Time=%0t]", $realtime );
         end
         `endif
 
