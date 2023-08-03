@@ -3,6 +3,7 @@
 
 module object_scanline (
     input   logic                   gpu_clk,
+    input   logic                   rst,
 
     output  logic                   ready_o,
 
@@ -106,10 +107,18 @@ module object_scanline (
     end
 
     always_ff @(posedge gpu_clk) begin
+        if (rst) begin
+            state_q <= WAIT;
+        end else begin
+            state_q <= state_d;
+        end
+    end
+    always_ff @(posedge gpu_clk) begin
         obs_y_q <= obs_y_d;
         clear_counter_q <= clear_counter_d;
         intx_counter_q <= intx_counter_d;
-        state_q <= state_d;
+    end
+    always_ff @(posedge gpu_clk) begin
         if (obsm_wen) begin
             OBSM[8'(obsm_waddr)] <= obsm_wdata;
         end

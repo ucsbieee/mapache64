@@ -170,6 +170,7 @@ module foreground #(
     generate for (genvar scanline_GEN = 0; scanline_GEN < NUM_OBS; scanline_GEN++) begin : scanline
         object_scanline obs (
             .gpu_clk(gpu_clk),
+            .rst(rst),
             .ready_o(obs_ready[scanline_GEN]),
             .clear_start_i(obs_clear_start[scanline_GEN]),
             .new_y_i(prefetch_y_i),
