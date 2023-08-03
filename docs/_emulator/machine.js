@@ -198,7 +198,7 @@ function drawBackground() {
 }
 
 function drawForeground() {
-    for ( let i = 0; i < NumObjects; i++ )
+    for ( let i = NumObjects-1; i >= 0; i-- )
         if ( OBM_getY(i) < GameHeight )
             drawObject( i );
 }

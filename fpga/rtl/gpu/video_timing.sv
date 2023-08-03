@@ -49,7 +49,7 @@ module video_timing (
     always_ff @(posedge clk_12_5875) begin
         if ( rst ) begin
             hcounter_q <= 10'b0;
-            vcounter_q <= 10'b0;
+            vcounter_q <= 10'd523;
         end else begin
             hcounter_q <= hcounter_d;
             vcounter_q <= vcounter_d;
@@ -57,7 +57,7 @@ module video_timing (
 
         `ifdef SIM
         if ( vcounter_q != 10'd0 && vcounter_d == 10'd0 ) begin
-            $display( "Next frame: [Time=%0t]", $realtime );
+            $display( "Starting new frame: [Time=%0t]", $realtime );
         end
         `endif
 

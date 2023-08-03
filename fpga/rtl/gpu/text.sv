@@ -23,19 +23,18 @@ module text (
     mapache64::data_t TXBL[1024];
     // 2 1-word read port
 
-    function automatic mapache64::txbl_tile_t txbl_tile(logic [4:0] r, c);
-        return TXBL[ {r, c} ];
-    endfunction
+    `define txbl_tile(R, C) (mapache64::txbl_tile_t'( \
+        TXBL[ {5'(R), 5'(C)} ] \
+    ))
 
     // Character Pattern Memory
     mapache64::data_t PMC[1024];
     initial $readmemb( "pmc.mem", PMC, 0, 1023 );
     // 1 1-word read port
 
-    function automatic logic pmc_valid(logic [6:0] pmca, logic [2:0] y, logic [2:0] x);
-        mapache64::data_t pmc_line = PMC[ {pmca, y} ];
-        return pmc_line[3'd7-x];
-    endfunction
+    `define pmc_valid(PMCA, Y, X) ( \
+        PMC[ {7'(PMCA), 3'(Y)} ][3'd7-3'(X)] \
+    )
 
 
 
@@ -65,10 +64,10 @@ module text (
     wire [2:0] display_intx = display_x_i[2:0];
 
     mapache64::txbl_tile_t display_tile;
-    always_comb display_tile = txbl_tile(display_row, display_col);
+    assign display_tile = `txbl_tile(display_row, display_col);
 
     assign display_color_o = display_tile.colorselect;
-    always_comb display_valid_o = pmc_valid(display_tile.pmca, display_inty, display_intx);
+    assign display_valid_o = `pmc_valid(display_tile.pmca, display_inty, display_intx);
 
 
 
@@ -80,7 +79,7 @@ module text (
         for ( genvar txbl_row_GEN = 0; txbl_row_GEN < 30; txbl_row_GEN = txbl_row_GEN+1 ) begin : txbl_row
             for ( genvar txbl_col_GEN = 0; txbl_col_GEN < 32; txbl_col_GEN = txbl_col_GEN+1 ) begin : txbl_column
                 mapache64::txbl_tile_t tile;
-                always_comb tile = txbl_tile(txbl_row_GEN, txbl_col_GEN);
+                assign tile = `txbl_tile(txbl_row_GEN, txbl_col_GEN);
             end
         end
     endgenerate

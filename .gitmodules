@@ -2,3 +2,6 @@
 	path = tools/py65ucsbieee
 	url = https://github.com/ucsbieee/py65
 	branch = main
+[submodule "fpga/dv/dpi/lib/lodepng"]
+	path = fpga/dv/dpi/lib/lodepng
+	url = git@github.com:lvandeve/lodepng.git

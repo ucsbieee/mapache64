@@ -31,6 +31,7 @@ This is the RTL for Mapache 64. It consists of the following modules:
 
 ```bash
 # setup
+git submodule update --init --recursive
 cd fpga
 ./rom/get_firmware.sh
 ./rom/get_font.sh
@@ -45,6 +46,8 @@ fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
 fusesoc run --target sim --tool verilator ucsbieee:mapache64:top
 # Synthesize for the Cmod-A7
 fusesoc run --target cmod_a7 ucsbieee:mapache64:top
+# Verify the GPU
+fusesoc run --target gpu_verify ucsbieee:mapache64:top
 ```
 
 Cmod-A7 SPI Flash: `mx25l3273f`

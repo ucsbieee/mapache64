@@ -25,24 +25,20 @@ module background (
     // 1 1-word read port
     mapache64::data_t PMB[512];
 
-    function automatic logic [15:0] pmb_line(logic [4:0] pmba, logic [2:0] y);
-        logic [7:0] left, right;
-        left = PMB[ {pmba, y, 1'b0} ];
-        right = PMB[ {pmba, y, 1'b1} ];
-        return {left, right};
-    endfunction
+    `define pmb_line(PMBA, Y) (16'({ \
+        PMB[ {5'(PMBA), 3'(Y), 1'b0} ], \
+        PMB[ {5'(PMBA), 3'(Y), 1'b1} ] \
+    }))
 
     // Nametable (https://mapache64.ucsbieee.org/guides/gpu/#Nametable)
     mapache64::data_t NTBL[1024];
     // 2 1-word read port
     // 1 1-word read port (color)
 
-    function automatic mapache64::ntbl_tile_t ntbl_tile(logic [4:0] r, c);
-        return NTBL[ {r, c} ];
-    endfunction
-    function automatic logic [5:0] ntbl_colors;
-        return 6'(NTBL[ 960 ]);
-    endfunction
+    `define ntbl_tile(R, C) (mapache64::ntbl_tile_t'( \
+        NTBL[ {5'(R), 5'(C)} ] \
+    ))
+    `define ntbl_colors (6'(NTBL[ 960 ]))
 
 
 
@@ -78,11 +74,11 @@ module background (
 
     // Read from NTBL
     mapache64::ntbl_tile_t display_tile;
-    always_comb display_tile = ntbl_tile(display_row, display_col);
+    assign display_tile = `ntbl_tile(display_row, display_col);
 
     // Find color
     logic [2:0] ntbl_color1, ntbl_color0;
-    always_comb {ntbl_color1,ntbl_color0} = ntbl_colors();
+    assign {ntbl_color1,ntbl_color0} = `ntbl_colors;
     wire [2:0] display_color = display_tile.colorselect ? ntbl_color1 : ntbl_color0;
 
     // get (flipped) addresses into pattern
@@ -91,7 +87,7 @@ module background (
 
     // Read from PMB
     logic [15:0] display_line;
-    always_comb display_line = pmb_line( display_tile.pmba, display_pattern_y );
+    assign display_line = `pmb_line( display_tile.pmba, display_pattern_y );
 
     // Find lightness
     wire [1:0] display_lightness = display_line[ {(3'h7-display_pattern_x),1'b0} +: 2 ];
@@ -110,19 +106,19 @@ module background (
         for ( genvar ntbl_r_GEN = 0; ntbl_r_GEN < 30; ntbl_r_GEN++ ) begin : ntbl_row
             for ( genvar ntbl_c_GEN = 0; ntbl_c_GEN < 32; ntbl_c_GEN++ ) begin : ntbl_column
                 mapache64::ntbl_tile_t tile;
-                always_comb tile = ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
+                assign tile = `ntbl_tile(ntbl_r_GEN,ntbl_c_GEN);
             end
         end
     endgenerate
     generate for ( genvar pattern_GEN = 0; pattern_GEN < 32; pattern_GEN++ ) begin : pattern
-        logic [15:0] line0; always_comb line0 = pmb_line(pattern_GEN,3'd0);
-        logic [15:0] line1; always_comb line1 = pmb_line(pattern_GEN,3'd1);
-        logic [15:0] line2; always_comb line2 = pmb_line(pattern_GEN,3'd2);
-        logic [15:0] line3; always_comb line3 = pmb_line(pattern_GEN,3'd3);
-        logic [15:0] line4; always_comb line4 = pmb_line(pattern_GEN,3'd4);
-        logic [15:0] line5; always_comb line5 = pmb_line(pattern_GEN,3'd5);
-        logic [15:0] line6; always_comb line6 = pmb_line(pattern_GEN,3'd6);
-        logic [15:0] line7; always_comb line7 = pmb_line(pattern_GEN,3'd7);
+        logic [15:0] line0; assign line0 = `pmb_line(pattern_GEN,3'd0);
+        logic [15:0] line1; assign line1 = `pmb_line(pattern_GEN,3'd1);
+        logic [15:0] line2; assign line2 = `pmb_line(pattern_GEN,3'd2);
+        logic [15:0] line3; assign line3 = `pmb_line(pattern_GEN,3'd3);
+        logic [15:0] line4; assign line4 = `pmb_line(pattern_GEN,3'd4);
+        logic [15:0] line5; assign line5 = `pmb_line(pattern_GEN,3'd5);
+        logic [15:0] line6; assign line6 = `pmb_line(pattern_GEN,3'd6);
+        logic [15:0] line7; assign line7 = `pmb_line(pattern_GEN,3'd7);
     end endgenerate
     `endif
 
