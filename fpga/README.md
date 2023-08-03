@@ -10,15 +10,13 @@ Repository: <https://github.com/ucsbieee/mapache64/tree/main/fpga/>
 This is the RTL for Mapache 64. It consists of the following modules:
 
 * Address Bus
-  * Sets chip enable nets according to the current address value.
-* Controller Interface
+  * Sets chip enable signals according to the current cpu address.
+* [Controller Interface](https://github.com/sifferman/nes_controller_interface)
   * Reads the controller values. (SIPO)
 * Firmware ROM
-  * The firmware from the assebmly level is stored in RAM.
-  * The 65c02 vectors are also stored here.
+  * The firmware and 65c02 vectors are stored in BRAM.
 * GPU
   * Implementation of this description: [GPU](https://mapache64.ucsbieee.org/guides/gpu/).
-  * Foreground module and background module.
 
 ## Required tools
 
