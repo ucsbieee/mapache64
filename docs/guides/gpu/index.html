@@ -68,7 +68,7 @@
         </p>
         <ul>
             <li>
-                The pattern memory (PMF and PMB) stores pixel data for 32 foreground sprites and 32 background tiles.
+                The pattern memory (PMF and PMB) stores pixel data for 32 foreground sprites and 32 background sprites.
             </li>
             <li>
                 The Nametable (NTBL) stores the arrangement of 32&times;30 background tiles on the screen.
@@ -98,14 +98,23 @@
 
         <h1 id="Pattern-Memory">Pattern Memory</h1>
         <p>
-            Pattern Memory stores collections of 8px&times;8px sprites and tiles. Each pixel is stored with 2 bits. Therefore, each sprite/tile is 16 Bytes. Pattern Memory has room for 32 sprites and 32 tiles.
+            Pattern Memory stores collections of 8px&times;8px sprites. Each pixel is stored with 2 bits, and a group of 4 pixels is stored as 1 byte. Each sprite is 16 bytes total.
         </p>
+        <img class="center hardbubble" src="/_media/GPU/lightness.svg" width="400px" alt="Pixel Data">
+        <ul>
+            <li><code>11</code> is white</li>
+            <li><code>10</code> is light gray</li>
+            <li><code>01</code> is dark gray</li>
+            <li><code>00</code> is transparent for PMF, black for PMB</li>
+        </ul>
+        <p>A color filter can be applied by the Nametable or Object Memory.</p>
+        <img class="center hardbubble pixelated" src="/_media/GPU/palettes.png" width="800px" alt="Pixel Data">
         <ul>
             <li>
-                Pattern Memory Foreground (PMF) only holds 32 sprites, and is addressable with 5 bits.
+                Pattern Memory Foreground (PMF) only holds 32 foreground sprites, and is addressable with 5 bits.
             </li>
             <li>
-                Pattern Memory Background (PMB) only holds 32 tiles, and is addressable with 5 bits.
+                Pattern Memory Background (PMB) only holds 32 background sprites, and is addressable with 5 bits.
             </li>
         </ul>
         <p><em>
@@ -116,32 +125,18 @@
         </p>
         <img class="center" src="/_media/GPU/VRAM/PatternMemory.svg" alt="Pattern Memory Diagram">
         <p>
-            Observe how the NES converts from bits to pixels:
+            This is an example of how sprites are stored in PMF.
         </p>
-        <a class="center" href="https://youtu.be/opoQdHqGEHg" target="_blank" rel="noopener noreferrer"><img src="/_media/GPU/pixels.jpg" alt="Pixel Data"></a>
-        <p>
-            Our GPU does not have the color capabilities of the NES. Instead,
-        </p>
-        <ul>
-            <li><code>11</code> is white,</li>
-            <li><code>10</code> is light gray,</li>
-            <li><code>01</code> is dark gray,</li>
-            <li><code>00</code> is transparent/black.</li>
-        </ul>
-        <p>Then, a color filter is applied depending on the Nametable or Object Memory.</p>
 
 
 
 
         <h1 id="Nametable">Nametable</h1>
         <p>
-            The Nametable is effectively a 32&times;30 array of tiles that represent the entire 256px&times;240px screen. If tiles are puzzle pieces, the Nametable is the puzzle solution.
+            The Nametable is a 32&times;30 array of tiles that represent the entire 256px&times;240px screen. Each tile must choose 1 sprite from PMB to display. Each tile can be flipped horizontally and flipped vertically. This allows for reuse of sprites.
         </p>
         <p>
-            Each tile can be flipped horizontally and flipped vertically. This allows for reuse of sprites, leading to smaller file sizes.
-        </p>
-        <p>
-            The Nametable also stores 2 global colors. This means that each background sprite can be only one of two colors. Each tile must select which color it will follow. This is very apparent when looking at the <a href="/examples/gpu-showcase/" target="_blank" rel="noopener noreferrer">GPU Showcase</a>. This example randomizes the VRAM on every frame, but fixes the two global Nametable colors to white and blue.
+            The Nametable also stores 2 global colors. Each tile must select one of the two colors. You can look at the <a href="/examples/gpu-showcase/" target="_blank" rel="noopener noreferrer">VRAM Randomizer example</a> to see this in action.
         </p>
         <img class="center" src="/_media/GPU/VRAM/Nametable.svg" alt="Nametable Diagram">
 
@@ -162,7 +157,7 @@
 
         <h1 id="Text-Table">Text Table</h1>
         <p>
-            The Text Table (TXBL) can be used to write text over the screen. The TXBL is similar to the NTBL, except the TXBL's tiles appear in front of foreground objects and uses read-only character pattern memory (PMC).
+            The Text Table (TXBL) can be used to write text over the screen. The TXBL is similar to the NTBL, except the TXBL's tiles appear in front of foreground objects and uses read-only character pattern memory (PMC) instead of custom sprites from the PMB.
         </p>
         <p>
             There are 128 characters in the font. Each character can be accessed by using the lower 7 bits of the character data in the TXBL. The font uses ASCII for all printable characters.

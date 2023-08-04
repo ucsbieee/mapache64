@@ -157,6 +157,14 @@ img.pixelated {
     font-size: 1.5rem;
 }
 
+.hardbubble {
+    background: #79bfd8;
+    background: linear-gradient(15deg, #c3e7aab0 0%, #2d87fdb0 90%);
+    margin: .5em;
+    padding: .6em .8em;
+    border-radius: .5em;
+}
+
 /* ======= Site Styling ======= */
 
 header {
