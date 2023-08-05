@@ -61,7 +61,7 @@
 
         <h1 id="Overview">Overview</h1>
         <p>
-            All the GPU does is display to the screen based off what is in the VRAM. Therefore, to display to the screen, you must fill the VRAM accordingly.
+            All the GPU does is display to the screen based off what is in the VRAM. Therefore, to display to the screen, you must fill the VRAM accordingly. If you are using Mapache 64's custom linker script, you can use the API described in <a class="external-link" href="https://github.com/ucsbieee/mapache64/blob/main/firmware/headers/vram.h" target="_blank" rel="noopener noreferrer">vram.h&nbsp;</a>.
         </p>
         <p>
             There are 4 parts of the VRAM: Pattern Memory, Nametable, Object Memory, and Text Table.
@@ -107,7 +107,10 @@
             <li><code>01</code> is dark gray</li>
             <li><code>00</code> is transparent for PMF, black for PMB</li>
         </ul>
-        <p>A color filter can be applied by the Nametable or Object Memory.</p>
+        <p></p>
+        <p><em>
+            Note: pixel data is separate from color data. A color filter can be applied over a sprite by the Nametable or Object Memory.
+        </em></p>
         <img class="center hardbubble pixelated" src="/_media/GPU/palettes.png" width="800px" alt="Pixel Data">
         <ul>
             <li>
@@ -117,9 +120,6 @@
                 Pattern Memory Background (PMB) only holds 32 background sprites, and is addressable with 5 bits.
             </li>
         </ul>
-        <p><em>
-            Note: pixel data is separate from color data; the Nametable and Object Memory store colors separately.
-        </em></p>
         <p>
             Observe the layout of the Pattern Memory:
         </p>
@@ -148,7 +148,7 @@
             The Object Memory is used to identify the location of the sprites on the screen.
         </p>
         <p>
-            Each object has an X and Y position, a sprite address, an H-Flip and V-Flip modifier, and a color. If two objects overlap, whichever object appears last in OBM will be on top.
+            Each object has an X and Y position, a sprite address, an H-Flip and V-Flip modifier, and a color. If two objects overlap, whichever object appears first in OBM will be on top.
         </p>
         <img class="center" src="/_media/GPU/VRAM/ObjectMemory.svg" alt="Object Memory Diagram">
 
