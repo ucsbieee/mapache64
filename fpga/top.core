@@ -112,7 +112,7 @@ targets:
       vivado:
         part: xc7a35tcpg236-1
 
-  lint: &lint # fusesoc run --target lint ucsbieee:mapache64:top
+  lint: &lint # fusesoc run --target lint --no-export ucsbieee:mapache64:top
     <<: *default
     toplevel: top
     default_tool: verilator

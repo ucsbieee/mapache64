@@ -37,7 +37,7 @@ fusesoc library add ucsbieee_mapache64_top . --sync-type=local
 fusesoc library add nes_controller_interface https://github.com/sifferman/nes_controller_interface --sync-type=git
 
 # Lint with Verilator
-fusesoc run --target lint ucsbieee:mapache64:top
+fusesoc run --target lint --no-export ucsbieee:mapache64:top
 # Simulate with Icarus
 fusesoc run --target sim --tool icarus ucsbieee:mapache64:top
 # Simulate with Verilator
