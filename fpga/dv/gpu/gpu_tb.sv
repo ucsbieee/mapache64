@@ -115,7 +115,8 @@ always @(negedge clk_12_5875) begin : check_pixel
     automatic logic [5:0] expected_pixel = gpugold_pixel(gpu.x_d, gpu.y_d);
     automatic logic [5:0] received_pixel = {gpu.r_d, gpu.g_d, gpu.b_d};
     if (!rst && gpu.drawing) begin
-        if (expected_pixel !== received_pixel) begin
+        assert (expected_pixel === received_pixel)
+        else begin
             $display(
                 "Failed (%0d,%0d) %0t: expected=%b received=%b text_valid=%b foreground_valid=%b ",
                 gpu.x_d, gpu.y_d, $realtime, expected_pixel, received_pixel, gpu.text_valid, gpu.foreground_valid
