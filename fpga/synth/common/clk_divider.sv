@@ -4,7 +4,8 @@ module clk_divider #(
     parameter real IN_FREQ  = 1.0,
     parameter real OUT_FREQ = 1.0
 ) (
-    input   logic   clk_i, rst,
+    input   logic   clk_i,
+    input   logic   rst,
     output  logic   clk_o
 );
 
@@ -31,7 +32,15 @@ module clk_divider #(
             end
         end
 
-        assign clk_o = ( counter_q < counter_t'($rtoi( COUNTER_RESET / 2.0 ) ));
+        logic clk_d, clk_q;
+        initial clk_q = 0;
+
+        assign clk_d = ( counter_q > counter_t'($rtoi( COUNTER_RESET / 2.0 ) ));
+        assign clk_o = clk_q;
+
+        always_ff @(posedge clk_i) begin
+            clk_q <= clk_d;
+        end
 
     end endgenerate
 
