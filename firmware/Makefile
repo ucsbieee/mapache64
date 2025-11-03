@@ -1,7 +1,7 @@
 # Instruct that compilation and assembly should be done using cc65/ca65 and
 # specify some required flags (https://cc65.github.io/doc/customizing.html#toc9)
 AS = ca65
-ASFLAGS = --cpu 65c02
+ASFLAGS = --cpu w65c02
 
 CC = cc65
 CFLAGS = --cpu 65c02 -t none -O
