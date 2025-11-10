@@ -12,7 +12,7 @@ default:
 	cp -r ${DEMO}/. ../template/.
 ifneq ("$(wildcard ${DEMO}/Makefile.top)","")
 	@echo "Makefile.top found. Modifying default Makefile"
-	@echo -e "\n" >> ../template/Makefile.top
+	@echo "\n" >> ../template/Makefile.top
 	@cat ../template/Makefile | sed -n '/${MAKEFILE_TOP_END}/,$$ p' >> ../template/Makefile.top
 	@mv ../template/Makefile.top ../template/Makefile
 	@echo "Created ${DEMO}'s Makefile"
