@@ -23,25 +23,12 @@ module clk_divider #(
 
         assign counter_d = (counter_q == counter_t'(COUNTER_RESET-1)) ? ('0) : (counter_q+1);
         initial counter_q = '0;
+        initial clk_o = 0;
 
         always_ff @(posedge clk_i) begin
-            if (rst) begin
-                counter_q <= '0;
-            end else begin
-                counter_q <= counter_d;
-            end
+            counter_q <= (rst) ? '0 : counter_d;
+            clk_o <= (counter_q >= counter_t'($rtoi( COUNTER_RESET / 2.0 )));
         end
-
-        logic clk_d, clk_q;
-        initial clk_q = 0;
-
-        assign clk_d = ( counter_q > counter_t'($rtoi( COUNTER_RESET / 2.0 ) ));
-        assign clk_o = clk_q;
-
-        always_ff @(posedge clk_i) begin
-            clk_q <= clk_d;
-        end
-
     end endgenerate
 
 endmodule
