@@ -15,6 +15,7 @@ module top #(
     output  logic                   SELECT_ram_no,
     output  logic                   ram_OE_no,
     output  logic                   SELECT_rom_no,
+    output  logic                   SELECT_expansion_o,
 
     output  logic                   vblank_irq_no,
 
@@ -43,7 +44,8 @@ module top #(
     logic SELECT_rom;
     logic vblank_irq;
     assign SELECT_ram_no = ~SELECT_ram;
-    assign SELECT_rom_no = ~SELECT_rom;
+    assign SELECT_rom_no = ~( !wen && SELECT_rom );
+    assign SELECT_expansion_o = wen && SELECT_rom && cpu_clk;
     assign vblank_irq_no = ~vblank_irq;
 
     assign ram_OE_no = ~( !wen && SELECT_ram );

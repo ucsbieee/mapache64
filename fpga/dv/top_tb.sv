@@ -21,6 +21,7 @@ reg                 wen_n;
 wire                SELECT_ram_B;
 wire                ram_OE_B;
 wire                SELECT_rom_B;
+wire                SELECT_expansion_B;
 wire                SELECT_controller_1;
 wire                SELECT_controller_2;
 
@@ -55,6 +56,7 @@ top #(mapache64::GpuForegroundNumObjects) top (
     SELECT_ram_B,
     ram_OE_B,
     SELECT_rom_B,
+    SELECT_expansion_B,
 
     vblank_irq_B,
 

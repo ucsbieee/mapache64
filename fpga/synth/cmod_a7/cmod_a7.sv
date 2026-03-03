@@ -52,6 +52,7 @@ module cmod_a7 (
     wire        SELECT_ram_B;
     wire        ram_OE_B;
     wire        SELECT_rom_B;
+    wire        SELECT_expansion_B;
     wire        vblank_irq_B;
 
     wire  [1:0] r;
@@ -74,6 +75,7 @@ module cmod_a7 (
     assign pio09 = ram_OE_B;
     assign pio08 = SELECT_ram_B;
     assign pio47 = SELECT_rom_B;
+    assign pio26 = SELECT_expansion_B;
     assign pio05 = vblank_irq_B;
 
     assign pio28 = r[1];
@@ -90,8 +92,6 @@ module cmod_a7 (
 
     assign pio02 = controller_latch;
     assign pio01 = controller_clk_out;
-
-    assign pio26 = fpga_data_enable; // select expansion
 
 
     // unused
@@ -111,6 +111,7 @@ module cmod_a7 (
         SELECT_ram_B,
         ram_OE_B,
         SELECT_rom_B,
+        SELECT_expansion_B,
 
         vblank_irq_B,
 
